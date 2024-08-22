@@ -1,21 +1,25 @@
+"use client";
+
 import Link from "next/link";
-import React from "react";
+import { useEffect, useState } from 'react';
 
 const Dashboard = () => {
+    const [user, setUser] = useState<any | null>(null);
+
+    useEffect(() => {
+        const userString = localStorage.getItem('user');
+        const user = userString ? JSON.parse(userString) : null;
+        setUser(user);
+
+    }, []);
 
     return (
-        <>
-            <div style={{
-                display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
-                width: '100%', height: '100%'
-            }}>
-                <br />
-                <h2>Login Succesfull</h2>
-                <br />
+        <div>
+            {user ? <p>Welcome, {user.user.name}!</p> : <p>Loading...</p>}
+            <br />
                 <Link href="/">Close session</Link>
-            </div>
-        </>
+        </div>
     );
-}
+};
 
 export default Dashboard;

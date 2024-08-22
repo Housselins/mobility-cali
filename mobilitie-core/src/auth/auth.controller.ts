@@ -11,8 +11,8 @@ export class AuthController {
     @Post()
     async login(@Body() usuario: User) {
       try {
-        const { access_token } = await this.authService.login(usuario);
-        return { access_token }; // Retorna el token JWT
+        const { access_token, user } = await this.authService.login(usuario);
+        return { access_token, user }; 
       } catch (error) {
         if (error instanceof HttpException) {
           throw error;

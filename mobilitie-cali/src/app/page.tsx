@@ -6,7 +6,7 @@ export default function Home() {
 
   const ocultarInitSesion = () => {
     console.log("Hola");
-    
+
     setControladorRenderLogin(!controladorRenderLogin);
   };
 
@@ -14,7 +14,7 @@ export default function Home() {
 
   return (
     <main>
-       <Toaster />
+      <Toaster />
       <div className="relative h-full w-full">
         <div className="absolute inset-x-0 top-0 h-10 flex px-5" style={{ backgroundColor: 'rgb(51, 102, 204)', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <p>Top Bar</p>

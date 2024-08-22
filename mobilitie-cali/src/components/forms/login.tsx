@@ -25,7 +25,7 @@ export default function LoginForm() {
         try {
             const response = await axios.post('http://localhost:4000/auth', data);
             console.log('Response:', response.data);
-            //router.push('/dashboard');
+            localStorage.setItem('user', JSON.stringify(response.data));
             window.location.href = '/dashboard';
 
         } catch (error: any) {
