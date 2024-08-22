@@ -1,6 +1,5 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UserDto } from './dto/user.dto';
 import { User} from '@prisma/client'
 
 @Controller('auth')
@@ -12,8 +11,8 @@ export class AuthController {
     @Post()
     async login(@Body() usuario: User) {
       try {
-        const user = await this.authService.login(usuario);
-        return { user };
+        const { access_token } = await this.authService.login(usuario);
+        return { access_token }; // Retorna el token JWT
       } catch (error) {
         if (error instanceof HttpException) {
           throw error;
