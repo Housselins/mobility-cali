@@ -2,6 +2,7 @@ import { LinkInterface } from "../interfaces";
 import { ADMIN_ROL_ID } from "./constants";
 
 export const MENU_DATA_LOGIN_KEY = "login";
+export const MENU_DATA_LOGOUT_KEY = "logout";
 export const MENU_DATA: LinkInterface[] = [
   {
     text: "Inicio",
@@ -13,6 +14,13 @@ export const MENU_DATA: LinkInterface[] = [
     text: "Iniciar Sesión",
     to: "/",
     keyLabel: MENU_DATA_LOGIN_KEY,
+    classNameContainer: "col-span-1",
+    className: "text-center align-middle",
+  },
+  {
+    text: "Cerrar Sesión",
+    to: "/",
+    keyLabel: MENU_DATA_LOGOUT_KEY,
     classNameContainer: "col-span-1",
     className: "text-center align-middle",
   },
