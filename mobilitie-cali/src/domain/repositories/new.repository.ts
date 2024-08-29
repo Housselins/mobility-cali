@@ -5,4 +5,5 @@ export interface INewsRepository {
     accessToken: string,
     newData: CreateNewInterface
   ): Promise<NewInterface | undefined>;
+  findNews(accessToken: string): Promise<NewInterface[] | undefined>;
 }

@@ -20,8 +20,6 @@ export default class NewsRepositoryImplement implements INewsRepository {
     newData: CreateNewInterface
   ): Promise<NewInterface | undefined> {
     try {
-      console.log('implements');
-      
       const config = {
         headers: {
           Authorization: "Bearer " + accessToken,
@@ -35,6 +33,34 @@ export default class NewsRepositoryImplement implements INewsRepository {
 
       if (resp && resp.status >= 200 && resp.status < 299) {
         return resp.data.data;
+      } else {
+        // Si la respuesta no es exitosa, lanza un error general
+        throw new Error("/news  message: Respuesta no exitosa del servidor");
+      }
+    } catch (error) {
+      if (isAxiosError(error)) {
+        // console.log(error);
+        // handleAxiosError(error, "/endpoint");
+      } else {
+        throw error;
+      }
+    }
+  }
+  async findNews(accessToken: string): Promise<NewInterface[] | undefined> {
+    try {
+      const config = {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+        },
+      };
+      let url = `/news`;
+
+      const resp = await this.axiosInstance.get(url, config);
+      // Verifica si la respuesta es exitosa y devuelve los datos
+      // console.log(resp);
+
+      if (resp && resp.status >= 200 && resp.status < 299) {
+        return resp.data;
       } else {
         // Si la respuesta no es exitosa, lanza un error general
         throw new Error("/news  message: Respuesta no exitosa del servidor");

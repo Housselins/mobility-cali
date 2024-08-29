@@ -35,9 +35,11 @@ export class NewsService {
   async findAll() {
     try {
       const allNews = await this.prismaService.new.findMany();
+
       if (allNews.length == 0) {
         throw new NotFoundException('No se encontraron noticias');
       }
+      return allNews;
     } catch (error) {
       console.log(error);
       throw new Error(error);
