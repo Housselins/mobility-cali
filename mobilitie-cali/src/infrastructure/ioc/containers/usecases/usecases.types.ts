@@ -1,5 +1,5 @@
 export const USECASES_TYPES = {
-  // REQUEST
-  _FindAllRequestsTypesUseCase: Symbol("FindAllRequestsTypesUseCase"),
-  _FindAllStatusUseCase: Symbol("FindAllStatusUseCase"),
+  // NEWS
+  _CreateNewUseCase: Symbol("CreateNewUseCase"),
+  _FindNewUseCase: Symbol("FindNewUseCase"),
 };
