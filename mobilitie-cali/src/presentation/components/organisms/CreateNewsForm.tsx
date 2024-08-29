@@ -9,7 +9,7 @@ import {
   Subtitle,
 } from "../atoms";
 import { appContainer, USECASES_TYPES } from "@/infrastructure/ioc";
-import CreateNewUseCase from "@/domain/usecases/request/create-new.use.case";
+import CreateNewUseCase from "@/domain/usecases/news/create-new.use.case";
 import { AuthDataInterface } from "@/lib/interfaces";
 type FormValues = {
   title?: string;
