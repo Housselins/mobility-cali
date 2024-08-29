@@ -35,6 +35,7 @@ model New {
   id         Int      @id @default(autoincrement())
   title      String   @unique
   content    Json?
+  image      String?
   isEnabled  Boolean  @default(true)
   createdAt  DateTime @default(now())
   updateddAt DateTime @default(now())
