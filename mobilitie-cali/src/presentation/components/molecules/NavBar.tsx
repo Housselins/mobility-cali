@@ -3,17 +3,33 @@ import { AuthDataInterface, NavBarInterface } from "@/lib/interfaces";
 import { useEffect, useState, type FC } from "react";
 import { ItemLink } from "../atoms";
 import LoginForm from "@/components/forms/login";
-import { MENU_DATA_LOGIN_KEY } from "@/lib/config/menuData";
+import {
+  MENU_DATA_LOGIN_KEY,
+  MENU_DATA_LOGOUT_KEY,
+} from "@/lib/config/menuData";
+import { useRouter } from "next/navigation";
 
 export const NavBar: FC<NavBarInterface> = ({ links, className = "" }) => {
+  const router = useRouter();
   const ocultarInitSesion = () => {
     console.log("Hola");
 
     setControladorRenderLogin(!controladorRenderLogin);
   };
+  const cleanSession = () => {
+    localStorage.removeItem("user");
+    setAuthData({
+      access_token: undefined,
+      user: undefined,
+    });
+    router.push("/");
+  };
 
   const [controladorRenderLogin, setControladorRenderLogin] = useState(false);
-  const [authData, setAuthData] = useState<AuthDataInterface | undefined>();
+  const [authData, setAuthData] = useState<AuthDataInterface>({
+    access_token: undefined,
+    user: undefined,
+  });
 
   useEffect(() => {
     const storedAuth = localStorage.getItem("user");
@@ -33,13 +49,21 @@ export const NavBar: FC<NavBarInterface> = ({ links, className = "" }) => {
           backgroundColor: "rgb(51, 102, 204)",
         }}
       >
-        {authData != undefined && (
+        {authData && (
           <div className="w-full h-full flex">
             {links.map((linkItem, key) => {
               if (linkItem.keyLabel == MENU_DATA_LOGIN_KEY) {
                 linkItem.execution = ocultarInitSesion;
+                if (authData.access_token) {
+                  return;
+                }
               }
-              console.log();
+              if (linkItem.keyLabel == MENU_DATA_LOGOUT_KEY) {
+                linkItem.execution = cleanSession;
+                if (!authData.access_token) {
+                  return;
+                }
+              }
 
               return (
                 <ItemLink

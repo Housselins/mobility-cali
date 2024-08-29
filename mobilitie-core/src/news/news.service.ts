@@ -19,7 +19,6 @@ export class NewsService {
           image: newData.image,
         },
       });
-      console.log(createNewResult);
 
       if (!createNewResult) {
         throw new InternalServerErrorException('No se pudo crear la noticia');

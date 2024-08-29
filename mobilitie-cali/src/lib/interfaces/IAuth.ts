@@ -1,6 +1,6 @@
 export interface AuthDataInterface {
-  access_token: string;
-  user: UserDataInterface;
+  access_token?: string;
+  user?: UserDataInterface;
 }
 
 export interface UserDataInterface {

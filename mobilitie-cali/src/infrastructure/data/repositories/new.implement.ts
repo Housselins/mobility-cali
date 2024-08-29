@@ -32,7 +32,7 @@ export default class NewsRepositoryImplement implements INewsRepository {
       // console.log(resp);
 
       if (resp && resp.status >= 200 && resp.status < 299) {
-        return resp.data.data;
+        return resp.data;
       } else {
         // Si la respuesta no es exitosa, lanza un error general
         throw new Error("/news  message: Respuesta no exitosa del servidor");
