@@ -1,19 +1,11 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "types": [
-      "reflect-metadata"
-    ],
+    "types": ["reflect-metadata"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "outDir": "dist",
-    "lib": [
-      "es6",
-      "dom",
-      "dom.iterable",
-      "esnext",
-      "ES2021"
-    ],
+    "lib": ["es6", "dom", "dom.iterable", "esnext", "ES2021"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -28,9 +20,7 @@
     "jsx": "preserve",
     "strictNullChecks": true,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
     "plugins": [
       {
@@ -42,11 +32,9 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "src/stories/storybook.mocks.js",
     ".next/types/**/*.ts",
+    "src/context/AuthContext.jsx",
     "middleware.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

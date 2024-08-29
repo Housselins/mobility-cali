@@ -1,4 +1,4 @@
 export const NETWORK_TYPES = {
-  _AxiosSusInstance: Symbol("AxiosSusInstance"),
+  _CoreAxiosInstance: Symbol("CoreAxiosInstance"),
   _NextAxiosInstance: Symbol("NextAxiosInstance"),
 };

@@ -3,6 +3,17 @@
 ```bash
 $ npm install
 ```
+# create database from docker file
+
+```bash
+$ docker-compose up --build
+```
+
+# migrations database
+
+```bash
+$ npx prisma migrate dev
+```
 
 ## Compile and run the project
 
