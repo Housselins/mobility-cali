@@ -33,7 +33,7 @@ model Rol {
 
 model New {
   id         Int      @id @default(autoincrement())
-  title      String   @unique
+  title      String
   content    Json?
   image      String?
   isEnabled  Boolean  @default(true)

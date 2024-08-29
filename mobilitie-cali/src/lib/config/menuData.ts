@@ -27,6 +27,12 @@ export const MENU_DATA: LinkInterface[] = [
 
 export const NEWS_MENU_DATA: LinkInterface[] = [
   {
+    text: "Inicio Gestion Noticia",
+    to: "/news",
+    classNameContainer: "",
+    className: "text-center align-middle",
+  },
+  {
     text: "Crear Noticia",
     to: "/news/create-new",
     classNameContainer: "",
@@ -34,7 +40,7 @@ export const NEWS_MENU_DATA: LinkInterface[] = [
   },
   {
     text: "Ver Noticias",
-    to: "/news/create-new",
+    to: "/news/find-new",
     classNameContainer: "",
     className: "text-center align-middle",
   },
