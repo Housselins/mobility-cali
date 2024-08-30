@@ -39,6 +39,9 @@ export const NewsList: FC<{}> = ({}) => {
       return;
     }
     setNewsList(resultCreateNewUseCase);
+    if (Array.isArray(resultCreateNewUseCase)) {
+      setNewsList(resultCreateNewUseCase);
+    }
   };
   useEffect(() => {
     const auth = localStorage.getItem("user");
