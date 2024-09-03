@@ -1,16 +1,29 @@
 "use client";
 import { CustomTextInputInterface } from "@/lib/interfaces";
 import Image from "next/image";
-import { useState, type FC } from "react";
+import { useState, type FC, ChangeEvent } from "react";
 
 export const CustomImageInput: FC<CustomTextInputInterface> = (props) => {
   const { returnFile, label, ...inputProps } = props;
 
-  const [image, setImage] = useState<string | null>();
+  const [image, setImage] = useState<string | null>(null);
 
-  const converBase64 = (file: any) => {
+  const convertBase64 = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]; // Obtener el primer archivo seleccionado
+
+    if (!file) return; // Si no hay archivo, salir
+
+    const maxSizeInMB = 1; // Tamaño máximo permitido en MB
+    const maxSizeInBytes = maxSizeInMB * 1024 * 1024; // Convertir MB a Bytes
+
+    if (file.size > maxSizeInBytes) {
+      alert('La imagen no puede superar los 1MB de tamaño.');
+      return; // Si el archivo excede el tamaño permitido, mostrar alerta y salir
+    }
+
+    // Convertir el archivo a base64
     const reader = new FileReader();
-    reader.readAsDataURL(file.target.files[0]);
+    reader.readAsDataURL(file);
     reader.onload = () => {
       if (reader.result) {
         setImage(reader.result as string);
@@ -21,6 +34,7 @@ export const CustomImageInput: FC<CustomTextInputInterface> = (props) => {
       console.log("Error in file parsing base 64: ", error);
     };
   };
+
   return (
     <div>
       {label && (
@@ -36,8 +50,9 @@ export const CustomImageInput: FC<CustomTextInputInterface> = (props) => {
         accept="image/*"
         placeholder={label}
         {...inputProps}
-        onChange={converBase64}
+        onChange={convertBase64}
       />
+
       {image && (
         <Image
           width={50}

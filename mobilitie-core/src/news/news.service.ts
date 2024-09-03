@@ -12,8 +12,10 @@ export class NewsService {
 
   async createNew(newData: CreateNewDTO) {
     try {
+      console.log('newData',newData);
+      
       const createNewResult = await this.prismaService.new.create({
-        data: {
+        data: { 
           title: newData.title,
           content: newData.content,
           image: newData.image,
