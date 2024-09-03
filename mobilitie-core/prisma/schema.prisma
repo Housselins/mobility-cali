@@ -47,3 +47,10 @@ model LoginHistory {
   user      User     @relation(fields: [userId], references: [id])
   loginTime DateTime @default(now())
 }
+
+model Banner {
+  id        Int      @id @default(autoincrement())
+  image     String
+  alt       String
+  createdAt  DateTime @default(now())
+}
