@@ -227,7 +227,7 @@ export const CreateNewsForm: FC<FormProps> = ({ newToEdit }) => {
           <PrimaryButton
             className="justify-self-center"
             type={"submit"}
-            label="Crear"
+            label={`${isModify ? "Modificar" : "Crear"}`}
             onClick={formikForm.submitForm}
           />
           {isModify && newToEdit && (
