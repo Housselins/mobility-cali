@@ -9,6 +9,7 @@ const config: Config = {
   theme: {
     colors: {
       principal: "#3366CC",
+      principalTransparente: "rgba(51, 102, 204, 0.7)",
       white: "#ffffff",
       menuLateral: "#EEEEEE",
     },
