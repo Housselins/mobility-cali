@@ -1,9 +1,13 @@
 "use client";
+import { NewInterface } from "@/domain/models";
 import CreateNewUseCase from "@/domain/usecases/news/create-new.use.case";
 import { appContainer, USECASES_TYPES } from "@/infrastructure/ioc";
 import { AuthDataInterface } from "@/lib/interfaces";
 import { isEmptyArray, useFormik } from "formik";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, FC, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 import {
   CustomImageInput,
@@ -12,11 +16,6 @@ import {
   PrimaryButton,
   Subtitle,
 } from "../atoms";
-import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import { NewInterface } from "@/domain/models";
-import { useDispatch } from "react-redux";
-import { setNewState } from "@/presentation/store/news/NewsSlice";
 type FormValues = {
   title?: string;
   content?: string;
@@ -48,7 +47,6 @@ export const CreateNewsForm: FC<FormProps> = ({ newToEdit }) => {
     initialValues: initialFormValues,
     validationSchema: schema,
     onSubmit: async (values) => {
-      console.log("valores", values);
       const content = {
         content: values.content,
       };
@@ -123,6 +121,53 @@ export const CreateNewsForm: FC<FormProps> = ({ newToEdit }) => {
       }
     },
   });
+
+  const removeNew = async (newData: NewInterface) => {
+    const resultCreateNewUseCase = await createNewUseCase.execute(
+      newData.title,
+      authenticated?.access_token,
+      newData.content,
+      newData.image,
+      newToEdit?.id,
+      !newData.isEnabled
+    );
+
+    if (resultCreateNewUseCase) {
+      toast(
+        (t) => (
+          <div style={{ color: "#fff" }}>
+            <strong>Exito!</strong>
+            <p>Se pudo remover la noticia.</p>
+          </div>
+        ),
+        {
+          style: {
+            backgroundColor: "green",
+            color: "#fff",
+          },
+          duration: 3000,
+        }
+      );
+      router.push("/news/find-new");
+    } else {
+      toast(
+        (t) => (
+          <div style={{ color: "#fff" }}>
+            <strong>Error!</strong>
+            <p>No se pudo remover la noticia.</p>
+          </div>
+        ),
+        {
+          style: {
+            backgroundColor: "red",
+            color: "#fff",
+          },
+          icon: "❌",
+          duration: 3000,
+        }
+      );
+    }
+  };
   useEffect(() => {
     const auth = localStorage.getItem("user");
     if (auth) {
@@ -133,7 +178,6 @@ export const CreateNewsForm: FC<FormProps> = ({ newToEdit }) => {
     // Clean store
     // return () => {
     //   console.log("unmount");
-
     //   dispatch(setNewState(undefined));
     // };
   }, []);
@@ -176,8 +220,6 @@ export const CreateNewsForm: FC<FormProps> = ({ newToEdit }) => {
           <CustomImageInput
             selectedImage={formikForm.values.image}
             returnFile={(image) => {
-              console.log("imagen", image);
-
               formikForm.setFieldValue("image", image);
             }}
           />
@@ -186,8 +228,16 @@ export const CreateNewsForm: FC<FormProps> = ({ newToEdit }) => {
             className="justify-self-center"
             type={"submit"}
             label="Crear"
-            onChange={formikForm.submitForm}
+            onClick={formikForm.submitForm}
           />
+          {isModify && newToEdit && (
+            <PrimaryButton
+              className="justify-self-center bg-red-400"
+              type={"button"}
+              label="Remover"
+              onClick={async () => await removeNew(newToEdit)}
+            />
+          )}
         </form>
       )}
     </div>
