@@ -100,7 +100,7 @@ export default function LoginForm() {
                         </div>
 
                         <div className="w-10/12 mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2">
+                            <label className="block text-gray-700 text-sm font-bold">
                                 Password
                             </label>
                             <div style={{ position: 'relative' }}>
@@ -112,7 +112,7 @@ export default function LoginForm() {
                             {errors.password && <p className="text-red-500 text-xs italic">Password is required.</p>}
                         </div>
 
-                        <button type="submit" className="relative bg-principal w-10/12 text-white font-semibold py-2 px-4 border border-principal-500 rounded-br20">
+                        <button type="submit" className=" bg-principal w-10/12 text-white font-semibold py-2 px-4 border border-principal-500 rounded-br20">
                             Entrar
                         </button>
                     </>) : (
