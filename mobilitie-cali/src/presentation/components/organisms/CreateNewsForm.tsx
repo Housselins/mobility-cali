@@ -14,21 +14,29 @@ import {
 } from "../atoms";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { NewInterface } from "@/domain/models";
+import { useDispatch } from "react-redux";
+import { setNewState } from "@/presentation/store/news/NewsSlice";
 type FormValues = {
   title?: string;
   content?: string;
   image?: string;
 };
-export const CreateNewsForm: FC<{}> = ({}) => {
+type FormProps = {
+  newToEdit?: NewInterface;
+};
+export const CreateNewsForm: FC<FormProps> = ({ newToEdit }) => {
+  const isModify = newToEdit ? true : false;
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const createNewUseCase = appContainer.get<CreateNewUseCase>(
     USECASES_TYPES._CreateNewUseCase
   );
   const initialFormValues: FormValues = {
-    title: "",
-    content: "",
-    image: "",
+    title: isModify ? newToEdit?.title : "",
+    content: isModify ? newToEdit?.content?.content : "",
+    image: isModify ? newToEdit?.image : "",
   };
   const [authenticated, setAuthenticated] = useState<AuthDataInterface>();
 
@@ -40,7 +48,7 @@ export const CreateNewsForm: FC<{}> = ({}) => {
     initialValues: initialFormValues,
     validationSchema: schema,
     onSubmit: async (values) => {
-      console.log('valores',values);
+      console.log("valores", values);
       const content = {
         content: values.content,
       };
@@ -74,7 +82,8 @@ export const CreateNewsForm: FC<{}> = ({}) => {
         values.title!,
         authenticated?.access_token,
         content,
-        values.image
+        values.image,
+        newToEdit?.id
       );
 
       if (resultCreateNewUseCase) {
@@ -120,6 +129,15 @@ export const CreateNewsForm: FC<{}> = ({}) => {
       setAuthenticated(JSON.parse(auth) as AuthDataInterface);
     }
   }, [localStorage]);
+  useEffect(() => {
+    // Clean store
+    // return () => {
+    //   console.log("unmount");
+
+    //   dispatch(setNewState(undefined));
+    // };
+  }, []);
+
   return (
     <div className="w-full h-full justify-center p-4 ">
       {authenticated && (
@@ -127,7 +145,9 @@ export const CreateNewsForm: FC<{}> = ({}) => {
           className="w-full h-full grid grid-flow-row justify-center p-4 bg-white shadow rounded-2xl"
           onSubmit={formikForm.handleSubmit}
         >
-          <Subtitle text="Crear Noticia" />
+          <Subtitle
+            text={`${isModify ? "Modificar Noticia" : "Crear Noticia"}`}
+          />
 
           <CustomInput
             value={formikForm.values.title}
@@ -154,14 +174,16 @@ export const CreateNewsForm: FC<{}> = ({}) => {
             </p>
           )}
           <CustomImageInput
+            selectedImage={formikForm.values.image}
             returnFile={(image) => {
-              console.log('imagen',image);
+              console.log("imagen", image);
 
               formikForm.setFieldValue("image", image);
             }}
           />
 
           <PrimaryButton
+            className="justify-self-center"
             type={"submit"}
             label="Crear"
             onChange={formikForm.submitForm}
