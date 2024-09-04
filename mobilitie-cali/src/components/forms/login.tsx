@@ -87,24 +87,24 @@ export default function LoginForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="form" style={{ width: '100%', height: '100%' }}>
-            <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '25px' }}>
+        <form onSubmit={handleSubmit(onSubmit)} className="form w-full h-full">
+            <div className='h-full w-full flex flex-col justify-center items-center gap-y-6'>
                 {tryCount < 3 ? (
                     <>
-                        <div>
+                        <div className="w-10/12">
                             <label className="block text-gray-700 text-sm font-bold mb-2">
                                 Email
                             </label>
-                            <input {...register("email", { required: true })} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Email" />
+                            <input {...register("email", { required: true })} className="shadow appearance-none border rounded-br20 w-full py-2 px-3 text-gray-700 bg-transparent leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Email" />
                             {errors.email && <p className="text-red-500 text-xs italic">Email is required.</p>}
                         </div>
 
-                        <div>
+                        <div className="w-10/12 mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2">
                                 Password
                             </label>
                             <div style={{ position: 'relative' }}>
-                                <input {...register("password", { required: true })} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type={viewPass ? 'text' : 'password'} placeholder="******************" />
+                                <input {...register("password", { required: true })} className="shadow appearance-none border rounded-br20 w-full py-2 px-3 text-gray-700 bg-transparent leading-tight focus:outline-none focus:shadow-outline" id="password" type={viewPass ? 'text' : 'password'} placeholder="******************" />
                                 <div style={{ position: 'absolute', top: '30%', right: '5%' }} onClick={showHidePass}>
                                     {viewPass ? <FaRegEyeSlash /> : <FaRegEye />}
                                 </div>
@@ -112,8 +112,8 @@ export default function LoginForm() {
                             {errors.password && <p className="text-red-500 text-xs italic">Password is required.</p>}
                         </div>
 
-                        <button type="submit" className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
-                            Send Data
+                        <button type="submit" className="relative bg-principal w-10/12 text-white font-semibold py-2 px-4 border border-principal-500 rounded-br20">
+                            Entrar
                         </button>
                     </>) : (
                     <>
