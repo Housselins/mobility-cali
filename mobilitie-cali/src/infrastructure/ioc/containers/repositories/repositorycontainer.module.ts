@@ -1,16 +1,10 @@
 import { ContainerModule, interfaces } from "inversify";
-import { IRequestsRepository } from "@/domain/repositories/request.repository";
-import RequestsRepositoryImplement from "@/infrastructure/data/repositories/requests.implement";
 import { REPOSITORY_TYPES } from "./repoository.types";
-import { IStatusRepository } from "@/domain/repositories/status.repository";
-import StatusRepositoryImplement from "@/infrastructure/data/repositories/status.implement";
+import { INewsRepository } from "@/domain/repositories/new.repository";
+import NewsRepositoryImplement from "@/infrastructure/data/repositories/new.implement";
 
 export const repositoryModule = new ContainerModule((bind: interfaces.Bind) => {
-  bind<IRequestsRepository>(REPOSITORY_TYPES._RequestsRepository).to(
-    RequestsRepositoryImplement
-  );
-
-  bind<IStatusRepository>(REPOSITORY_TYPES._StatusRepository).to(
-    StatusRepositoryImplement
+  bind<INewsRepository>(REPOSITORY_TYPES._NewRepository).to(
+    NewsRepositoryImplement
   );
 });

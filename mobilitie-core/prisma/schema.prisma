@@ -14,11 +14,31 @@ datasource db {
 }
 
 model User {
-  id       Int             @id @default(autoincrement())
-  email    String          @unique
+  id       Int            @id @default(autoincrement())
+  email    String         @unique
   password String
   name     String?
-  logins   LoginHistory[]  // Relación con LoginHistory
+  rol      Rol?           @relation(fields: [rolId], references: [id])
+  rolId    Int?
+  logins   LoginHistory[] // Relación con LoginHistory
+}
+
+model Rol {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  description String?
+
+  User User[]
+}
+
+model New {
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    Json?
+  image      String?
+  isEnabled  Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updateddAt DateTime @default(now())
 }
 
 model LoginHistory {
@@ -26,4 +46,11 @@ model LoginHistory {
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
   loginTime DateTime @default(now())
+}
+
+model Banner {
+  id        Int      @id @default(autoincrement())
+  image     String
+  alt       String
+  createdAt  DateTime @default(now())
 }

@@ -6,6 +6,7 @@ import { FaUserAlt, FaSearch } from "react-icons/fa";
 import LoginForm from "../components/forms/login";
 import React from "react";
 import Carousel from "@/presentation/components/organisms/carousel";
+import { Banner } from "@/components/banner/Banner";
 export default function Home() {
   const ocultarInitSesion = () => {
     setControladorRenderLogin(!controladorRenderLogin);
@@ -23,7 +24,7 @@ export default function Home() {
   return (
     <main className="h-full w-full">
       <Toaster />
-      <div className="fixed z-10 w-full justify-between bg-principal py-2 px-6 flex flex-row items-center">
+      <div className="fixed z-40 w-full justify-between bg-principal py-2 px-6 flex flex-row items-center">
         <div className="flex flex-row items-center space-x-2">
           <FaBars
             style={{ color: "white", cursor: "pointer" }}
@@ -115,7 +116,9 @@ export default function Home() {
         </aside>
 
         <div className="bg-white w-full h-full gap-[2.75rem] overflow-y-auto">
-          <Carousel />
+          <div className="w-full pt-10 ">
+            <Banner />
+          </div>
           <br />
           <div className="w-full p-4 bg-white flex flex-row gap-5">
             <div className="w-3/4 p-4 gap-4 rounded-br20 bg-principal flex flex-row">
