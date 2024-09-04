@@ -40,7 +40,7 @@ export const CreateNewsForm: FC<{}> = ({}) => {
     initialValues: initialFormValues,
     validationSchema: schema,
     onSubmit: async (values) => {
-      console.log(values);
+      console.log('valores',values);
       const content = {
         content: values.content,
       };
@@ -155,7 +155,7 @@ export const CreateNewsForm: FC<{}> = ({}) => {
           )}
           <CustomImageInput
             returnFile={(image) => {
-              console.log(image);
+              console.log('imagen',image);
 
               formikForm.setFieldValue("image", image);
             }}
