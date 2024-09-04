@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from 'react';
+import { Banner } from '../../components/banner/Banner'
+import './dashboard.css';
+
 
 const Dashboard = () => {
     const [user, setUser] = useState<any | null>(null);
@@ -14,11 +17,9 @@ const Dashboard = () => {
     }, []);
 
     return (
-        <div>
-            {user ? <p>Welcome, {user.user.name}!</p> : <p>Loading...</p>}
-            <br />
-                <Link href="/">Close session</Link>
-        </div>
+        <>
+            <Banner />
+        </>
     );
 };
 

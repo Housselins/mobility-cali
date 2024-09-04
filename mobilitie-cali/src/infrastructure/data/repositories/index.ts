@@ -1,2 +1,1 @@
-export * from "./requests.implement";
-export * from "./status.implement";
+export * from "./new.implement";
