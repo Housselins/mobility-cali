@@ -34,7 +34,8 @@ export const NewsList: FC<{}> = ({}) => {
     const resultCreateNewUseCase = await createNewUseCase.execute(
       authenticated?.access_token
     );
-
+    console.log('resultNew',resultCreateNewUseCase);
+    
     if (!resultCreateNewUseCase) {
       return;
     }
