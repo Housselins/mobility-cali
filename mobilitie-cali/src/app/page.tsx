@@ -1,7 +1,4 @@
 "use client";
-import { Toaster } from "react-hot-toast";
-import LoginForm from "../components/forms/login";
-import React from "react";
 export default function Home() {
   return (
     <main>

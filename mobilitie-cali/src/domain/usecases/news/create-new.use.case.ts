@@ -18,7 +18,8 @@ export default class CreateNewUseCase {
     title: string,
     token?: string,
     content?: Record<string, any>,
-    image?: string
+    image?: string,
+    id?: number
   ): Promise<NewInterface | undefined> {
     if (!token) return;
 
@@ -26,6 +27,7 @@ export default class CreateNewUseCase {
       title,
       content,
       image,
+      id,
     };
     const request = await this.newRepository
       .createNew(token, newData)

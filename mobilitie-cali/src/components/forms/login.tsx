@@ -1,8 +1,8 @@
-import { useForm } from "react-hook-form";
 import axios from "axios";
+import React from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
-import React from "react";
 
 export default function LoginForm() {
   const {

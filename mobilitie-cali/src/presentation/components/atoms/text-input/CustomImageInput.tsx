@@ -1,12 +1,16 @@
 "use client";
 import { CustomTextInputInterface } from "@/lib/interfaces";
 import Image from "next/image";
-import { useState, type FC, ChangeEvent } from "react";
+import { ChangeEvent, useState, type FC } from "react";
 
-export const CustomImageInput: FC<CustomTextInputInterface> = (props) => {
-  const { returnFile, label, ...inputProps } = props;
+interface CustomImageProps extends CustomTextInputInterface {
+  selectedImage?: string;
+}
 
-  const [image, setImage] = useState<string | null>(null);
+export const CustomImageInput: FC<CustomImageProps> = (props) => {
+  const { selectedImage, returnFile, label, ...inputProps } = props;
+
+  const [image, setImage] = useState<string | undefined>(selectedImage);
 
   const convertBase64 = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]; // Obtener el primer archivo seleccionado
@@ -17,7 +21,7 @@ export const CustomImageInput: FC<CustomTextInputInterface> = (props) => {
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024; // Convertir MB a Bytes
 
     if (file.size > maxSizeInBytes) {
-      alert('La imagen no puede superar los 1MB de tamaño.');
+      alert("La imagen no puede superar los 1MB de tamaño.");
       return; // Si el archivo excede el tamaño permitido, mostrar alerta y salir
     }
 
@@ -36,7 +40,7 @@ export const CustomImageInput: FC<CustomTextInputInterface> = (props) => {
   };
 
   return (
-    <div>
+    <div className="w-full h-full grid grid-flow-row gap-2">
       {label && (
         <label className="block text-gray-700 text-sm font-bold mb-2">
           {label}
@@ -55,9 +59,9 @@ export const CustomImageInput: FC<CustomTextInputInterface> = (props) => {
 
       {image && (
         <Image
-          width={50}
-          height={50}
-          className="w-20 h-20"
+          width={100}
+          height={100}
+          className="w-full h-full flex max-w-40 max-h-40 justify-self-center rounded-md border-2 border-solid border-cyan-600"
           alt={`loadedImage${label}`}
           src={image}
         />
