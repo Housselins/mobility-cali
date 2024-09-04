@@ -16,4 +16,5 @@ export interface CreateNewInterface {
   title: string;
   content?: Record<string, any>;
   image?: string;
+  isEnabled?: boolean;
 }

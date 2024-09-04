@@ -19,11 +19,14 @@ export class NewsService {
             title: newData.title,
             content: newData.content,
             image: newData.image,
+            isEnabled: newData.isEnabled,
           },
         });
 
         if (!createNewResult) {
-          throw new InternalServerErrorException('No se pudo actualizar la noticia');
+          throw new InternalServerErrorException(
+            'No se pudo actualizar la noticia',
+          );
         }
         return createNewResult;
       } else {
@@ -49,7 +52,9 @@ export class NewsService {
 
   async findAll() {
     try {
-      const allNews = await this.prismaService.new.findMany();
+      const allNews = await this.prismaService.new.findMany({
+        where: { isEnabled: true },
+      });
 
       if (allNews.length == 0) {
         throw new NotFoundException('No se encontraron noticias');
