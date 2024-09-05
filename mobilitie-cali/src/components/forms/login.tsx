@@ -22,7 +22,7 @@ export default function LoginForm() {
 
   const onSubmit = async (data: any) => {
     try {
-      const response = await axios.post("http://localhost:4000/auth", data);
+      const response = await axios.post("https://7687-201-185-44-218.ngrok-free.app/auth", data);
       console.log("Response:", response.data);
       localStorage.setItem("user", JSON.stringify(response.data));
       window.location.href = "/";

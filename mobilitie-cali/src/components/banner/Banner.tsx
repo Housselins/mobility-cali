@@ -28,7 +28,7 @@ export const Banner = () => {
 
     // Estado para manejar la visibilidad del modal
     const [openAdd, setOpenAdd] = useState(false);
-    const [banners, setBanners] = useState([]);
+    const [banners, setBanners] = useState<any[]>([]);
     const [openDelete, setOpenDelete] = useState(false);
 
     // Estado para manejar el ID del banner seleccionado para eliminación
@@ -120,13 +120,14 @@ export const Banner = () => {
 
     const getBanners = async () => {
         try {
-            const response = await axios.get("http://localhost:4000/banner");
-            console.log("Response banners:", response.data);
-            setBanners(response.data);
+          const response = await axios.get("http://localhost:4000/banner");
+          console.log("Response banners:", response.data);
+          setBanners(Array.isArray(response.data) ? response.data : []); // Asegurarse de que sea un array
         } catch (error) {
-            console.error("Error al obtener los banners:", error);
+          console.error("Error al obtener los banners:", error);
+          setBanners([]); // Si hay un error, asegurarse de que banners sea un array vacío
         }
-    };
+      };
 
     // Función para abrir el modal de eliminación y establecer el ID del banner a eliminar
     const handleClickOpenDelete = (id: string) => {

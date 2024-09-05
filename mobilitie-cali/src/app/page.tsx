@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import { CustomImageInput, CustomInput, CustomTextArea } from "@/presentation";
 import axios from "axios";
+import Link from "next/link";
 
 export default function Home() {
   const [userInfo, setUserInfo] = React.useState<any>(null);
@@ -26,7 +27,7 @@ export default function Home() {
     console.log("userData", userData);
 
     if (userData) {
-      setUserInfo(JSON.parse(userData)); 
+      setUserInfo(JSON.parse(userData));
       console.log("userInfo", userInfo);
 
     }
@@ -123,14 +124,26 @@ export default function Home() {
 
   // Obtén los dos elementos siguientes basados en el currentIndex
   const getVisibleItems = () => {
+    if (!Array.isArray(arrayNewaCarousel) || arrayNewaCarousel.length === 0) {
+      return [];
+    }
+
+    // Verificar que currentIndex esté dentro del rango
+    if (currentIndex >= arrayNewaCarousel.length || currentIndex < 0) {
+      console.warn("currentIndex fuera de rango:", currentIndex);
+      return [];
+    }
+
     if (currentIndex === arrayNewaCarousel.length - 1) {
       return [arrayNewaCarousel[currentIndex], arrayNewaCarousel[0]];
     }
+
     return arrayNewaCarousel.slice(currentIndex, currentIndex + 2);
   };
 
   const handleOpenAddNews = () => {
     setType("add");
+    setTilte("Añadir noticia");
     setOpenAddNews(true);
   };
 
@@ -139,9 +152,11 @@ export default function Home() {
   };
   const [selectNwsIdEdit, setSelectNwsIdEdit] = React.useState<string | null>(null);
   const [type, setType] = React.useState("");
+  const [tilte, setTilte] = React.useState("");
 
   const handleOpenEditNews = async (id: string) => {
     setType("edit");
+    setTilte("Editar noticia");
     const response = await axios.get(`http://localhost:4000/news/${id}`);
     console.log("response para editar:", response?.data);
     setOpenAddNews(true);
@@ -423,18 +438,22 @@ export default function Home() {
                           />
                         )}
                         {userInfo && userInfo.user.rol.id === 1 && (
-                          <MdModeEdit 
-                            size={20} 
+                          <MdModeEdit
+                            size={20}
                             title="Editar"
                             className="text-neutral-500"
                             onClick={() => handleOpenEditNews(carrousel.id)} />
                         )}
                       </div>
-                      <img
-                        className="h-3/4 rounded-t-br20 w-full object-cover"
-                        src={carrousel.image}
-                        alt={carrousel.title}
-                      />
+                      <Link href={`/noticia?id=${carrousel.id}`} passHref>
+                        <img
+                          id="noticia"
+                          className="h-3/4 rounded-t-br20 w-full object-cover"
+                          src={carrousel.image}
+                          alt={carrousel.title}
+                        />
+                      </Link>
+
                       <p className="text-neutral-600 text-center py-2 text-xs">
                         {carrousel.title}
                       </p>
@@ -468,7 +487,7 @@ export default function Home() {
             aria-describedby="alert-dialog-description"
           >
             <DialogTitle id="alert-dialog-title">
-              {"Agregar noticia"}
+              {tilte}
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
@@ -515,11 +534,11 @@ export default function Home() {
             aria-describedby="alert-dialog-description"
           >
             <DialogTitle id="alert-dialog-title">
-              {"Eliminar imagen del banner"}
+              {"Eliminar Noticia"}
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                ¿Está seguro de eliminar la imagen del banner?
+                ¿Está seguro que desea eliminar esta noticia?
               </DialogContentText>
             </DialogContent>
             <DialogActions>
