@@ -108,4 +108,24 @@ export class NewsService {
       );
     }
   }
+
+  async findOne(id: number) {
+    try {
+      const news = await this.prismaService.new.findUnique({
+        where: { id },
+      });
+      if (!news) {
+        throw new NotFoundException(`Noticia con ID ${id} no encontrado`);
+      }
+      return news;
+    } catch (error) {
+      console.log(error);
+      if (error instanceof NotFoundException) {
+        throw error; // Re-lanzar la excepción NotFoundException si la noticia no existe
+      }
+      throw new InternalServerErrorException(
+        'Error al intentar encontrar la noticia',
+      );
+    }
+  }
 }
