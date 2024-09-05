@@ -1,12 +1,23 @@
 "use client";
 import { Toaster } from "react-hot-toast";
-import { FaBars, FaHouse, FaLanguage } from "react-icons/fa6";
+import { FaBars, FaHouse, FaLanguage, FaPlus } from "react-icons/fa6";
 import { FaUserAlt, FaSearch } from "react-icons/fa";
 
 import LoginForm from "../components/forms/login";
 import React from "react";
-import Carousel from "@/presentation/components/organisms/carousel";
 import { Banner } from "@/components/banner/Banner";
+import { MdDelete, MdModeEdit } from "react-icons/md";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
+import { CustomImageInput, CustomInput, CustomTextArea } from "@/presentation";
+import axios from "axios";
+
 export default function Home() {
   const ocultarInitSesion = () => {
     setControladorRenderLogin(!controladorRenderLogin);
@@ -15,11 +26,160 @@ export default function Home() {
     setControladorRenderMenu(!controladorRenderMenu);
   };
 
+  const [formValues, setFormValues] = React.useState({
+    title: "",
+    contenido_noticia: "",
+    image: "",
+  });
+
+  const limpiarFormValues = () => {
+    setFormValues({
+      title: "",
+      contenido_noticia: "",
+      image: "",
+    });
+  } 
+  const [openAddNews, setOpenAddNews] = React.useState(false);
+
   const [controladorRenderMenu, setControladorRenderMenu] =
     React.useState(false);
 
   const [controladorRenderLogin, setControladorRenderLogin] =
     React.useState(false);
+
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const handleNext = () => {
+    if (currentIndex < arrayNewaCarousel.length - 2) {
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
+  const [arrayNewaCarousel, setArrayNewaCarousel] = React.useState([
+    {
+      id: "1",
+      title: "Titulo noticia 1",
+      image:
+        "https://img.daisyui.com/images/stock/photo-1625726411847-8cbb60cc71e6.webp",
+    },
+    {
+      id: "2",
+      title: "Titulo noticia 2",
+      image:
+        "https://img.daisyui.com/images/stock/photo-1609621838510-5ad474b7d25d.webp",
+    },
+    {
+      id: "3",
+      title: "Titulo noticia 3",
+      image:
+        "https://img.daisyui.com/images/stock/photo-1414694762283-acccc27bca85.webp",
+    },
+    {
+      id: "4",
+      title: "Titulo noticia 4",
+      image:
+        "https://img.daisyui.com/images/stock/photo-1665553365602-b2fb8e5d1707.webp",
+    },
+  ]);
+
+  const initNews = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/news");
+      setArrayNewaCarousel(response?.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) =>
+        prevIndex === arrayNewaCarousel.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 3000); // Cambia cada 3 segundos
+
+    return () => clearInterval(interval); // Limpia el intervalo cuando el componente se desmonte
+  }, [arrayNewaCarousel.length]);
+
+  React.useEffect(() => {
+    initNews();
+  }, []);
+
+  // Obtén los dos elementos siguientes basados en el currentIndex
+  const getVisibleItems = () => {
+    if (currentIndex === arrayNewaCarousel.length - 1) {
+      return [arrayNewaCarousel[currentIndex], arrayNewaCarousel[0]];
+    }
+    return arrayNewaCarousel.slice(currentIndex, currentIndex + 2);
+  };
+
+  const handleClsAddNews = () => {
+    setOpenAddNews(false);
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormValues({
+      ...formValues,
+      [name]: value,
+    });
+  };
+
+  const handleTxtAreaChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const { name, value } = event.target;
+    setFormValues({
+      ...formValues,
+      [name]: value,
+    });
+  };
+
+  const handleImageChange = (image: string) => {
+    setFormValues({
+      ...formValues,
+      image,
+    });
+  };
+
+  const handleSubmit = async () => {
+    console.log("Valores del formulario:", formValues);
+    try {
+      await axios.post("http://localhost:4000/news", formValues);
+      await initNews();
+    } catch (error) {
+      console.log(error);
+    }
+    limpiarFormValues();
+    handleClsAddNews();
+  };
+
+  const [openDeleteNews, setOpenDeleteNews] = React.useState(false);
+  const handleClsDltNws = () => {
+    setOpenDeleteNews(false);
+  };
+  const [selectNwsId, setSelectNwsId] = React.useState<string | null>(null);
+  const handleOpenDltNews = (id: string) => {
+    setSelectNwsId(id);
+    setOpenDeleteNews(true);
+  };
+
+  const handleDltNws = async () => {
+    if (!selectNwsId) return; // Verificar si hay un ID seleccionado
+    try {
+      await axios.delete(`http://localhost:4000/news/${selectNwsId}`);
+      setArrayNewaCarousel(
+        arrayNewaCarousel.filter((noticia: any) => noticia.id !== selectNwsId)
+      ); // Actualizar la lista de banners
+      setOpenDeleteNews(false); // Cerrar el modal después de eliminar
+    } catch (error) {
+      console.error("Error al eliminar el noticia:", error);
+    }
+  };
 
   return (
     <main className="h-full w-full">
@@ -201,9 +361,133 @@ export default function Home() {
               </div>
             </div>
           </div>
+          <div>
+            <div className="carousel w-full">
+              <div id="sld" className="carousel-item relative w-full">
+                <div className="w-full flex flex-row justify-around h-60 items-center relative">
+                  <FaPlus
+                    title="Añadir nueva imagen"
+                    onClick={() => setOpenAddNews(true)}
+                    className="text-principal absolute top-1/2 z-10 cursor-pointer w-10"
+                  />
+                  {getVisibleItems().map((carrousel) => (
+                    <div
+                      key={carrousel.id}
+                      className="w-2/6 h-5/6 rounded-br20 shadow-xl cursor-pointer relative overflow-hidden"
+                    >
+                      <div className="absolute top-0 right-0 flex flex-col justify-center items-center gap-3 text-neutral-300 text-xs font-bold p-2">
+                        <MdDelete
+                          size={20}
+                          title="Eliminar"
+                          onClick={() => handleOpenDltNews(carrousel.id)}
+                        />
+                        <MdModeEdit size={20} title="Editar" />
+                      </div>
+                      <img
+                        className="h-3/4 rounded-t-br20 w-full object-cover"
+                        src={carrousel.image}
+                        alt={carrousel.title}
+                      />
+                      <p className="text-neutral-600 text-center py-2 text-xs">
+                        {carrousel.title}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                  <button
+                    onClick={() => handlePrev()}
+                    className="btn btn-circle"
+                  >
+                    ❮
+                  </button>
+                  <button
+                    onClick={() => handleNext()}
+                    className="btn btn-circle"
+                  >
+                    ❯
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
           <footer className="text-center p-4 bg-principal text-white">
             © 2023 Copyright: Base
           </footer>
+          <Dialog
+            open={openAddNews}
+            onClose={handleClsAddNews}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Agregar noticia"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                <form>
+                  <CustomInput
+                    className="bg-transparent h-10 w-full pl-4 border border-l-base-300 rounded-br20"
+                    value={formValues.title}
+                    onChange={handleInputChange}
+                    name="title"
+                    label="Titutlo de la noticia"
+                  />
+                  <br />
+
+                  <CustomTextArea
+                    className="bg-transparent h-40 p-4 w-full pl-4 border border-l-base-300 rounded-br20"
+                    value={formValues.contenido_noticia}
+                    onChange={handleTxtAreaChange}
+                    name="contenido_noticia"
+                    label="Contenido noticia"
+                  />
+                  <br />
+                  <CustomImageInput returnFile={handleImageChange} />
+                </form>
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions className="justify-center pb-6">
+              <Button onClick={handleSubmit} variant="outlined" color="success">
+                Aceptar
+              </Button>
+              <Button
+                onClick={handleClsAddNews}
+                variant="outlined"
+                color="error"
+              >
+                Cancelar
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog
+            open={openDeleteNews}
+            onClose={handleClsDltNws}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Eliminar imagen del banner"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                ¿Está seguro de eliminar la imagen del banner?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleDltNws} variant="outlined" color="error">
+                Aceptar
+              </Button>
+              <Button
+                onClick={handleClsDltNws}
+                variant="outlined"
+                color="success"
+              >
+                Cancelar
+              </Button>
+            </DialogActions>
+          </Dialog>
         </div>
       </div>
 

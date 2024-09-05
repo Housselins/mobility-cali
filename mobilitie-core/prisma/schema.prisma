@@ -34,7 +34,7 @@ model Rol {
 model New {
   id         Int      @id @default(autoincrement())
   title      String
-  content    Json?
+  contenido_noticia String
   image      String?
   isEnabled  Boolean  @default(true)
   createdAt  DateTime @default(now())
