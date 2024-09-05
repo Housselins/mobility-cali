@@ -5,8 +5,9 @@ export class CreateNewDTO {
   @IsNotEmpty()
   title: string;
 
-  @IsOptional()
-  content?: Record<string, any>;
+  @IsString()
+  @IsNotEmpty()
+  contenido_noticia?: string;
 
   @IsOptional()
   image?: string;
@@ -15,7 +16,7 @@ export class CreateNewDTO {
 export interface NewInterface {
   id: number;
   title: string;
-  content?: Record<string, any>;
+  contenido_noticia?: string;
   image?: string;
   isEnabled: boolean;
   createdAt: string;

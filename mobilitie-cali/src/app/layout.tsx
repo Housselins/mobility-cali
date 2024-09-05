@@ -5,6 +5,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { NavBar } from "@/presentation/components/molecules";
 import { MENU_DATA } from "@/lib/config/menuData";
+import { StoreProvider } from "@/presentation";
 
 const inter = Inter({ subsets: ["latin"] });
 

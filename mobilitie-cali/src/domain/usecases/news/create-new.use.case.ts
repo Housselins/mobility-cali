@@ -1,7 +1,7 @@
-import type { INewsRepository } from "@/domain/repositories/new.repository";
-import { REPOSITORY_TYPES } from "../../../infrastructure/ioc/containers/repositories/repoository.types";
-import { inject, injectable } from "inversify";
 import { CreateNewInterface, NewInterface } from "@/domain/models";
+import type { INewsRepository } from "@/domain/repositories/new.repository";
+import { inject, injectable } from "inversify";
+import { REPOSITORY_TYPES } from "../../../infrastructure/ioc/containers/repositories/repoository.types";
 
 @injectable()
 export default class CreateNewUseCase {
@@ -18,7 +18,9 @@ export default class CreateNewUseCase {
     title: string,
     token?: string,
     content?: Record<string, any>,
-    image?: string
+    image?: string,
+    id?: number,
+    status?: boolean
   ): Promise<NewInterface | undefined> {
     if (!token) return;
 
@@ -26,6 +28,8 @@ export default class CreateNewUseCase {
       title,
       content,
       image,
+      id,
+      isEnabled: status,
     };
     const request = await this.newRepository
       .createNew(token, newData)
