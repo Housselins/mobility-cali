@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
-import React from "react";
+import React, { useEffect } from "react";
 
 export default function LoginForm() {
   const {
@@ -25,7 +25,7 @@ export default function LoginForm() {
       const response = await axios.post("http://localhost:4000/auth", data);
       console.log("Response:", response.data);
       localStorage.setItem("user", JSON.stringify(response.data));
-      window.location.href = "/dashboard";
+      window.location.href = "/";
     } catch (error: any) {
       if (
         error.response &&
@@ -87,6 +87,24 @@ export default function LoginForm() {
     }
   };
 
+  const [userInfo, setUserInfo] = React.useState<any>(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    console.log("userData", userData);
+
+    if (userData) {
+      setUserInfo(JSON.parse(userData));
+      console.log("userInfo", userInfo);
+
+    }
+  }, []);
+
+  const cerrarSesion = () => {
+    localStorage.removeItem("user");
+    window.location.href = "/";
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="form w-full h-full">
       <div className="h-full w-full flex flex-col justify-center items-center gap-y-6">
@@ -142,6 +160,14 @@ export default function LoginForm() {
             >
               Entrar
             </button>
+            {userInfo &&(
+              <button
+                className=" bg-principal w-10/12 text-white font-semibold py-2 px-4 border border-principal-500 rounded-br20"
+                onClick={cerrarSesion}
+              >
+                Cerrar sesión
+              </button>
+            )}
           </>
         ) : (
           <>
@@ -170,6 +196,7 @@ export default function LoginForm() {
                 className="shadow appearance-none border rounded w-2/3 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               />
               <br />
+
               <button
                 type="button"
                 onClick={captchaValidate}

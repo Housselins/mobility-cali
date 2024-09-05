@@ -23,4 +23,9 @@ export class NewsController {
   async updateNewEndpoint(@Param('id') id: string, @Body() newData: CreateNewDTO) {
     return this.newsService.editNew(Number(id), newData);
   }
+
+  @Get(':id')
+  async findOneEndpoint(@Param('id', ParseIntPipe) id: number) {
+    return this.newsService.findOne(id);
+  }
 }

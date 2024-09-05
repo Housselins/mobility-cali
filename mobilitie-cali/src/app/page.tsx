@@ -4,7 +4,7 @@ import { FaBars, FaHouse, FaLanguage, FaPlus } from "react-icons/fa6";
 import { FaUserAlt, FaSearch } from "react-icons/fa";
 
 import LoginForm from "../components/forms/login";
-import React from "react";
+import React, { useEffect } from "react";
 import { Banner } from "@/components/banner/Banner";
 import { MdDelete, MdModeEdit } from "react-icons/md";
 import {
@@ -19,6 +19,18 @@ import { CustomImageInput, CustomInput, CustomTextArea } from "@/presentation";
 import axios from "axios";
 
 export default function Home() {
+  const [userInfo, setUserInfo] = React.useState<any>(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    console.log("userData", userData);
+
+    if (userData) {
+      setUserInfo(JSON.parse(userData)); 
+      console.log("userInfo", userInfo);
+
+    }
+  }, []);
   const ocultarInitSesion = () => {
     setControladorRenderLogin(!controladorRenderLogin);
   };
@@ -38,7 +50,7 @@ export default function Home() {
       contenido_noticia: "",
       image: "",
     });
-  } 
+  }
   const [openAddNews, setOpenAddNews] = React.useState(false);
 
   const [controladorRenderMenu, setControladorRenderMenu] =
@@ -117,9 +129,26 @@ export default function Home() {
     return arrayNewaCarousel.slice(currentIndex, currentIndex + 2);
   };
 
+  const handleOpenAddNews = () => {
+    setType("add");
+    setOpenAddNews(true);
+  };
+
   const handleClsAddNews = () => {
     setOpenAddNews(false);
   };
+  const [selectNwsIdEdit, setSelectNwsIdEdit] = React.useState<string | null>(null);
+  const [type, setType] = React.useState("");
+
+  const handleOpenEditNews = async (id: string) => {
+    setType("edit");
+    const response = await axios.get(`http://localhost:4000/news/${id}`);
+    console.log("response para editar:", response?.data);
+    setOpenAddNews(true);
+    setSelectNwsIdEdit(id);
+    setFormValues(response?.data);
+
+  }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -149,8 +178,14 @@ export default function Home() {
   const handleSubmit = async () => {
     console.log("Valores del formulario:", formValues);
     try {
-      await axios.post("http://localhost:4000/news", formValues);
-      await initNews();
+      if (type === "edit") {
+        await axios.put(`http://localhost:4000/news/${selectNwsIdEdit}`, formValues);
+        await initNews();
+      }
+      else if (type === "add") {
+        await axios.post("http://localhost:4000/news", formValues);
+        await initNews();
+      }
     } catch (error) {
       console.log(error);
     }
@@ -276,7 +311,7 @@ export default function Home() {
         </aside>
 
         <div className="bg-white w-full h-full gap-[2.75rem] overflow-y-auto">
-          <div className="w-full pt-10 ">
+          <div id="banner" className="w-full pt-10 ">
             <Banner />
           </div>
           <br />
@@ -364,24 +399,36 @@ export default function Home() {
           <div>
             <div className="carousel w-full">
               <div id="sld" className="carousel-item relative w-full">
-                <div className="w-full flex flex-row justify-around h-60 items-center relative">
-                  <FaPlus
-                    title="Añadir nueva imagen"
-                    onClick={() => setOpenAddNews(true)}
-                    className="text-principal absolute top-1/2 z-10 cursor-pointer w-10"
-                  />
+                <div className="w-full flex flex-row justify-around h-60 items-center relative pt-4">
+
+                  {userInfo && userInfo.user.rol.id === 1 && (
+                    <FaPlus
+                      title="Añadir nueva noticia"
+                      onClick={() => handleOpenAddNews()}
+                      className="text-principal absolute top-1/2 z-10 cursor-pointer w-10 "
+                    />
+                  )}
                   {getVisibleItems().map((carrousel) => (
                     <div
                       key={carrousel.id}
                       className="w-2/6 h-5/6 rounded-br20 shadow-xl cursor-pointer relative overflow-hidden"
                     >
                       <div className="absolute top-0 right-0 flex flex-col justify-center items-center gap-3 text-neutral-300 text-xs font-bold p-2">
-                        <MdDelete
-                          size={20}
-                          title="Eliminar"
-                          onClick={() => handleOpenDltNews(carrousel.id)}
-                        />
-                        <MdModeEdit size={20} title="Editar" />
+                        {userInfo && userInfo.user.rol.id === 1 && (
+                          <MdDelete
+                            size={20}
+                            title="Eliminar"
+                            className="text-neutral-500"
+                            onClick={() => handleOpenDltNews(carrousel.id)}
+                          />
+                        )}
+                        {userInfo && userInfo.user.rol.id === 1 && (
+                          <MdModeEdit 
+                            size={20} 
+                            title="Editar"
+                            className="text-neutral-500"
+                            onClick={() => handleOpenEditNews(carrousel.id)} />
+                        )}
                       </div>
                       <img
                         className="h-3/4 rounded-t-br20 w-full object-cover"
