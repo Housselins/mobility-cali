@@ -8,7 +8,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box'
 import {
     CustomInput,
     CustomImageInput,
@@ -36,6 +37,7 @@ export const Banner = () => {
     const [userInfo, setUserInfo] = React.useState<any>(null);
 
     const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false); // Estado para la carga
 
     useEffect(() => {
         const userData = localStorage.getItem("user");
@@ -112,11 +114,15 @@ export const Banner = () => {
             setError("Por favor, completa todos los campos.");
             return;
         }
+
+        setLoading(true);  // Iniciar carga
         try {
             await axios.post("http://localhost:4000/banner", formValues);
-            await getBanners(); // Actualizar la lista de banners después de añadir uno nuevo
+            await getBanners();
         } catch (error) {
             console.log(error);
+        } finally {
+            setLoading(false);  // Finalizar carga
         }
         handleClose();
         setFormValues({
@@ -168,21 +174,28 @@ export const Banner = () => {
                     {"Añadir nueva imagen al banner"}
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        <form>
-                            <CustomInput
-                                className="bg-transparent h-10 w-full pl-4 border border-l-base-300 rounded-br10"
-                                value={formValues.alt}
-                                onChange={handleInputChange}
-                                name="alt"
-                                label="Descripción imagen"
-                            />
-                            <CustomImageInput
-                                className="pt-4"
-                                returnFile={handleImageChange} />
-                            {error && <p className="error pt-2">{error}</p>}
-                        </form>
-                    </DialogContentText>
+                    {loading ? (
+                        // Mostrar el indicador de carga mientras se está creando una noticia
+                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                            <CircularProgress />
+                        </Box>
+                    ) : (
+                        <DialogContentText id="alert-dialog-description">
+                            <form>
+                                <CustomInput
+                                    className="bg-transparent h-10 w-full pl-4 border border-l-base-300 rounded-br10"
+                                    value={formValues.alt}
+                                    onChange={handleInputChange}
+                                    name="alt"
+                                    label="Descripción imagen"
+                                />
+                                <CustomImageInput
+                                    className="pt-4"
+                                    returnFile={handleImageChange} />
+                                {error && <p className="error pt-2">{error}</p>}
+                            </form>
+                        </DialogContentText>
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleSubmit} variant="outlined" color="success">
