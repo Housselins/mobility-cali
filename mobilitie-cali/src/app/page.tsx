@@ -2,7 +2,6 @@
 import { Toaster } from "react-hot-toast";
 import { FaBars, FaHouse, FaLanguage, FaPlus } from "react-icons/fa6";
 import { FaUserAlt, FaSearch } from "react-icons/fa";
-
 import LoginForm from "../components/forms/login";
 import React, { useEffect, useState } from "react";
 import { Banner } from "@/components/banner/Banner";
@@ -18,12 +17,13 @@ import {
 import { CustomImageInput, CustomInput, CustomTextArea } from "@/presentation";
 import axios from "axios";
 import Link from "next/link";
-
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box'
 export default function Home() {
   const [userInfo, setUserInfo] = React.useState<any>(null);
 
   const [error, setError] = useState<string | null>(null);
-
+  const [loading, setLoading] = useState<boolean>(false); // Estado para la carga
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -201,11 +201,11 @@ export default function Home() {
       setError("Por favor, completa todos los campos obligatorios");
       return;
     }
-    
+    setLoading(true);
     try {
       if (type === "edit") {
         await axios.put(`http://localhost:4000/news/${selectNwsIdEdit}`, formValues);
-        await initNews();
+        initNews();
       }
       else if (type === "add") {
         await axios.post("http://localhost:4000/news", formValues);
@@ -213,6 +213,8 @@ export default function Home() {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
     limpiarFormValues();
     handleClsAddNews();
@@ -500,29 +502,36 @@ export default function Home() {
               {tilte}
             </DialogTitle>
             <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                <form>
-                  <CustomInput
-                    className="bg-transparent h-10 w-full pl-4 border border-l-base-300 rounded-br20"
-                    value={formValues.title}
-                    onChange={handleInputChange}
-                    name="title"
-                    label="Titutlo de la noticia"
-                  />
-                  <br />
+              {loading ? (
+                // Mostrar el indicador de carga mientras se está creando una noticia
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <DialogContentText id="alert-dialog-description">
+                  <form>
+                    <CustomInput
+                      className="bg-transparent h-10 w-full pl-4 border border-l-base-300 rounded-br20"
+                      value={formValues.title}
+                      onChange={handleInputChange}
+                      name="title"
+                      label="Titutlo de la noticia"
+                    />
+                    <br />
 
-                  <CustomTextArea
-                    className="bg-transparent h-40 p-4 w-full pl-4 border border-l-base-300 rounded-br20"
-                    value={formValues.contenido_noticia}
-                    onChange={handleTxtAreaChange}
-                    name="contenido_noticia"
-                    label="Contenido noticia"
-                  />
-                  <br />
-                  <CustomImageInput returnFile={handleImageChange} />
-                  {error && <p className="error pt-2">{error}</p>}
-                </form>
-              </DialogContentText>
+                    <CustomTextArea
+                      className="bg-transparent h-40 p-4 w-full pl-4 border border-l-base-300 rounded-br20"
+                      value={formValues.contenido_noticia}
+                      onChange={handleTxtAreaChange}
+                      name="contenido_noticia"
+                      label="Contenido noticia"
+                    />
+                    <br />
+                    <CustomImageInput returnFile={handleImageChange} />
+                    {error && <p className="error pt-2">{error}</p>}
+                  </form>
+                </DialogContentText>
+              )}
             </DialogContent>
             <DialogActions className="justify-center pb-6">
               <Button onClick={handleSubmit} variant="outlined" color="success">
