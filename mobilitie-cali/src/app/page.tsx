@@ -4,7 +4,7 @@ import { FaBars, FaHouse, FaLanguage, FaPlus } from "react-icons/fa6";
 import { FaUserAlt, FaSearch } from "react-icons/fa";
 
 import LoginForm from "../components/forms/login";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Banner } from "@/components/banner/Banner";
 import { MdDelete, MdModeEdit } from "react-icons/md";
 import {
@@ -21,6 +21,9 @@ import Link from "next/link";
 
 export default function Home() {
   const [userInfo, setUserInfo] = React.useState<any>(null);
+
+  const [error, setError] = useState<string | null>(null);
+
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -148,6 +151,8 @@ export default function Home() {
   };
 
   const handleClsAddNews = () => {
+    limpiarFormValues();
+    setError(null);
     setOpenAddNews(false);
   };
   const [selectNwsIdEdit, setSelectNwsIdEdit] = React.useState<string | null>(null);
@@ -189,9 +194,14 @@ export default function Home() {
       image,
     });
   };
+  
 
   const handleSubmit = async () => {
-    console.log("Valores del formulario:", formValues);
+    if (!formValues.title || !formValues.image || !formValues.contenido_noticia) {
+      setError("Por favor, completa todos los campos obligatorios");
+      return;
+    }
+    
     try {
       if (type === "edit") {
         await axios.put(`http://localhost:4000/news/${selectNwsIdEdit}`, formValues);
@@ -510,6 +520,7 @@ export default function Home() {
                   />
                   <br />
                   <CustomImageInput returnFile={handleImageChange} />
+                  {error && <p className="error pt-2">{error}</p>}
                 </form>
               </DialogContentText>
             </DialogContent>

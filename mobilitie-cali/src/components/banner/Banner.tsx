@@ -35,12 +35,14 @@ export const Banner = () => {
     const [selectedBannerId, setSelectedBannerId] = useState<string | null>(null);
     const [userInfo, setUserInfo] = React.useState<any>(null);
 
+    const [error, setError] = useState<string | null>(null);
+
     useEffect(() => {
         const userData = localStorage.getItem("user");
         console.log("userData", userData);
 
         if (userData) {
-            setUserInfo(JSON.parse(userData));  
+            setUserInfo(JSON.parse(userData));
             console.log("userInfo", userInfo);
 
         }
@@ -65,6 +67,8 @@ export const Banner = () => {
 
     // Función para cerrar el modal
     const handleClose = () => {
+        setFormValues({ alt: "", image: "" });
+        setError(null);
         setOpenAdd(false);
     };
 
@@ -104,7 +108,10 @@ export const Banner = () => {
 
     // Función para manejar la acción del botón Aceptar
     const handleSubmit = async () => {
-        console.log("Valores del formulario:", formValues);
+        if (!formValues.alt || !formValues.image) {
+            setError("Por favor, completa todos los campos.");
+            return;
+        }
         try {
             await axios.post("http://localhost:4000/banner", formValues);
             await getBanners(); // Actualizar la lista de banners después de añadir uno nuevo
@@ -120,14 +127,14 @@ export const Banner = () => {
 
     const getBanners = async () => {
         try {
-          const response = await axios.get("http://localhost:4000/banner");
-          console.log("Response banners:", response.data);
-          setBanners(Array.isArray(response.data) ? response.data : []); // Asegurarse de que sea un array
+            const response = await axios.get("http://localhost:4000/banner");
+            console.log("Response banners:", response.data);
+            setBanners(Array.isArray(response.data) ? response.data : []); // Asegurarse de que sea un array
         } catch (error) {
-          console.error("Error al obtener los banners:", error);
-          setBanners([]); // Si hay un error, asegurarse de que banners sea un array vacío
+            console.error("Error al obtener los banners:", error);
+            setBanners([]); // Si hay un error, asegurarse de que banners sea un array vacío
         }
-      };
+    };
 
     // Función para abrir el modal de eliminación y establecer el ID del banner a eliminar
     const handleClickOpenDelete = (id: string) => {
@@ -171,8 +178,9 @@ export const Banner = () => {
                                 label="Descripción imagen"
                             />
                             <CustomImageInput
-                            className="pt-4"
-                             returnFile={handleImageChange} />
+                                className="pt-4"
+                                returnFile={handleImageChange} />
+                            {error && <p className="error pt-2">{error}</p>}
                         </form>
                     </DialogContentText>
                 </DialogContent>
