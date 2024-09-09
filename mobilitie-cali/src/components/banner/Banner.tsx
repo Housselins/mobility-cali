@@ -146,7 +146,8 @@ export const Banner = () => {
     const handleClickOpenDelete = (id: string) => {
         setSelectedBannerId(id);
         setOpenDelete(true);
-    }; const [currentSlide, setCurrentSlide] = useState(0);
+    };
+    const [currentSlide, setCurrentSlide] = useState(0);
 
     // Cambiar slide cada 3 segundos
     useEffect(() => {
@@ -236,16 +237,17 @@ export const Banner = () => {
             </Dialog>
 
             <div className="w-full relative">
-                <div className="add-icon-container">
+                {userInfo && userInfo.user.rol.id === 1 && (
+                    <div className="add-icon-container">
 
-                    {userInfo && userInfo.user.rol.id === 1 && (
+
                         <FaPlus
                             title="Añadir nueva imagen"
                             className="plus"
                             onClick={handleClickOpen}
                         />
-                    )}
-                </div>
+                    </div>
+                )}
                 <div className="w-full carousel">
                     {banners.map((banner: any, index) => (
                         <div

@@ -1,0 +1,45 @@
+.bloqueZona2{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 272px;
+    background-color: #215a9a;
+    position: relative;
+}
+
+.cotenedores-informacion {
+    max-height: 700px;
+
+    width: 70%;
+    height: 85%;
+}
+
+.carousel-item-info {
+    width: 25%;
+   
+}
+
+.add-icon-container-info {
+    position: absolute;
+    top: 10px; 
+    right: 10px; 
+    background-color: rgba(0, 0, 0, 0.5); 
+    border-radius: 5px;
+    padding: 5px;
+ 
+}
+
+.edit{
+    color: white;
+    cursor: pointer;
+    position: absolute; /* Posiciona el icono de eliminar dentro del contenedor de la imagen */
+    top: 60px;
+    right: 60px;
+    background-color: rgba(0, 0, 0,0.5); /* Fondo semi-transparente para mayor contraste */
+    border-radius: 5px;
+    padding: 10px; /* Mayor padding para un área de clic más grande */
+    font-size: 35px; /* Aumenta el tamaño del icono de eliminar */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

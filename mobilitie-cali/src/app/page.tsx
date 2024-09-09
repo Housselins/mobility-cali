@@ -5,6 +5,7 @@ import { FaUserAlt, FaSearch } from "react-icons/fa";
 import LoginForm from "../components/forms/login";
 import React, { useEffect, useState } from "react";
 import { Banner } from "@/components/banner/Banner";
+import {MenuCentral} from "@/components/menu-central/MenuCentral"
 import { MdDelete, MdModeEdit } from "react-icons/md";
 import {
   Button,
@@ -19,6 +20,8 @@ import axios from "axios";
 import Link from "next/link";
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box'
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 export default function Home() {
   const [userInfo, setUserInfo] = React.useState<any>(null);
 
@@ -76,30 +79,7 @@ export default function Home() {
     }
   };
   const [arrayNewaCarousel, setArrayNewaCarousel] = React.useState([
-    {
-      id: "1",
-      title: "Titulo noticia 1",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1625726411847-8cbb60cc71e6.webp",
-    },
-    {
-      id: "2",
-      title: "Titulo noticia 2",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1609621838510-5ad474b7d25d.webp",
-    },
-    {
-      id: "3",
-      title: "Titulo noticia 3",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1414694762283-acccc27bca85.webp",
-    },
-    {
-      id: "4",
-      title: "Titulo noticia 4",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1665553365602-b2fb8e5d1707.webp",
-    },
+   
   ]);
 
   const initNews = async () => {
@@ -341,6 +321,9 @@ export default function Home() {
           <div id="banner" className="w-full pt-10 ">
             <Banner />
           </div>
+          <div className="pt-10">
+              <MenuCentral />
+          </div>
           <br />
           <div className="w-full p-4 bg-white flex flex-row gap-5">
             <div className="w-3/4 p-4 gap-4 rounded-br20 bg-principal flex flex-row">
@@ -435,7 +418,7 @@ export default function Home() {
                       className="text-principal absolute top-1/2 z-10 cursor-pointer w-10 "
                     />
                   )}
-                  {getVisibleItems().map((carrousel) => (
+                  {getVisibleItems().map((carrousel: any) => (
                     <div
                       key={carrousel.id}
                       className="w-2/6 h-5/6 rounded-br20 shadow-xl cursor-pointer relative overflow-hidden"
