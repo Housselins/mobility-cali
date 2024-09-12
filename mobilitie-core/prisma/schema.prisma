@@ -32,13 +32,13 @@ model Rol {
 }
 
 model New {
-  id         Int      @id @default(autoincrement())
-  title      String
+  id                Int      @id @default(autoincrement())
+  title             String
   contenido_noticia String
-  image      String?
-  isEnabled  Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updateddAt DateTime @default(now())
+  image             String?
+  isEnabled         Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updateddAt        DateTime @default(now())
 }
 
 model LoginHistory {
@@ -52,5 +52,28 @@ model Banner {
   id        Int      @id @default(autoincrement())
   image     String
   alt       String
-  createdAt  DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+model SocialMedia {
+  id               Int                @id @default(autoincrement())
+  name             String
+  url              String
+  image            String?
+  isEnabled        Boolean            @default(true)
+  createdAt        DateTime           @default(now())
+  updateddAt       DateTime           @default(now())
+  SocialMediaAudit SocialMediaAudit[]
+}
+
+model SocialMediaAudit {
+  id            Int         @id @default(autoincrement())
+  socialMedia   SocialMedia @relation(fields: [socialMediaId], references: [id])
+  socialMediaId Int
+  name          String
+  url           String
+  image         String
+  isEnabled     String
+  createdAt     DateTime    @default(now())
+  updateddAt    DateTime    @default(now())
 }
