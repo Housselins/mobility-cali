@@ -71,3 +71,7 @@
     transform: scale(1.1); /* Pequeña animación de aumento al hacer hover */
     transition: transform 0.2s ease-in-out; /* Transición suave para el efecto de hover */
   }
+
+  .error{
+    color: red;
+  }
