@@ -2,7 +2,8 @@
 import toast, { Toaster } from "react-hot-toast";
 import { FaSearch, FaUserAlt } from "react-icons/fa";
 import { FaBars, FaHouse, FaLanguage, FaPlus } from "react-icons/fa6";
-
+import LoginForm from "../components/forms/login";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { Banner } from "@/components/banner/Banner";
 import { SocialMediaInterface } from "@/domain/models";
 import CreateSocialMediaUseCase from "@/domain/usecases/social-media/create-social-media.use.case";
@@ -18,11 +19,15 @@ import {
   DialogTitle,
 } from "@mui/material";
 import axios from "axios";
+import Link from "next/link";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
+import "react-toastify/dist/ReactToastify.css";
 import { isEmptyArray, useFormik } from "formik";
-import React, { ChangeEvent, useEffect, useState } from "react";
 import { MdDelete, MdModeEdit, MdOutlineAdd } from "react-icons/md";
 import * as Yup from "yup";
-import LoginForm from "../components/forms/login";
+
+import { MenuCentral } from "@/components/menu-central/MenuCentral";
 type FormSocialMediaValues = {
   name?: string;
   url?: string;
@@ -195,6 +200,9 @@ export default function Home() {
 
   const [userInfo, setUserInfo] = React.useState<any>(null);
 
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false); // Estado para la carga
+
   useEffect(() => {
     const userData = localStorage.getItem("user");
     console.log("userData", userData);
@@ -244,32 +252,7 @@ export default function Home() {
       setCurrentIndex(currentIndex - 1);
     }
   };
-  const [arrayNewaCarousel, setArrayNewaCarousel] = React.useState([
-    {
-      id: "1",
-      title: "Titulo noticia 1",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1625726411847-8cbb60cc71e6.webp",
-    },
-    {
-      id: "2",
-      title: "Titulo noticia 2",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1609621838510-5ad474b7d25d.webp",
-    },
-    {
-      id: "3",
-      title: "Titulo noticia 3",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1414694762283-acccc27bca85.webp",
-    },
-    {
-      id: "4",
-      title: "Titulo noticia 4",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1665553365602-b2fb8e5d1707.webp",
-    },
-  ]);
+  const [arrayNewaCarousel, setArrayNewaCarousel] = React.useState([]);
 
   const initNews = async () => {
     try {
@@ -297,18 +280,32 @@ export default function Home() {
 
   // Obtén los dos elementos siguientes basados en el currentIndex
   const getVisibleItems = () => {
+    if (!Array.isArray(arrayNewaCarousel) || arrayNewaCarousel.length === 0) {
+      return [];
+    }
+
+    // Verificar que currentIndex esté dentro del rango
+    if (currentIndex >= arrayNewaCarousel.length || currentIndex < 0) {
+      console.warn("currentIndex fuera de rango:", currentIndex);
+      return [];
+    }
+
     if (currentIndex === arrayNewaCarousel.length - 1) {
       return [arrayNewaCarousel[currentIndex], arrayNewaCarousel[0]];
     }
+
     return arrayNewaCarousel.slice(currentIndex, currentIndex + 2);
   };
 
   const handleOpenAddNews = () => {
     setType("add");
+    setTilte("Añadir noticia");
     setOpenAddNews(true);
   };
 
   const handleClsAddNews = () => {
+    limpiarFormValues();
+    setError(null);
     setOpenAddNews(false);
   };
 
@@ -317,6 +314,7 @@ export default function Home() {
   );
 
   const [type, setType] = React.useState("");
+  const [tilte, setTilte] = React.useState("");
 
   const [openAddRds, setOpenAddRds] = React.useState({
     open: false,
@@ -341,6 +339,7 @@ export default function Home() {
 
   const handleOpenEditNews = async (id: string) => {
     setType("edit");
+    setTilte("Editar noticia");
     const response = await axios.get(`http://localhost:4000/news/${id}`);
     console.log("response para editar:", response?.data);
     setOpenAddNews(true);
@@ -374,7 +373,15 @@ export default function Home() {
   };
 
   const handleSubmit = async () => {
-    console.log("Valores del formulario:", formValues);
+    if (
+      !formValues.title ||
+      !formValues.image ||
+      !formValues.contenido_noticia
+    ) {
+      setError("Por favor, completa todos los campos obligatorios");
+      return;
+    }
+    setLoading(true);
     try {
       if (type === "edit") {
         await axios.put(
@@ -388,6 +395,8 @@ export default function Home() {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
     limpiarFormValues();
     handleClsAddNews();
@@ -571,6 +580,9 @@ export default function Home() {
           <div id="banner" className="w-full pt-10 ">
             <Banner />
           </div>
+          <div className="pt-10">
+            <MenuCentral />
+          </div>
           <br />
           <div className="w-full p-4 bg-white flex flex-row gap-5">
             <div className="w-3/4 p-4 gap-4 rounded-br20 bg-principal flex flex-row">
@@ -664,7 +676,7 @@ export default function Home() {
                       className="text-principal absolute top-1/2 z-10 cursor-pointer w-10 "
                     />
                   )}
-                  {getVisibleItems().map((carrousel) => (
+                  {getVisibleItems().map((carrousel: any) => (
                     <div
                       key={carrousel.id}
                       className="w-2/6 h-5/6 rounded-br20 shadow-xl cursor-pointer relative overflow-hidden"
@@ -687,11 +699,15 @@ export default function Home() {
                           />
                         )}
                       </div>
-                      <img
-                        className="h-3/4 rounded-t-br20 w-full object-cover"
-                        src={carrousel.image}
-                        alt={carrousel.title}
-                      />
+                      <Link href={`/noticia?id=${carrousel.id}`} passHref>
+                        <img
+                          id="noticia"
+                          className="h-3/4 rounded-t-br20 w-full object-cover"
+                          src={carrousel.image}
+                          alt={carrousel.title}
+                        />
+                      </Link>
+
                       <p className="text-neutral-600 text-center py-2 text-xs">
                         {carrousel.title}
                       </p>
@@ -724,32 +740,38 @@ export default function Home() {
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">
-              {"Agregar noticia"}
-            </DialogTitle>
+            <DialogTitle id="alert-dialog-title">{tilte}</DialogTitle>
             <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                <form>
-                  <CustomInput
-                    className="bg-transparent h-10 w-full pl-4 border border-l-base-300 rounded-br20"
-                    value={formValues.title}
-                    onChange={handleInputChange}
-                    name="title"
-                    label="Titutlo de la noticia"
-                  />
-                  <br />
+              {loading ? (
+                // Mostrar el indicador de carga mientras se está creando una noticia
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <DialogContentText id="alert-dialog-description">
+                  <form>
+                    <CustomInput
+                      className="bg-transparent h-10 w-full pl-4 border border-l-base-300 rounded-br20"
+                      value={formValues.title}
+                      onChange={handleInputChange}
+                      name="title"
+                      label="Titutlo de la noticia"
+                    />
+                    <br />
 
-                  <CustomTextArea
-                    className="bg-transparent h-40 p-4 w-full pl-4 border border-l-base-300 rounded-br20"
-                    value={formValues.contenido_noticia}
-                    onChange={handleTxtAreaChange}
-                    name="contenido_noticia"
-                    label="Contenido noticia"
-                  />
-                  <br />
-                  <CustomImageInput returnFile={handleImageChange} />
-                </form>
-              </DialogContentText>
+                    <CustomTextArea
+                      className="bg-transparent h-40 p-4 w-full pl-4 border border-l-base-300 rounded-br20"
+                      value={formValues.contenido_noticia}
+                      onChange={handleTxtAreaChange}
+                      name="contenido_noticia"
+                      label="Contenido noticia"
+                    />
+                    <br />
+                    <CustomImageInput returnFile={handleImageChange} />
+                    {error && <p className="error pt-2">{error}</p>}
+                  </form>
+                </DialogContentText>
+              )}
             </DialogContent>
             <DialogActions className="justify-center pb-6">
               <Button onClick={handleSubmit} variant="outlined" color="success">
@@ -772,11 +794,11 @@ export default function Home() {
             aria-describedby="alert-dialog-description"
           >
             <DialogTitle id="alert-dialog-title">
-              {"Eliminar imagen del banner"}
+              {"Eliminar Noticia"}
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                ¿Está seguro de eliminar la imagen del banner?
+                ¿Está seguro que desea eliminar esta noticia?
               </DialogContentText>
             </DialogContent>
             <DialogActions>

@@ -8,7 +8,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box'
 import {
     CustomInput,
     CustomImageInput,
@@ -28,19 +29,22 @@ export const Banner = () => {
 
     // Estado para manejar la visibilidad del modal
     const [openAdd, setOpenAdd] = useState(false);
-    const [banners, setBanners] = useState([]);
+    const [banners, setBanners] = useState<any[]>([]);
     const [openDelete, setOpenDelete] = useState(false);
 
     // Estado para manejar el ID del banner seleccionado para eliminación
     const [selectedBannerId, setSelectedBannerId] = useState<string | null>(null);
     const [userInfo, setUserInfo] = React.useState<any>(null);
 
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false); // Estado para la carga
+
     useEffect(() => {
         const userData = localStorage.getItem("user");
         console.log("userData", userData);
 
         if (userData) {
-            setUserInfo(JSON.parse(userData));  
+            setUserInfo(JSON.parse(userData));
             console.log("userInfo", userInfo);
 
         }
@@ -65,6 +69,8 @@ export const Banner = () => {
 
     // Función para cerrar el modal
     const handleClose = () => {
+        setFormValues({ alt: "", image: "" });
+        setError(null);
         setOpenAdd(false);
     };
 
@@ -104,12 +110,19 @@ export const Banner = () => {
 
     // Función para manejar la acción del botón Aceptar
     const handleSubmit = async () => {
-        console.log("Valores del formulario:", formValues);
+        if (!formValues.alt || !formValues.image) {
+            setError("Por favor, completa todos los campos.");
+            return;
+        }
+
+        setLoading(true);  // Iniciar carga
         try {
             await axios.post("http://localhost:4000/banner", formValues);
-            await getBanners(); // Actualizar la lista de banners después de añadir uno nuevo
+            await getBanners();
         } catch (error) {
             console.log(error);
+        } finally {
+            setLoading(false);  // Finalizar carga
         }
         handleClose();
         setFormValues({
@@ -122,9 +135,10 @@ export const Banner = () => {
         try {
             const response = await axios.get("http://localhost:4000/banner");
             console.log("Response banners:", response.data);
-            setBanners(response.data);
+            setBanners(Array.isArray(response.data) ? response.data : []); // Asegurarse de que sea un array
         } catch (error) {
             console.error("Error al obtener los banners:", error);
+            setBanners([]); // Si hay un error, asegurarse de que banners sea un array vacío
         }
     };
 
@@ -132,7 +146,8 @@ export const Banner = () => {
     const handleClickOpenDelete = (id: string) => {
         setSelectedBannerId(id);
         setOpenDelete(true);
-    }; const [currentSlide, setCurrentSlide] = useState(0);
+    };
+    const [currentSlide, setCurrentSlide] = useState(0);
 
     // Cambiar slide cada 3 segundos
     useEffect(() => {
@@ -160,20 +175,28 @@ export const Banner = () => {
                     {"Añadir nueva imagen al banner"}
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        <form>
-                            <CustomInput
-                                className="bg-transparent h-10 w-full pl-4 border border-l-base-300 rounded-br10"
-                                value={formValues.alt}
-                                onChange={handleInputChange}
-                                name="alt"
-                                label="Descripción imagen"
-                            />
-                            <CustomImageInput
-                            className="pt-4"
-                             returnFile={handleImageChange} />
-                        </form>
-                    </DialogContentText>
+                    {loading ? (
+                        // Mostrar el indicador de carga mientras se está creando una noticia
+                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                            <CircularProgress />
+                        </Box>
+                    ) : (
+                        <DialogContentText id="alert-dialog-description">
+                            <form>
+                                <CustomInput
+                                    className="bg-transparent h-10 w-full pl-4 border border-l-base-300 rounded-br10"
+                                    value={formValues.alt}
+                                    onChange={handleInputChange}
+                                    name="alt"
+                                    label="Descripción imagen"
+                                />
+                                <CustomImageInput
+                                    className="pt-4"
+                                    returnFile={handleImageChange} />
+                                {error && <p className="error pt-2">{error}</p>}
+                            </form>
+                        </DialogContentText>
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleSubmit} variant="outlined" color="success">
@@ -214,16 +237,17 @@ export const Banner = () => {
             </Dialog>
 
             <div className="w-full relative">
-                <div className="add-icon-container">
+                {userInfo && userInfo.user.rol.id === 1 && (
+                    <div className="add-icon-container">
 
-                    {userInfo && userInfo.user.rol.id === 1 && (
+
                         <FaPlus
                             title="Añadir nueva imagen"
                             className="plus"
                             onClick={handleClickOpen}
                         />
-                    )}
-                </div>
+                    </div>
+                )}
                 <div className="w-full carousel">
                     {banners.map((banner: any, index) => (
                         <div

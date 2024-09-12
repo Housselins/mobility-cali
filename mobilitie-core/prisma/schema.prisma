@@ -77,3 +77,14 @@ model SocialMediaAudit {
   createdAt     DateTime    @default(now())
   updateddAt    DateTime    @default(now())
 }
+
+
+model info {
+  id         Int      @id @default(autoincrement())
+  title      String
+  contenido_info String
+  image      String
+  isEnabled  Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updateddAt DateTime @default(now())
+}
