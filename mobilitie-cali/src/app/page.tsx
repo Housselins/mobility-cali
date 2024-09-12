@@ -26,9 +26,8 @@ export default function Home() {
     console.log("userData", userData);
 
     if (userData) {
-      setUserInfo(JSON.parse(userData)); 
+      setUserInfo(JSON.parse(userData));
       console.log("userInfo", userInfo);
-
     }
   }, []);
   const ocultarInitSesion = () => {
@@ -50,7 +49,7 @@ export default function Home() {
       contenido_noticia: "",
       image: "",
     });
-  }
+  };
   const [openAddNews, setOpenAddNews] = React.useState(false);
 
   const [controladorRenderMenu, setControladorRenderMenu] =
@@ -98,6 +97,27 @@ export default function Home() {
     },
   ]);
 
+  const [arrayRedes, setArrayRedes] = React.useState([
+    {
+      id: 1,
+      alt: "facebook icon",
+      url: "https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg",
+      link: "https://www.facebook.com/AlcaldiaDeCali/",
+    },
+    {
+      id: 2,
+      alt: "instagram icon",
+      url: "https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png",
+      link: "https://www.instagram.com/alcaldiadecali/",
+    },
+    {
+      id: 3,
+      alt: "x icon",
+      url: "https://upload.wikimedia.org/wikipedia/commons/c/cc/X_icon.svg",
+      link: "https://x.com/alcaldiadecali",
+    },
+  ]);
+
   const initNews = async () => {
     try {
       const response = await axios.get("http://localhost:4000/news");
@@ -137,8 +157,17 @@ export default function Home() {
   const handleClsAddNews = () => {
     setOpenAddNews(false);
   };
-  const [selectNwsIdEdit, setSelectNwsIdEdit] = React.useState<string | null>(null);
+
+  const [selectNwsIdEdit, setSelectNwsIdEdit] = React.useState<string | null>(
+    null
+  );
+
   const [type, setType] = React.useState("");
+
+  const [openAddRds, setOpenAddRds] = React.useState(false);
+  const handleCloseRds = () => {
+    setOpenAddRds(false);
+  };
 
   const handleOpenEditNews = async (id: string) => {
     setType("edit");
@@ -147,8 +176,7 @@ export default function Home() {
     setOpenAddNews(true);
     setSelectNwsIdEdit(id);
     setFormValues(response?.data);
-
-  }
+  };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -179,10 +207,12 @@ export default function Home() {
     console.log("Valores del formulario:", formValues);
     try {
       if (type === "edit") {
-        await axios.put(`http://localhost:4000/news/${selectNwsIdEdit}`, formValues);
+        await axios.put(
+          `http://localhost:4000/news/${selectNwsIdEdit}`,
+          formValues
+        );
         await initNews();
-      }
-      else if (type === "add") {
+      } else if (type === "add") {
         await axios.post("http://localhost:4000/news", formValues);
         await initNews();
       }
@@ -230,6 +260,26 @@ export default function Home() {
             src="https://www.cali.gov.co/movilidad/info/principal/media/bloque214959.png"
             alt=""
           />
+        </div>
+
+        <div className="flex flex-row space-x-2 items-center">
+          {arrayRedes.map((red) => (
+            <a href={red.link} target="_blank">
+              <img
+                className="w-5 h-5 cursor-pointer"
+                src={red.url}
+                alt={red.alt}
+              />
+            </a>
+          ))}
+
+          {userInfo?.access_token && (
+            <MdModeEdit
+              title="Editar"
+              className="h-5 text-white cursor-pointer"
+              onClick={() => setOpenAddRds(true)}
+            />
+          )}
         </div>
 
         <div className="flex flex-row space-x-2">
@@ -400,7 +450,6 @@ export default function Home() {
             <div className="carousel w-full">
               <div id="sld" className="carousel-item relative w-full">
                 <div className="w-full flex flex-row justify-around h-60 items-center relative pt-4">
-
                   {userInfo && userInfo.user.rol.id === 1 && (
                     <FaPlus
                       title="Añadir nueva noticia"
@@ -423,11 +472,12 @@ export default function Home() {
                           />
                         )}
                         {userInfo && userInfo.user.rol.id === 1 && (
-                          <MdModeEdit 
-                            size={20} 
+                          <MdModeEdit
+                            size={20}
                             title="Editar"
                             className="text-neutral-500"
-                            onClick={() => handleOpenEditNews(carrousel.id)} />
+                            onClick={() => handleOpenEditNews(carrousel.id)}
+                          />
                         )}
                       </div>
                       <img
@@ -533,6 +583,62 @@ export default function Home() {
               >
                 Cancelar
               </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog
+            open={openAddRds}
+            onClose={handleCloseRds}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Añadir nueva red"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                <form className="flex flex-col gap-4">
+                  <div className="flex flex-col">
+                    <label htmlFor="altImg">Ingresa el alt:</label>
+                    <input
+                      type="text"
+                      id="altImg"
+                      placeholder="alt"
+                      className="input input-bordered w-full max-w-xs bg-transparent mt-2"
+                    />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label htmlFor="urlImg">Ingresa el url de la imagen:</label>
+                    <input
+                      type="text"
+                      id="urlImg"
+                      placeholder="url"
+                      className="input input-bordered w-full max-w-xs bg-transparent mt-2"
+                    />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label htmlFor="linkImg">Ingresa el link de la red:</label>
+                    <input
+                      type="text"
+                      id="linkImg"
+                      placeholder="link"
+                      className="input input-bordered w-full max-w-xs bg-transparent mt-2"
+                    />
+                  </div>
+                </form>
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <div className="flex flex-row w-full justify-center gap-3 pb-5">
+              <Button onClick={handleCloseRds} variant="outlined" color="error">
+                Cancelar
+              </Button>
+              <Button onClick={handleCloseRds} variant="outlined" color="success">
+                Aceptar
+              </Button>
+              </div>
             </DialogActions>
           </Dialog>
         </div>
