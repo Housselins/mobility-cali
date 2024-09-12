@@ -1,28 +1,202 @@
 "use client";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
+import { FaSearch, FaUserAlt } from "react-icons/fa";
 import { FaBars, FaHouse, FaLanguage, FaPlus } from "react-icons/fa6";
-import { FaUserAlt, FaSearch } from "react-icons/fa";
-import LoginForm from "../components/forms/login";
-import React, { useEffect, useState } from "react";
+
 import { Banner } from "@/components/banner/Banner";
-import {MenuCentral} from "@/components/menu-central/MenuCentral"
-import { MdDelete, MdModeEdit } from "react-icons/md";
+import { SocialMediaInterface } from "@/domain/models";
+import CreateSocialMediaUseCase from "@/domain/usecases/social-media/create-social-media.use.case";
+import GetSocialMediaUseCase from "@/domain/usecases/social-media/get-social-media.use.case";
+import { appContainer, USECASES_TYPES } from "@/infrastructure/ioc";
+import { CustomImageInput, CustomInput, CustomTextArea } from "@/presentation";
 import {
+  Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { CustomImageInput, CustomInput, CustomTextArea } from "@/presentation";
 import axios from "axios";
+import { isEmptyArray, useFormik } from "formik";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { MdDelete, MdModeEdit, MdOutlineAdd } from "react-icons/md";
+import * as Yup from "yup";
+import LoginForm from "../components/forms/login";
 import Link from "next/link";
-import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box'
-import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import { MenuCentral } from "@/components/menu-central/MenuCentral";
+type FormSocialMediaValues = {
+  name?: string;
+  url?: string;
+  image?: string;
+  isEnabled?: boolean;
+};
+type FormSocialMediaProps = {
+  newToEdit?: SocialMediaInterface;
+};
+
 export default function Home() {
+  // ==================== INSTANCES OF USE CASES
+
+  // Create Social Media
+  const createSocialMediaUseCase = appContainer.get<CreateSocialMediaUseCase>(
+    USECASES_TYPES._CreateSocialMediaUseCase
+  );
+  // Get Social Media
+  const getSocialMediaUseCase = appContainer.get<GetSocialMediaUseCase>(
+    USECASES_TYPES._GetSocialMediaUseCase
+  );
+
+  const [isModify, setIsModify] = React.useState<any>(null);
+  const [selectedSocialMedia, setSelectedSocialMedia] =
+    React.useState<SocialMediaInterface>();
+  const [socialMediaData, setSocialMediaData] = useState<
+    SocialMediaInterface[]
+  >([]);
+
+  // ==================== INIT FORM DATA
+
+  const initialFormValues: FormSocialMediaValues = {
+    name: "",
+    url: "",
+    image: "",
+    isEnabled: true,
+  };
+
+  // ==================== FORMIK SCHEMES
+
+  const schema = Yup.object().shape({
+    name: Yup.string().required("Campo alt obligatorio *"),
+    image: Yup.string().required("Campo imagen obligatorio *"),
+    url: Yup.string().required("Campo link obligatorio *"),
+  });
+
+  const formikForm = useFormik({
+    initialValues: initialFormValues,
+    validationSchema: schema,
+    onSubmit: async (values) => {
+      // Triggers validations
+      const validateFomr = await formikForm.validateForm();
+      // Catch errors array
+      const errorsInForm = Object.values(validateFomr);
+
+      if (!isEmptyArray(errorsInForm)) {
+        toast(
+          (t) => (
+            <div style={{ color: "#fff" }}>
+              <strong>Error!</strong>
+              <p>
+                No se pudo crear la noticia por validaciones del formulario.
+              </p>
+            </div>
+          ),
+          {
+            style: {
+              backgroundColor: "red",
+              color: "#fff",
+            },
+            icon: "❌",
+            duration: 3000,
+          }
+        );
+        return;
+      }
+      // DELETE
+
+      if (openAddRds.isModify) {
+        const resultModifyRedUseCase = await createSocialMediaUseCase.execute(
+          values.name!,
+          values.url!,
+          values.image!,
+          openAddRds.selected.id,
+          values.isEnabled
+        );
+
+        if (resultModifyRedUseCase) {
+          toast(
+            (t) => (
+              <div style={{ color: "#fff" }}>
+                <strong>Exito!</strong>
+                <p>Se pudo editar la red Social.</p>
+              </div>
+            ),
+            {
+              style: {
+                backgroundColor: "green",
+                color: "#fff",
+              },
+              duration: 3000,
+            }
+          );
+        } else {
+          toast(
+            (t) => (
+              <div style={{ color: "#fff" }}>
+                <strong>Error!</strong>
+                <p>No se pudo editar la red Social.</p>
+              </div>
+            ),
+            {
+              style: {
+                backgroundColor: "red",
+                color: "#fff",
+              },
+              icon: "❌",
+              duration: 3000,
+            }
+          );
+        }
+      }
+      // CREATE
+      else {
+        const resultCreateNewUseCase = await createSocialMediaUseCase.execute(
+          values.name!,
+          values.url!,
+          values.image!
+        );
+
+        if (resultCreateNewUseCase) {
+          toast(
+            (t) => (
+              <div style={{ color: "#fff" }}>
+                <strong>Exito!</strong>
+                <p>Se pudo crear la red Social.</p>
+              </div>
+            ),
+            {
+              style: {
+                backgroundColor: "green",
+                color: "#fff",
+              },
+              duration: 3000,
+            }
+          );
+        } else {
+          toast(
+            (t) => (
+              <div style={{ color: "#fff" }}>
+                <strong>Error!</strong>
+                <p>No se pudo crear la red Social.</p>
+              </div>
+            ),
+            {
+              style: {
+                backgroundColor: "red",
+                color: "#fff",
+              },
+              icon: "❌",
+              duration: 3000,
+            }
+          );
+        }
+      }
+      setOpenAddRds({ isModify: false, open: false, selected: { id: 0 } });
+      await getSocialMedia();
+    },
+  });
+
   const [userInfo, setUserInfo] = React.useState<any>(null);
 
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +209,6 @@ export default function Home() {
     if (userData) {
       setUserInfo(JSON.parse(userData));
       console.log("userInfo", userInfo);
-
     }
   }, []);
   const ocultarInitSesion = () => {
@@ -57,7 +230,7 @@ export default function Home() {
       contenido_noticia: "",
       image: "",
     });
-  }
+  };
   const [openAddNews, setOpenAddNews] = React.useState(false);
 
   const [controladorRenderMenu, setControladorRenderMenu] =
@@ -103,6 +276,7 @@ export default function Home() {
 
   React.useEffect(() => {
     initNews();
+    getSocialMedia();
   }, []);
 
   // Obtén los dos elementos siguientes basados en el currentIndex
@@ -135,9 +309,34 @@ export default function Home() {
     setError(null);
     setOpenAddNews(false);
   };
-  const [selectNwsIdEdit, setSelectNwsIdEdit] = React.useState<string | null>(null);
+
+  const [selectNwsIdEdit, setSelectNwsIdEdit] = React.useState<string | null>(
+    null
+  );
+
   const [type, setType] = React.useState("");
   const [tilte, setTilte] = React.useState("");
+
+  const [openAddRds, setOpenAddRds] = React.useState({
+    open: false,
+    isModify: false,
+    selected: {
+      id: 0,
+    },
+  });
+  const handleCloseRds = () => {
+    formikForm.setFieldValue("isEnabled", true, true);
+    formikForm.setFieldValue("name", "", true);
+    formikForm.setFieldValue("image", "", true);
+    formikForm.setFieldValue("url", "", true);
+    setOpenAddRds({
+      open: false,
+      isModify: false,
+      selected: {
+        id: 0,
+      },
+    });
+  };
 
   const handleOpenEditNews = async (id: string) => {
     setType("edit");
@@ -147,8 +346,7 @@ export default function Home() {
     setOpenAddNews(true);
     setSelectNwsIdEdit(id);
     setFormValues(response?.data);
-
-  }
+  };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -184,10 +382,12 @@ export default function Home() {
     setLoading(true);
     try {
       if (type === "edit") {
-        await axios.put(`http://localhost:4000/news/${selectNwsIdEdit}`, formValues);
-        initNews();
-      }
-      else if (type === "add") {
+        await axios.put(
+          `http://localhost:4000/news/${selectNwsIdEdit}`,
+          formValues
+        );
+        await initNews();
+      } else if (type === "add") {
         await axios.post("http://localhost:4000/news", formValues);
         await initNews();
       }
@@ -223,6 +423,14 @@ export default function Home() {
     }
   };
 
+  //  ==================== Get All Social Media
+  const getSocialMedia = async () => {
+    const result = await getSocialMediaUseCase.execute();
+    console.log(result);
+
+    if (Array.isArray(result)) setSocialMediaData(result);
+  };
+
   return (
     <main className="h-full w-full">
       <Toaster />
@@ -237,6 +445,55 @@ export default function Home() {
             src="https://www.cali.gov.co/movilidad/info/principal/media/bloque214959.png"
             alt=""
           />
+        </div>
+
+        <div className="flex flex-row space-x-2 items-center">
+          {socialMediaData.map((red) => (
+            <div className="flex flex-col">
+              {userInfo?.access_token && (
+                <MdModeEdit
+                  title="Editar"
+                  className="h-5 text-white cursor-pointer"
+                  onClick={() => {
+                    formikForm.setFieldValue("isEnabled", true, true);
+                    formikForm.setFieldValue("name", red.name, true);
+                    formikForm.setFieldValue("image", red.image, true);
+                    formikForm.setFieldValue("url", red.url, true);
+                    setOpenAddRds({
+                      open: true,
+                      isModify: true,
+                      selected: {
+                        id: red.id!,
+                      },
+                    });
+                  }}
+                />
+              )}
+              <a href={red.url} target="_blank">
+                <img
+                  className="w-5 h-5 cursor-pointer"
+                  src={red.image}
+                  alt={red.name}
+                />
+              </a>
+            </div>
+          ))}
+
+          {userInfo?.access_token && (
+            <MdOutlineAdd
+              title="Editar"
+              className="h-5 text-white cursor-pointer"
+              onClick={() =>
+                setOpenAddRds({
+                  open: true,
+                  isModify: false,
+                  selected: {
+                    id: 0,
+                  },
+                })
+              }
+            />
+          )}
         </div>
 
         <div className="flex flex-row space-x-2">
@@ -410,7 +667,6 @@ export default function Home() {
             <div className="carousel w-full">
               <div id="sld" className="carousel-item relative w-full">
                 <div className="w-full flex flex-row justify-around h-60 items-center relative pt-4">
-
                   {userInfo && userInfo.user.rol.id === 1 && (
                     <FaPlus
                       title="Añadir nueva noticia"
@@ -437,7 +693,8 @@ export default function Home() {
                             size={20}
                             title="Editar"
                             className="text-neutral-500"
-                            onClick={() => handleOpenEditNews(carrousel.id)} />
+                            onClick={() => handleOpenEditNews(carrousel.id)}
+                          />
                         )}
                       </div>
                       <Link href={`/noticia?id=${carrousel.id}`} passHref>
@@ -555,6 +812,125 @@ export default function Home() {
               >
                 Cancelar
               </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog
+            open={openAddRds.open}
+            onClose={handleCloseRds}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {openAddRds.isModify ? "Editar red" : "Añadir nueva red"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                <form
+                  className="flex flex-col gap-4"
+                  onSubmit={formikForm.handleSubmit}
+                >
+                  <div className="flex flex-col">
+                    <label htmlFor="altImg">Ingresa el alt:</label>
+                    <input
+                      type="text"
+                      id="altImg"
+                      placeholder="alt"
+                      className="input input-bordered w-full max-w-xs bg-transparent mt-2"
+                      value={formikForm.values.name}
+                      onChange={(
+                        titleChange: ChangeEvent<HTMLInputElement>
+                      ) => {
+                        formikForm.setFieldValue(
+                          "name",
+                          titleChange.target.value,
+                          true
+                        );
+                      }}
+                    />
+                    {formikForm.errors.name && (
+                      <p className="text-red-500 text-xs italic">
+                        {formikForm.errors.name}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label htmlFor="urlImg">Ingresa el url de la imagen:</label>
+                    <input
+                      type="text"
+                      id="urlImg"
+                      placeholder="url"
+                      className="input input-bordered w-full max-w-xs bg-transparent mt-2"
+                      value={formikForm.values.image}
+                      onChange={(
+                        titleChange: ChangeEvent<HTMLInputElement>
+                      ) => {
+                        formikForm.setFieldValue(
+                          "image",
+                          titleChange.target.value,
+                          true
+                        );
+                      }}
+                    />
+                    {formikForm.errors.image && (
+                      <p className="text-red-500 text-xs italic">
+                        {formikForm.errors.image}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label htmlFor="linkImg">Ingresa el link de la red:</label>
+                    <input
+                      type="text"
+                      id="linkImg"
+                      placeholder="link"
+                      className="input input-bordered w-full max-w-xs bg-transparent mt-2"
+                      value={formikForm.values.url}
+                      onChange={(
+                        titleChange: ChangeEvent<HTMLInputElement>
+                      ) => {
+                        formikForm.setFieldValue(
+                          "url",
+                          titleChange.target.value,
+                          true
+                        );
+                      }}
+                    />
+                    {formikForm.errors.url && (
+                      <p className="text-red-500 text-xs italic">
+                        {formikForm.errors.url}
+                      </p>
+                    )}
+                  </div>
+                </form>
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <div className="flex flex-row w-full justify-center gap-3 pb-5">
+                <Button
+                  onClick={() => {
+                    formikForm.setFieldValue("isEnabled", false, true);
+                    if (openAddRds.isModify) {
+                      formikForm.submitForm();
+                    } else {
+                      handleCloseRds();
+                    }
+                  }}
+                  variant="outlined"
+                  color="error"
+                >
+                  {openAddRds.isModify ? "Borrar" : "Cancelar"}
+                </Button>
+                <Button
+                  onClick={formikForm.submitForm}
+                  variant="outlined"
+                  color="success"
+                >
+                  Aceptar
+                </Button>
+              </div>
             </DialogActions>
           </Dialog>
         </div>
