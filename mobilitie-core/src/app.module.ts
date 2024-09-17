@@ -4,6 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { NewsModule } from './news/news.module';
 import { BannerModule } from './banner/banner.module';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { InfoModule } from './info-central/info.module';
 
 @Module({
@@ -13,6 +14,20 @@ import { SocialMediaModule } from './social-media/social-media.module';
 
 @Module({
   imports: [SharedModule, AuthModule, NewsModule, BannerModule, SocialMediaModule],
+>>>>>>> origin/social-managment
+=======
+import { InfoModule } from './info-central/info.module';
+import { SocialMediaModule } from './social-media/social-media.module';
+
+@Module({
+  imports: [
+    SharedModule,
+    AuthModule,
+    NewsModule,
+    BannerModule,
+    InfoModule,
+    SocialMediaModule,
+  ],
 >>>>>>> origin/social-managment
   controllers: [],
   providers: [],

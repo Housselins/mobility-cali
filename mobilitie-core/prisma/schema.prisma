@@ -53,6 +53,7 @@ model Banner {
   image     String
   alt       String
 <<<<<<< HEAD
+<<<<<<< HEAD
   createdAt  DateTime @default(now())
 }
 
@@ -66,6 +67,8 @@ model info {
   updateddAt DateTime @default(now())
 }
 =======
+=======
+>>>>>>> origin/social-managment
   createdAt DateTime @default(now())
 }
 
@@ -90,5 +93,19 @@ model SocialMediaAudit {
   isEnabled     String
   createdAt     DateTime    @default(now())
   updateddAt    DateTime    @default(now())
+}
+<<<<<<< HEAD
+>>>>>>> origin/social-managment
+=======
+
+
+model info {
+  id         Int      @id @default(autoincrement())
+  title      String
+  contenido_info String
+  image      String
+  isEnabled  Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updateddAt DateTime @default(now())
 }
 >>>>>>> origin/social-managment
