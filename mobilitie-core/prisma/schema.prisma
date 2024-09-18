@@ -32,13 +32,13 @@ model Rol {
 }
 
 model New {
-  id         Int      @id @default(autoincrement())
-  title      String
+  id                Int      @id @default(autoincrement())
+  title             String
   contenido_noticia String
-  image      String?
-  isEnabled  Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updateddAt DateTime @default(now())
+  image             String?
+  isEnabled         Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updateddAt        DateTime @default(now())
 }
 
 model LoginHistory {
@@ -52,5 +52,85 @@ model Banner {
   id        Int      @id @default(autoincrement())
   image     String
   alt       String
+  createdAt DateTime @default(now())
+}
+
+model SocialMedia {
+  id               Int                @id @default(autoincrement())
+  name             String
+  url              String
+  image            String?
+  isEnabled        Boolean            @default(true)
+  createdAt        DateTime           @default(now())
+  updateddAt       DateTime           @default(now())
+  SocialMediaAudit SocialMediaAudit[]
+}
+
+model SocialMediaAudit {
+  id            Int         @id @default(autoincrement())
+  socialMedia   SocialMedia @relation(fields: [socialMediaId], references: [id])
+  socialMediaId Int
+  name          String
+  url           String
+  image         String
+  isEnabled     String
+  createdAt     DateTime    @default(now())
+  updateddAt    DateTime    @default(now())
+}
+
+
+model info {
+  id         Int      @id @default(autoincrement())
+  title      String
+  contenido_info String
+  image      String
+  isEnabled  Boolean  @default(true)
   createdAt  DateTime @default(now())
+  updateddAt DateTime @default(now())
+}
+
+
+model Denunciante {
+  id                  Int      @id @default(autoincrement())
+  nombre              String
+  apellido            String
+  numeroIdentificacion String
+  sexo                String
+  correo              String
+  telefono            String
+  direccion           String
+  denuncias           Denuncia[]  // Relación con la tabla Denuncia
+}
+
+model Denuncia {
+  id                    Int       @id @default(autoincrement())
+  denuncianteId         Int
+  denunciante           Denunciante  @relation(fields: [denuncianteId], references: [id])
+  servidorInvolucrado   String    // Nombres y apellidos del servidor o contratista involucrado
+  rol                   String    // Campo o rol del servidor
+  organismo             String    // Organismo al que pertenece el servidor
+  lugarHechos           String    // Lugar de los hechos
+  fechaHechos           String  // Fecha de los hechos
+  descripcion           String    // Descripción detallada de los hechos
+  pruebas               Prueba[]  // Relación con la tabla Prueba
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @default(now())
+}
+
+model Prueba {
+  id          Int       @id @default(autoincrement())
+  denunciaId  Int
+  denuncia    Denuncia  @relation(fields: [denunciaId], references: [id])
+  evidencia   String?   // Ruta o nombre del archivo de evidencia
+  testigos    Testigo[] // Relación con la tabla de Testigos
+}
+
+model Testigo {
+  id            Int      @id @default(autoincrement())
+  nombreCompleto String
+  direccion     String
+  telefono      String
+  correo        String
+  pruebaId      Int
+  prueba        Prueba   @relation(fields: [pruebaId], references: [id])
 }

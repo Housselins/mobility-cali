@@ -1,12 +1,15 @@
 "use client";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
+import { FaSearch, FaUserAlt } from "react-icons/fa";
 import { FaBars, FaHouse, FaLanguage, FaPlus } from "react-icons/fa6";
-import { FaUserAlt, FaSearch } from "react-icons/fa";
-
 import LoginForm from "../components/forms/login";
-import React, { useEffect } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { Banner } from "@/components/banner/Banner";
-import { MdDelete, MdModeEdit } from "react-icons/md";
+import { SocialMediaInterface } from "@/domain/models";
+import CreateSocialMediaUseCase from "@/domain/usecases/social-media/create-social-media.use.case";
+import GetSocialMediaUseCase from "@/domain/usecases/social-media/get-social-media.use.case";
+import { appContainer, USECASES_TYPES } from "@/infrastructure/ioc";
+import { CustomImageInput, CustomInput, CustomTextArea } from "@/presentation";
 import {
   Button,
   Dialog,
@@ -15,12 +18,190 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { CustomImageInput, CustomInput, CustomTextArea } from "@/presentation";
 import axios from "axios";
 import { PQRSDButton } from "@/presentation/components/atoms/buttons/pqrsd";
+import Link from "next/link";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
+import "react-toastify/dist/ReactToastify.css";
+import { isEmptyArray, useFormik } from "formik";
+import { MdDelete, MdModeEdit, MdOutlineAdd } from "react-icons/md";
+import * as Yup from "yup";
+import { MenuCentral } from "@/components/menu-central/MenuCentral";
+type FormSocialMediaValues = {
+  name?: string;
+  url?: string;
+  image?: string;
+  isEnabled?: boolean;
+};
+type FormSocialMediaProps = {
+  newToEdit?: SocialMediaInterface;
+};
 
 export default function Home() {
+  // ==================== INSTANCES OF USE CASES
+
+  // Create Social Media
+  const createSocialMediaUseCase = appContainer.get<CreateSocialMediaUseCase>(
+    USECASES_TYPES._CreateSocialMediaUseCase
+  );
+  // Get Social Media
+  const getSocialMediaUseCase = appContainer.get<GetSocialMediaUseCase>(
+    USECASES_TYPES._GetSocialMediaUseCase
+  );
+
+  const [isModify, setIsModify] = React.useState<any>(null);
+  const [selectedSocialMedia, setSelectedSocialMedia] =
+    React.useState<SocialMediaInterface>();
+  const [socialMediaData, setSocialMediaData] = useState<
+    SocialMediaInterface[]
+  >([]);
+
+  // ==================== INIT FORM DATA
+
+  const initialFormValues: FormSocialMediaValues = {
+    name: "",
+    url: "",
+    image: "",
+    isEnabled: true,
+  };
+
+  // ==================== FORMIK SCHEMES
+
+  const schema = Yup.object().shape({
+    name: Yup.string().required("Campo alt obligatorio *"),
+    image: Yup.string().required("Campo imagen obligatorio *"),
+    url: Yup.string().required("Campo link obligatorio *"),
+  });
+
+  const formikForm = useFormik({
+    initialValues: initialFormValues,
+    validationSchema: schema,
+    onSubmit: async (values) => {
+      // Triggers validations
+      const validateFomr = await formikForm.validateForm();
+      // Catch errors array
+      const errorsInForm = Object.values(validateFomr);
+
+      if (!isEmptyArray(errorsInForm)) {
+        toast(
+          (t) => (
+            <div style={{ color: "#fff" }}>
+              <strong>Error!</strong>
+              <p>
+                No se pudo crear la noticia por validaciones del formulario.
+              </p>
+            </div>
+          ),
+          {
+            style: {
+              backgroundColor: "red",
+              color: "#fff",
+            },
+            icon: "❌",
+            duration: 3000,
+          }
+        );
+        return;
+      }
+      // DELETE
+
+      if (openAddRds.isModify) {
+        const resultModifyRedUseCase = await createSocialMediaUseCase.execute(
+          values.name!,
+          values.url!,
+          values.image!,
+          openAddRds.selected.id,
+          values.isEnabled
+        );
+
+        if (resultModifyRedUseCase) {
+          toast(
+            (t) => (
+              <div style={{ color: "#fff" }}>
+                <strong>Exito!</strong>
+                <p>Se pudo editar la red Social.</p>
+              </div>
+            ),
+            {
+              style: {
+                backgroundColor: "green",
+                color: "#fff",
+              },
+              duration: 3000,
+            }
+          );
+        } else {
+          toast(
+            (t) => (
+              <div style={{ color: "#fff" }}>
+                <strong>Error!</strong>
+                <p>No se pudo editar la red Social.</p>
+              </div>
+            ),
+            {
+              style: {
+                backgroundColor: "red",
+                color: "#fff",
+              },
+              icon: "❌",
+              duration: 3000,
+            }
+          );
+        }
+      }
+      // CREATE
+      else {
+        const resultCreateNewUseCase = await createSocialMediaUseCase.execute(
+          values.name!,
+          values.url!,
+          values.image!
+        );
+
+        if (resultCreateNewUseCase) {
+          toast(
+            (t) => (
+              <div style={{ color: "#fff" }}>
+                <strong>Exito!</strong>
+                <p>Se pudo crear la red Social.</p>
+              </div>
+            ),
+            {
+              style: {
+                backgroundColor: "green",
+                color: "#fff",
+              },
+              duration: 3000,
+            }
+          );
+        } else {
+          toast(
+            (t) => (
+              <div style={{ color: "#fff" }}>
+                <strong>Error!</strong>
+                <p>No se pudo crear la red Social.</p>
+              </div>
+            ),
+            {
+              style: {
+                backgroundColor: "red",
+                color: "#fff",
+              },
+              icon: "❌",
+              duration: 3000,
+            }
+          );
+        }
+      }
+      setOpenAddRds({ isModify: false, open: false, selected: { id: 0 } });
+      await getSocialMedia();
+    },
+  });
+
   const [userInfo, setUserInfo] = React.useState<any>(null);
+
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false); // Estado para la carga
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -71,53 +252,7 @@ export default function Home() {
       setCurrentIndex(currentIndex - 1);
     }
   };
-  const [arrayNewaCarousel, setArrayNewaCarousel] = React.useState([
-    {
-      id: "1",
-      title: "Titulo noticia 1",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1625726411847-8cbb60cc71e6.webp",
-    },
-    {
-      id: "2",
-      title: "Titulo noticia 2",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1609621838510-5ad474b7d25d.webp",
-    },
-    {
-      id: "3",
-      title: "Titulo noticia 3",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1414694762283-acccc27bca85.webp",
-    },
-    {
-      id: "4",
-      title: "Titulo noticia 4",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1665553365602-b2fb8e5d1707.webp",
-    },
-  ]);
-
-  const [arrayRedes, setArrayRedes] = React.useState([
-    {
-      id: 1,
-      alt: "facebook icon",
-      url: "https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg",
-      link: "https://www.facebook.com/AlcaldiaDeCali/",
-    },
-    {
-      id: 2,
-      alt: "instagram icon",
-      url: "https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png",
-      link: "https://www.instagram.com/alcaldiadecali/",
-    },
-    {
-      id: 3,
-      alt: "x icon",
-      url: "https://upload.wikimedia.org/wikipedia/commons/c/cc/X_icon.svg",
-      link: "https://x.com/alcaldiadecali",
-    },
-  ]);
+  const [arrayNewaCarousel, setArrayNewaCarousel] = React.useState([]);
 
   const initNews = async () => {
     try {
@@ -140,22 +275,37 @@ export default function Home() {
 
   React.useEffect(() => {
     initNews();
+    getSocialMedia();
   }, []);
 
   // Obtén los dos elementos siguientes basados en el currentIndex
   const getVisibleItems = () => {
+    if (!Array.isArray(arrayNewaCarousel) || arrayNewaCarousel.length === 0) {
+      return [];
+    }
+
+    // Verificar que currentIndex esté dentro del rango
+    if (currentIndex >= arrayNewaCarousel.length || currentIndex < 0) {
+      console.warn("currentIndex fuera de rango:", currentIndex);
+      return [];
+    }
+
     if (currentIndex === arrayNewaCarousel.length - 1) {
       return [arrayNewaCarousel[currentIndex], arrayNewaCarousel[0]];
     }
+
     return arrayNewaCarousel.slice(currentIndex, currentIndex + 2);
   };
 
   const handleOpenAddNews = () => {
     setType("add");
+    setTilte("Añadir noticia");
     setOpenAddNews(true);
   };
 
   const handleClsAddNews = () => {
+    limpiarFormValues();
+    setError(null);
     setOpenAddNews(false);
   };
 
@@ -164,14 +314,32 @@ export default function Home() {
   );
 
   const [type, setType] = React.useState("");
+  const [tilte, setTilte] = React.useState("");
 
-  const [openAddRds, setOpenAddRds] = React.useState(false);
+  const [openAddRds, setOpenAddRds] = React.useState({
+    open: false,
+    isModify: false,
+    selected: {
+      id: 0,
+    },
+  });
   const handleCloseRds = () => {
-    setOpenAddRds(false);
+    formikForm.setFieldValue("isEnabled", true, true);
+    formikForm.setFieldValue("name", "", true);
+    formikForm.setFieldValue("image", "", true);
+    formikForm.setFieldValue("url", "", true);
+    setOpenAddRds({
+      open: false,
+      isModify: false,
+      selected: {
+        id: 0,
+      },
+    });
   };
 
   const handleOpenEditNews = async (id: string) => {
     setType("edit");
+    setTilte("Editar noticia");
     const response = await axios.get(`http://localhost:4000/news/${id}`);
     console.log("response para editar:", response?.data);
     setOpenAddNews(true);
@@ -205,7 +373,15 @@ export default function Home() {
   };
 
   const handleSubmit = async () => {
-    console.log("Valores del formulario:", formValues);
+    if (
+      !formValues.title ||
+      !formValues.image ||
+      !formValues.contenido_noticia
+    ) {
+      setError("Por favor, completa todos los campos obligatorios");
+      return;
+    }
+    setLoading(true);
     try {
       if (type === "edit") {
         await axios.put(
@@ -219,6 +395,8 @@ export default function Home() {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
     limpiarFormValues();
     handleClsAddNews();
@@ -247,6 +425,14 @@ export default function Home() {
     }
   };
 
+  //  ==================== Get All Social Media
+  const getSocialMedia = async () => {
+    const result = await getSocialMediaUseCase.execute();
+    console.log(result);
+
+    if (Array.isArray(result)) setSocialMediaData(result);
+  };
+
   return (
     <main className="h-full w-full">
       <Toaster />
@@ -264,21 +450,50 @@ export default function Home() {
         </div>
 
         <div className="flex flex-row space-x-2 items-center">
-          {arrayRedes.map((red) => (
-            <a href={red.link} target="_blank">
-              <img
-                className="w-5 h-5 cursor-pointer"
-                src={red.url}
-                alt={red.alt}
-              />
-            </a>
+          {socialMediaData.map((red) => (
+            <div className="flex flex-col">
+              {userInfo?.access_token && (
+                <MdModeEdit
+                  title="Editar"
+                  className="h-5 text-white cursor-pointer"
+                  onClick={() => {
+                    formikForm.setFieldValue("isEnabled", true, true);
+                    formikForm.setFieldValue("name", red.name, true);
+                    formikForm.setFieldValue("image", red.image, true);
+                    formikForm.setFieldValue("url", red.url, true);
+                    setOpenAddRds({
+                      open: true,
+                      isModify: true,
+                      selected: {
+                        id: red.id!,
+                      },
+                    });
+                  }}
+                />
+              )}
+              <a href={red.url} target="_blank">
+                <img
+                  className="w-5 h-5 cursor-pointer"
+                  src={red.image}
+                  alt={red.name}
+                />
+              </a>
+            </div>
           ))}
 
           {userInfo?.access_token && (
-            <MdModeEdit
+            <MdOutlineAdd
               title="Editar"
               className="h-5 text-white cursor-pointer"
-              onClick={() => setOpenAddRds(true)}
+              onClick={() =>
+                setOpenAddRds({
+                  open: true,
+                  isModify: false,
+                  selected: {
+                    id: 0,
+                  },
+                })
+              }
             />
           )}
         </div>
@@ -364,6 +579,9 @@ export default function Home() {
         <div className="bg-white w-full h-full gap-[2.75rem] overflow-y-auto">
           <div id="banner" className="w-full pt-10 ">
             <Banner />
+          </div>
+          <div className="pt-10">
+            <MenuCentral />
           </div>
           <br />
           <div className="w-full p-4 bg-white flex flex-row gap-5">
@@ -458,7 +676,7 @@ export default function Home() {
                       className="text-principal absolute top-1/2 z-10 cursor-pointer w-10 "
                     />
                   )}
-                  {getVisibleItems().map((carrousel) => (
+                  {getVisibleItems().map((carrousel: any) => (
                     <div
                       key={carrousel.id}
                       className="w-2/6 h-5/6 rounded-br20 shadow-xl cursor-pointer relative overflow-hidden"
@@ -481,11 +699,15 @@ export default function Home() {
                           />
                         )}
                       </div>
-                      <img
-                        className="h-3/4 rounded-t-br20 w-full object-cover"
-                        src={carrousel.image}
-                        alt={carrousel.title}
-                      />
+                      <Link href={`/noticia?id=${carrousel.id}`} passHref>
+                        <img
+                          id="noticia"
+                          className="h-3/4 rounded-t-br20 w-full object-cover"
+                          src={carrousel.image}
+                          alt={carrousel.title}
+                        />
+                      </Link>
+
                       <p className="text-neutral-600 text-center py-2 text-xs">
                         {carrousel.title}
                       </p>
@@ -518,32 +740,38 @@ export default function Home() {
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">
-              {"Agregar noticia"}
-            </DialogTitle>
+            <DialogTitle id="alert-dialog-title">{tilte}</DialogTitle>
             <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                <form>
-                  <CustomInput
-                    className="bg-transparent h-10 w-full pl-4 border border-l-base-300 rounded-br20"
-                    value={formValues.title}
-                    onChange={handleInputChange}
-                    name="title"
-                    label="Titutlo de la noticia"
-                  />
-                  <br />
+              {loading ? (
+                // Mostrar el indicador de carga mientras se está creando una noticia
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <DialogContentText id="alert-dialog-description">
+                  <form>
+                    <CustomInput
+                      className="bg-transparent h-10 w-full pl-4 border border-l-base-300 rounded-br20"
+                      value={formValues.title}
+                      onChange={handleInputChange}
+                      name="title"
+                      label="Titutlo de la noticia"
+                    />
+                    <br />
 
-                  <CustomTextArea
-                    className="bg-transparent h-40 p-4 w-full pl-4 border border-l-base-300 rounded-br20"
-                    value={formValues.contenido_noticia}
-                    onChange={handleTxtAreaChange}
-                    name="contenido_noticia"
-                    label="Contenido noticia"
-                  />
-                  <br />
-                  <CustomImageInput returnFile={handleImageChange} />
-                </form>
-              </DialogContentText>
+                    <CustomTextArea
+                      className="bg-transparent h-40 p-4 w-full pl-4 border border-l-base-300 rounded-br20"
+                      value={formValues.contenido_noticia}
+                      onChange={handleTxtAreaChange}
+                      name="contenido_noticia"
+                      label="Contenido noticia"
+                    />
+                    <br />
+                    <CustomImageInput returnFile={handleImageChange} />
+                    {error && <p className="error pt-2">{error}</p>}
+                  </form>
+                </DialogContentText>
+              )}
             </DialogContent>
             <DialogActions className="justify-center pb-6">
               <Button onClick={handleSubmit} variant="outlined" color="success">
@@ -566,11 +794,11 @@ export default function Home() {
             aria-describedby="alert-dialog-description"
           >
             <DialogTitle id="alert-dialog-title">
-              {"Eliminar imagen del banner"}
+              {"Eliminar Noticia"}
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                ¿Está seguro de eliminar la imagen del banner?
+                ¿Está seguro que desea eliminar esta noticia?
               </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -588,17 +816,20 @@ export default function Home() {
           </Dialog>
 
           <Dialog
-            open={openAddRds}
+            open={openAddRds.open}
             onClose={handleCloseRds}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
             <DialogTitle id="alert-dialog-title">
-              {"Añadir nueva red"}
+              {openAddRds.isModify ? "Editar red" : "Añadir nueva red"}
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                <form className="flex flex-col gap-4">
+                <form
+                  className="flex flex-col gap-4"
+                  onSubmit={formikForm.handleSubmit}
+                >
                   <div className="flex flex-col">
                     <label htmlFor="altImg">Ingresa el alt:</label>
                     <input
@@ -606,7 +837,22 @@ export default function Home() {
                       id="altImg"
                       placeholder="alt"
                       className="input input-bordered w-full max-w-xs bg-transparent mt-2"
+                      value={formikForm.values.name}
+                      onChange={(
+                        titleChange: ChangeEvent<HTMLInputElement>
+                      ) => {
+                        formikForm.setFieldValue(
+                          "name",
+                          titleChange.target.value,
+                          true
+                        );
+                      }}
                     />
+                    {formikForm.errors.name && (
+                      <p className="text-red-500 text-xs italic">
+                        {formikForm.errors.name}
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex flex-col">
@@ -616,7 +862,22 @@ export default function Home() {
                       id="urlImg"
                       placeholder="url"
                       className="input input-bordered w-full max-w-xs bg-transparent mt-2"
+                      value={formikForm.values.image}
+                      onChange={(
+                        titleChange: ChangeEvent<HTMLInputElement>
+                      ) => {
+                        formikForm.setFieldValue(
+                          "image",
+                          titleChange.target.value,
+                          true
+                        );
+                      }}
                     />
+                    {formikForm.errors.image && (
+                      <p className="text-red-500 text-xs italic">
+                        {formikForm.errors.image}
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex flex-col">
@@ -626,19 +887,49 @@ export default function Home() {
                       id="linkImg"
                       placeholder="link"
                       className="input input-bordered w-full max-w-xs bg-transparent mt-2"
+                      value={formikForm.values.url}
+                      onChange={(
+                        titleChange: ChangeEvent<HTMLInputElement>
+                      ) => {
+                        formikForm.setFieldValue(
+                          "url",
+                          titleChange.target.value,
+                          true
+                        );
+                      }}
                     />
+                    {formikForm.errors.url && (
+                      <p className="text-red-500 text-xs italic">
+                        {formikForm.errors.url}
+                      </p>
+                    )}
                   </div>
                 </form>
               </DialogContentText>
             </DialogContent>
             <DialogActions>
               <div className="flex flex-row w-full justify-center gap-3 pb-5">
-              <Button onClick={handleCloseRds} variant="outlined" color="error">
-                Cancelar
-              </Button>
-              <Button onClick={handleCloseRds} variant="outlined" color="success">
-                Aceptar
-              </Button>
+                <Button
+                  onClick={() => {
+                    formikForm.setFieldValue("isEnabled", false, true);
+                    if (openAddRds.isModify) {
+                      formikForm.submitForm();
+                    } else {
+                      handleCloseRds();
+                    }
+                  }}
+                  variant="outlined"
+                  color="error"
+                >
+                  {openAddRds.isModify ? "Borrar" : "Cancelar"}
+                </Button>
+                <Button
+                  onClick={formikForm.submitForm}
+                  variant="outlined"
+                  color="success"
+                >
+                  Aceptar
+                </Button>
               </div>
             </DialogActions>
           </Dialog>
