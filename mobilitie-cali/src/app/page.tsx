@@ -26,7 +26,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { isEmptyArray, useFormik } from "formik";
 import { MdDelete, MdModeEdit, MdOutlineAdd } from "react-icons/md";
 import * as Yup from "yup";
-
 import { MenuCentral } from "@/components/menu-central/MenuCentral";
 type FormSocialMediaValues = {
   name?: string;
