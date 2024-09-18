@@ -2,6 +2,7 @@
 import React from "react";
 import "./pqrsd.css";
 import Link from "next/link";
+import { Topbar } from "@/components/topbar/Topbar";
 
 const PQRSD = () => {
   const [arrayOpciones, setArrayOpciones] = React.useState<any>([
@@ -32,6 +33,7 @@ const PQRSD = () => {
   ]);
   return (
     <>
+    <Topbar />
       <div className="w-full h-full flex flex-row justify-center items-center gap-3 px-10">
         {arrayOpciones.map((element: any) => (
           <div className="w-1/5">

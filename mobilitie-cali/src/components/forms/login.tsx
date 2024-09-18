@@ -14,6 +14,11 @@ export default function LoginForm() {
   //Captcha func
   const [tryCount, setTryCount] = React.useState(0);
   const [captchaCode, setCaptchaCode] = React.useState("");
+  const [usuario, setUsuario] = React.useState({
+    email: "",
+    name: ""
+  });
+
   const generarCodigo = () => {
     const letra = String.fromCharCode(97 + Math.floor(Math.random() * 26));
     const numeros = Math.floor(1000 + Math.random() * 9000);
@@ -23,7 +28,8 @@ export default function LoginForm() {
   const onSubmit = async (data: any) => {
     try {
       const response = await axios.post("http://localhost:4000/auth", data);
-      console.log("Response:", response.data);
+      console.log("Response del usuario:", response.data.user);
+      setUsuario(response.data.user);
       localStorage.setItem("user", JSON.stringify(response.data));
       window.location.href = "/";
     } catch (error: any) {
@@ -110,6 +116,9 @@ export default function LoginForm() {
       <div className="h-full w-full flex flex-col justify-center items-center gap-y-6">
         {tryCount < 3 ? (
           <>
+          <div className="justify-center">
+          <span> Bienvenido! <strong>{usuario?.name}</strong> </span>
+          </div>
             <div className="w-10/12">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 Email
