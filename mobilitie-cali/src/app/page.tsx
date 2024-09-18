@@ -2,7 +2,8 @@
 import toast, { Toaster } from "react-hot-toast";
 import { FaSearch, FaUserAlt } from "react-icons/fa";
 import { FaBars, FaHouse, FaLanguage, FaPlus } from "react-icons/fa6";
-
+import LoginForm from "../components/forms/login";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { Banner } from "@/components/banner/Banner";
 import { SocialMediaInterface } from "@/domain/models";
 import CreateSocialMediaUseCase from "@/domain/usecases/social-media/create-social-media.use.case";
@@ -10,9 +11,7 @@ import GetSocialMediaUseCase from "@/domain/usecases/social-media/get-social-med
 import { appContainer, USECASES_TYPES } from "@/infrastructure/ioc";
 import { CustomImageInput, CustomInput, CustomTextArea } from "@/presentation";
 import {
-  Box,
   Button,
-  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -20,12 +19,14 @@ import {
   DialogTitle,
 } from "@mui/material";
 import axios from "axios";
+import Link from "next/link";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
+import "react-toastify/dist/ReactToastify.css";
 import { isEmptyArray, useFormik } from "formik";
-import React, { ChangeEvent, useEffect, useState } from "react";
 import { MdDelete, MdModeEdit, MdOutlineAdd } from "react-icons/md";
 import * as Yup from "yup";
-import LoginForm from "../components/forms/login";
-import Link from "next/link";
+
 import { MenuCentral } from "@/components/menu-central/MenuCentral";
 type FormSocialMediaValues = {
   name?: string;
@@ -251,9 +252,7 @@ export default function Home() {
       setCurrentIndex(currentIndex - 1);
     }
   };
-  const [arrayNewaCarousel, setArrayNewaCarousel] = React.useState([
-   
-  ]);
+  const [arrayNewaCarousel, setArrayNewaCarousel] = React.useState([]);
 
   const initNews = async () => {
     try {
@@ -372,10 +371,13 @@ export default function Home() {
       image,
     });
   };
-  
 
   const handleSubmit = async () => {
-    if (!formValues.title || !formValues.image || !formValues.contenido_noticia) {
+    if (
+      !formValues.title ||
+      !formValues.image ||
+      !formValues.contenido_noticia
+    ) {
       setError("Por favor, completa todos los campos obligatorios");
       return;
     }
@@ -579,7 +581,7 @@ export default function Home() {
             <Banner />
           </div>
           <div className="pt-10">
-              <MenuCentral />
+            <MenuCentral />
           </div>
           <br />
           <div className="w-full p-4 bg-white flex flex-row gap-5">
@@ -738,13 +740,11 @@ export default function Home() {
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">
-              {tilte}
-            </DialogTitle>
+            <DialogTitle id="alert-dialog-title">{tilte}</DialogTitle>
             <DialogContent>
               {loading ? (
                 // Mostrar el indicador de carga mientras se está creando una noticia
-                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
                   <CircularProgress />
                 </Box>
               ) : (

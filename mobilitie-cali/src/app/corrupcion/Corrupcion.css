@@ -1,0 +1,88 @@
+.contenedor-principal-corrupcion {}
+
+.topbar {
+    border: 1px solid rgb(189, 9, 9);
+}
+
+
+
+.center-container {
+    padding-top: 100px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.image-alcaldia {
+    width: 150px;
+    height: 120px;
+}
+
+.card-title-corrupcion {
+    font-weight: 700;
+}
+
+.card-body {
+    border: 1px solid #bce8f1;
+    border-color: #bce8f1;
+    background-color: #d9edf7;
+
+}
+
+.card-body-corrupcion {
+    border-radius: 5px;
+    padding: 20px;
+    border: 1px solid #bce8f1;
+    background-color: #d9edf7;
+
+}
+
+.message-accordion {
+    color: #31708f;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: justify;
+}
+
+.custom-card-width {
+    width: 800px;
+    height: 400px;
+}
+
+.formato-paso-a-paso {
+    cursor: pointer;
+    color: #607890;
+}
+
+.contenedor-icon-formato-paso {
+    display: flex;
+}
+
+.icon-formato-paso {
+    margin-right: 10px;
+}
+
+.testigos {
+    color: #31708f;
+    font-weight: 500;
+}
+
+.btn-corrupcion {
+    color: #fff;
+    background-color: #428bca;
+    border-color: #357ebd;
+    padding: 20px;
+}
+
+.btn-corrupcion:hover {
+    color: #fff;
+    background-color: #3071a9;
+    border-color: #285e8e;
+}
+
+.error-message{
+    color: red;
+    font-weight: 500;
+    font-size: 16px;
+}
