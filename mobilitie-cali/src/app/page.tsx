@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import { CustomImageInput, CustomInput, CustomTextArea } from "@/presentation";
 import axios from "axios";
+import { PQRSDButton } from "@/presentation/components/atoms/buttons/pqrsd";
 
 export default function Home() {
   const [userInfo, setUserInfo] = React.useState<any>(null);
@@ -282,8 +283,8 @@ export default function Home() {
           )}
         </div>
 
-        <div className="flex flex-row space-x-2">
-          <FaLanguage style={{ color: "white" }} />
+        <div className="flex flex-row space-x-2 items-center">
+          <PQRSDButton />
           <FaSearch style={{ color: "white" }} />
           <FaUserAlt
             style={{ color: "white", cursor: "pointer" }}
