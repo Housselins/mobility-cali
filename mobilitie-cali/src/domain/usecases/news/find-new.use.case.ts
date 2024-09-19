@@ -2,6 +2,7 @@ import { NewInterface } from "@/domain/models";
 import type { INewsRepository } from "@/domain/repositories/new.repository";
 import { inject, injectable } from "inversify";
 import { REPOSITORY_TYPES } from "../../../infrastructure/ioc/containers/repositories/repoository.types";
+import { IFindNews } from "@/lib/interfaces";
 
 @injectable()
 export default class FindNewUseCase {
@@ -14,11 +15,13 @@ export default class FindNewUseCase {
     this.newRepository = newRepository;
   }
 
-  async execute(token?: string): Promise<NewInterface[] | undefined> {
+  async execute(
+    token?: string,
+    filter?: IFindNews
+  ): Promise<NewInterface[] | undefined> {
     if (!token) return;
-
     const request = await this.newRepository
-      .findNews(token)
+      .findNews(token, filter)
       .catch((error) => error);
 
     if (request instanceof Error) {

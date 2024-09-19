@@ -1,6 +1,16 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateNewDTO {
+  @IsNumber()
+  @IsOptional()
+  id: number;
+
   @IsString()
   @IsNotEmpty()
   title: string;
@@ -11,6 +21,10 @@ export class CreateNewDTO {
 
   @IsOptional()
   image?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  attached?: boolean;
 }
 
 export interface NewInterface {
@@ -18,7 +32,19 @@ export interface NewInterface {
   title: string;
   contenido_noticia?: string;
   image?: string;
+  attached?: boolean;
   isEnabled: boolean;
   createdAt: string;
   updateddAt: string;
+}
+
+export interface NewFilter {
+  id?: number;
+  title?: string;
+  contenido_noticia?: string;
+  image?: string;
+  attached?: boolean;
+  isEnabled?: boolean;
+  createdAt?: string;
+  updateddAt?: string;
 }
