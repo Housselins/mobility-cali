@@ -1,15 +1,14 @@
 "use client";
-import toast, { Toaster } from "react-hot-toast";
-import { FaSearch, FaUserAlt } from "react-icons/fa";
-import { FaBars, FaHouse, FaLanguage, FaPlus } from "react-icons/fa6";
-import LoginForm from "../components/forms/login";
-import React, { ChangeEvent, useEffect, useState } from "react";
 import { Banner } from "@/components/banner/Banner";
-import { SocialMediaInterface } from "@/domain/models";
+import { MenuCentral } from "@/components/menu-central/MenuCentral";
+import { NewInterface, SocialMediaInterface } from "@/domain/models";
+import CreateNewUseCase from "@/domain/usecases/news/create-new.use.case";
+import FindNewUseCase from "@/domain/usecases/news/find-new.use.case";
 import CreateSocialMediaUseCase from "@/domain/usecases/social-media/create-social-media.use.case";
 import GetSocialMediaUseCase from "@/domain/usecases/social-media/get-social-media.use.case";
 import { appContainer, USECASES_TYPES } from "@/infrastructure/ioc";
 import { CustomImageInput, CustomInput, CustomTextArea } from "@/presentation";
+import { PQRSDButton } from "@/presentation/components/atoms/buttons/pqrsd";
 import {
   Button,
   Dialog,
@@ -18,16 +17,20 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import axios from "axios";
-import { PQRSDButton } from "@/presentation/components/atoms/buttons/pqrsd";
-import Link from "next/link";
-import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import "react-toastify/dist/ReactToastify.css";
+import CircularProgress from "@mui/material/CircularProgress";
+import axios from "axios";
 import { isEmptyArray, useFormik } from "formik";
-import { MdDelete, MdModeEdit, MdOutlineAdd } from "react-icons/md";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import { FaSearch, FaUserAlt } from "react-icons/fa";
+import { FaBars, FaHouse, FaPlus } from "react-icons/fa6";
+import { MdDelete, MdModeEdit, MdOutlineAdd, MdStar } from "react-icons/md";
+import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
-import { MenuCentral } from "@/components/menu-central/MenuCentral";
+import LoginForm from "../components/forms/login";
 type FormSocialMediaValues = {
   name?: string;
   url?: string;
@@ -40,7 +43,7 @@ type FormSocialMediaProps = {
 
 export default function Home() {
   // ==================== INSTANCES OF USE CASES
-
+  const router = useRouter();
   // Create Social Media
   const createSocialMediaUseCase = appContainer.get<CreateSocialMediaUseCase>(
     USECASES_TYPES._CreateSocialMediaUseCase
@@ -48,6 +51,14 @@ export default function Home() {
   // Get Social Media
   const getSocialMediaUseCase = appContainer.get<GetSocialMediaUseCase>(
     USECASES_TYPES._GetSocialMediaUseCase
+  );
+  // Find News
+  const getNewsUseCase = appContainer.get<FindNewUseCase>(
+    USECASES_TYPES._FindNewUseCase
+  );
+  // Update or Create New
+  const createNewUseCase = appContainer.get<CreateNewUseCase>(
+    USECASES_TYPES._CreateNewUseCase
   );
 
   const [isModify, setIsModify] = React.useState<any>(null);
@@ -205,11 +216,9 @@ export default function Home() {
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
-    console.log("userData", userData);
 
     if (userData) {
       setUserInfo(JSON.parse(userData));
-      console.log("userInfo", userInfo);
     }
   }, []);
   const ocultarInitSesion = () => {
@@ -252,12 +261,25 @@ export default function Home() {
       setCurrentIndex(currentIndex - 1);
     }
   };
-  const [arrayNewaCarousel, setArrayNewaCarousel] = React.useState([]);
-
+  const [arrayNewaCarousel, setArrayNewaCarousel] = React.useState<
+    NewInterface[]
+  >([]);
+  const [attachedNews, setAttachedNews] = useState<NewInterface[]>([]);
   const initNews = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/news");
-      setArrayNewaCarousel(response?.data);
+      const response = await getNewsUseCase.execute(
+        userInfo?.access_token ?? "token"
+      );
+      const attachedResponse = await getNewsUseCase.execute(
+        userInfo?.access_token ?? "token",
+        { attached: true }
+      );
+
+      setArrayNewaCarousel(response ? response : []);
+
+      setAttachedNews(attachedResponse ? attachedResponse.slice(0, 3) : []);
+
+      return;
     } catch (error) {
       console.error(error);
     }
@@ -271,7 +293,7 @@ export default function Home() {
     }, 3000); // Cambia cada 3 segundos
 
     return () => clearInterval(interval); // Limpia el intervalo cuando el componente se desmonte
-  }, [arrayNewaCarousel.length]);
+  }, [arrayNewaCarousel]);
 
   React.useEffect(() => {
     initNews();
@@ -279,22 +301,22 @@ export default function Home() {
   }, []);
 
   // Obtén los dos elementos siguientes basados en el currentIndex
-  const getVisibleItems = () => {
-    if (!Array.isArray(arrayNewaCarousel) || arrayNewaCarousel.length === 0) {
+  const getVisibleItems = (newArray: NewInterface[]) => {
+    if (!Array.isArray(newArray) || newArray.length === 0) {
       return [];
     }
 
     // Verificar que currentIndex esté dentro del rango
-    if (currentIndex >= arrayNewaCarousel.length || currentIndex < 0) {
+    if (currentIndex >= newArray.length || currentIndex < 0) {
       console.warn("currentIndex fuera de rango:", currentIndex);
       return [];
     }
 
-    if (currentIndex === arrayNewaCarousel.length - 1) {
-      return [arrayNewaCarousel[currentIndex], arrayNewaCarousel[0]];
+    if (currentIndex === newArray.length - 1) {
+      return [newArray[currentIndex], newArray[0]];
     }
 
-    return arrayNewaCarousel.slice(currentIndex, currentIndex + 2);
+    return newArray.slice(currentIndex, currentIndex + 2);
   };
 
   const handleOpenAddNews = () => {
@@ -428,7 +450,6 @@ export default function Home() {
   //  ==================== Get All Social Media
   const getSocialMedia = async () => {
     const result = await getSocialMediaUseCase.execute();
-    console.log(result);
 
     if (Array.isArray(result)) setSocialMediaData(result);
   };
@@ -616,54 +637,79 @@ export default function Home() {
           </div>
 
           <div className="bg-white flex flex-row pt-4 pb-4 justify-around">
-            <div className="w-1/4 relative rounded-br20">
-              <img
-                className="w-full h-full object-cover rounded-br20"
-                src="https://www.cali.gov.co/movilidad/publicaciones/182709/trabajo-conjunto-entre-movilidad-y-direccion-de-transito-y-transporte-logra-resultados-exitosos-se-han-impuesto-3739-notificaciones/info/principal/media/pubInt/thumbs/thpub_700X400_182709.jpg"
-                alt=""
-              />
+            {attachedNews.map((attachedNew) => {
+              return (
+                <div className="w-1/4 relative rounded-br20">
+                  <div className="absolute top-0 right-0 flex flex-col justify-center items-center gap-3 text-neutral-300 text-xs font-bold p-2">
+                    {userInfo && userInfo.user.rol.id === 1 && (
+                      <MdDelete
+                        size={20}
+                        title="Eliminar"
+                        className="text-neutral-500"
+                        onClick={() =>
+                          handleOpenEditNews(attachedNew.id.toString())
+                        }
+                      />
+                    )}
+                    {userInfo && userInfo.user.rol.id === 1 && (
+                      <MdModeEdit
+                        size={20}
+                        title="Editar"
+                        className="text-neutral-500"
+                        onClick={() =>
+                          handleOpenEditNews(attachedNew.id.toString())
+                        }
+                      />
+                    )}
+                    {userInfo && userInfo.user.rol.id === 1 && (
+                      <MdStar
+                        size={20}
+                        title="Fijar"
+                        className={`${
+                          attachedNew.attached
+                            ? "text-yellow"
+                            : "text-neutral-500"
+                        } bg-white rounded-full cursor-pointer z-50`}
+                        onClick={async () => {
+                          await createNewUseCase
+                            .execute(
+                              attachedNew.title!,
+                              userInfo?.access_token,
+                              attachedNew.content,
+                              attachedNew.image,
+                              attachedNew?.id,
+                              !attachedNew.attached,
+                              true
+                            )
+                            .then(async () => {
+                              await initNews();
+                            });
+                        }}
+                      />
+                    )}
+                  </div>
+                  <img
+                    className="w-full h-full object-cover rounded-br20"
+                    src={attachedNew.image}
+                    alt={attachedNew.title}
+                  />
 
-              <div className="absolute p-2 flex flex-col justify-end rounded-b-br20 bottom-0 left-0 h-3/4">
-                <p className="text-white text-xs text-left mb-8 font-bold">
-                  repellendus veniam magnam, dolores natus esse. Non, illum.
-                </p>
-                <button className="text-white w-2/4 text-xs py-2 px-3 rounded-br20 bg-principal font-semibold">
-                  Saber más
-                </button>
-              </div>
-            </div>
-            <div className="w-1/3 relative rounded-br20">
-              <img
-                className="w-full h-full object-cover rounded-br20"
-                src="https://www.cali.gov.co/movilidad/publicaciones/182709/trabajo-conjunto-entre-movilidad-y-direccion-de-transito-y-transporte-logra-resultados-exitosos-se-han-impuesto-3739-notificaciones/info/principal/media/pubInt/thumbs/thpub_700X400_182709.jpg"
-                alt=""
-              />
-
-              <div className="absolute p-2 flex flex-col justify-end rounded-b-br20 bottom-0 left-0 h-3/4">
-                <p className="text-white text-xs text-left mb-8 font-bold">
-                  repellendus veniam magnam, dolores natus esse. Non, illum.
-                </p>
-                <button className="text-white w-2/4 text-xs py-2 px-3 rounded-br20 bg-principal font-semibold">
-                  Saber más
-                </button>
-              </div>
-            </div>
-            <div className="w-1/4 relative rounded-br20">
-              <img
-                className="w-full h-full object-cover rounded-br20"
-                src="https://www.cali.gov.co/movilidad/publicaciones/182709/trabajo-conjunto-entre-movilidad-y-direccion-de-transito-y-transporte-logra-resultados-exitosos-se-han-impuesto-3739-notificaciones/info/principal/media/pubInt/thumbs/thpub_700X400_182709.jpg"
-                alt=""
-              />
-
-              <div className="absolute p-2 flex flex-col justify-end rounded-b-br20 bottom-0 left-0 h-3/4">
-                <p className="text-white text-xs text-left mb-8 font-bold">
-                  repellendus veniam magnam, dolores natus esse. Non, illum.
-                </p>
-                <button className="text-white w-2/4 text-xs py-2 px-3 rounded-br20 bg-principal font-semibold">
-                  Saber más
-                </button>
-              </div>
-            </div>
+                  <div className="absolute p-2 flex flex-col justify-end rounded-b-br20 bottom-0 left-0 h-3/4">
+                    <p className="text-white text-xs text-left mb-8 font-bold">
+                      {attachedNew.title}
+                    </p>
+                    <button
+                      className="text-white w-2/4 text-xs py-2 px-3 rounded-br20 bg-principal font-semibold"
+                      onClick={() => {
+                        router.push(`/noticia?id=${attachedNew.id}`);
+                      }}
+                    >
+                      Saber más
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
           <div>
             <div className="carousel w-full">
@@ -676,43 +722,72 @@ export default function Home() {
                       className="text-principal absolute top-1/2 z-10 cursor-pointer w-10 "
                     />
                   )}
-                  {getVisibleItems().map((carrousel: any) => (
-                    <div
-                      key={carrousel.id}
-                      className="w-2/6 h-5/6 rounded-br20 shadow-xl cursor-pointer relative overflow-hidden"
-                    >
-                      <div className="absolute top-0 right-0 flex flex-col justify-center items-center gap-3 text-neutral-300 text-xs font-bold p-2">
-                        {userInfo && userInfo.user.rol.id === 1 && (
-                          <MdDelete
-                            size={20}
-                            title="Eliminar"
-                            className="text-neutral-500"
-                            onClick={() => handleOpenDltNews(carrousel.id)}
-                          />
-                        )}
-                        {userInfo && userInfo.user.rol.id === 1 && (
-                          <MdModeEdit
-                            size={20}
-                            title="Editar"
-                            className="text-neutral-500"
-                            onClick={() => handleOpenEditNews(carrousel.id)}
-                          />
-                        )}
-                      </div>
-                      <Link href={`/noticia?id=${carrousel.id}`} passHref>
-                        <img
-                          id="noticia"
-                          className="h-3/4 rounded-t-br20 w-full object-cover"
-                          src={carrousel.image}
-                          alt={carrousel.title}
-                        />
-                      </Link>
+                  {arrayNewaCarousel &&
+                    getVisibleItems(arrayNewaCarousel).map((carrousel: any) => {
+                      return (
+                        <div
+                          key={carrousel.id}
+                          className="w-2/6 h-5/6 rounded-br20 shadow-xl cursor-pointer relative overflow-hidden"
+                        >
+                          <div className="absolute top-0 right-0 flex flex-col justify-center items-center gap-3 text-neutral-300 text-xs font-bold p-2">
+                            {userInfo && userInfo.user.rol.id === 1 && (
+                              <MdDelete
+                                size={20}
+                                title="Eliminar"
+                                className="text-neutral-500"
+                                onClick={() => handleOpenDltNews(carrousel.id)}
+                              />
+                            )}
+                            {userInfo && userInfo.user.rol.id === 1 && (
+                              <MdModeEdit
+                                size={20}
+                                title="Editar"
+                                className="text-neutral-500"
+                                onClick={() => handleOpenEditNews(carrousel.id)}
+                              />
+                            )}
+                            {userInfo && userInfo.user.rol.id === 1 && (
+                              <MdStar
+                                size={20}
+                                title="Fijar"
+                                className={`${
+                                  carrousel.attached
+                                    ? "text-yellow"
+                                    : "text-neutral-500"
+                                } bg-white rounded-full cursor-pointer z-50`}
+                                onClick={async () => {
+                                  await createNewUseCase
+                                    .execute(
+                                      carrousel.title!,
+                                      userInfo?.access_token,
+                                      carrousel.content,
+                                      carrousel.image,
+                                      carrousel?.id,
+                                      !carrousel.attached,
+                                      true
+                                    )
+                                    .then(async () => {
+                                      await initNews();
+                                    });
+                                }}
+                              />
+                            )}
+                          </div>
+                          <Link href={`/noticia?id=${carrousel.id}`} passHref>
+                            <img
+                              id="noticia"
+                              className="h-3/4 rounded-t-br20 w-full object-cover"
+                              src={carrousel.image}
+                              alt={carrousel.title}
+                            />
+                          </Link>
 
-                      <p className="text-neutral-600 text-center py-2 text-xs">
-                        {carrousel.title}
-                      </p>
-                    </div>
-                  ))}
+                          <p className="text-neutral-600 text-center py-2 text-xs">
+                            {carrousel.title}
+                          </p>
+                        </div>
+                      );
+                    })}
                 </div>
                 <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
                   <button
