@@ -25,6 +25,18 @@ export class CreateNewDTO {
   @IsBoolean()
   @IsOptional()
   attached?: boolean;
+
+  @IsOptional()
+  @IsString()
+  file?: string;
+
+  @IsOptional()
+  @IsString()
+  fileName?: string;
+
+  @IsOptional()
+  @IsString()
+  fileDescription?: string;
 }
 
 export interface NewInterface {
@@ -33,6 +45,9 @@ export interface NewInterface {
   contenido_noticia?: string;
   image?: string;
   attached?: boolean;
+  file?: string;
+  fileName?: string;
+  fileDescription?: string;
   isEnabled: boolean;
   createdAt: string;
   updateddAt: string;
@@ -44,6 +59,9 @@ export interface NewFilter {
   contenido_noticia?: string;
   image?: string;
   attached?: boolean;
+  file?: string;
+  fileName?: string;
+  fileDescription?: string;
   isEnabled?: boolean;
   createdAt?: string;
   updateddAt?: string;

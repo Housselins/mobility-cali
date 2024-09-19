@@ -17,8 +17,6 @@ export class NewsController {
   constructor(private newsService: NewsService) {}
   @Post()
   createNewEndpoint(@Body() newsData: CreateNewDTO) {
-    console.log(newsData);
-    
     return this.newsService.createNew(newsData);
   }
   @Get()

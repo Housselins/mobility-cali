@@ -12,6 +12,20 @@ export class NewsService {
 
   async createNew(newData: CreateNewDTO) {
     try {
+      const pdf = {
+        ...(newData.file && { file: newData.file }),
+      };
+      const pdfDesc = {
+        ...(newData.fileDescription && {
+          fileDescription: newData.fileDescription,
+        }),
+      };
+      const fileName = {
+        ...(newData.fileName && {
+          fileName: newData.fileName,
+        }),
+      };
+
       if (newData.id) {
         const update = await this.prismaService.new.update({
           where: { id: newData.id },
@@ -20,6 +34,9 @@ export class NewsService {
             title: newData.title,
             contenido_noticia: newData.contenido_noticia,
             image: newData.image,
+            ...(pdf && { ...pdf }),
+            ...(fileName && { ...fileName }),
+            ...(pdfDesc && { ...pdfDesc }),
           },
         });
 

@@ -24,12 +24,12 @@ export default class CreateNewUseCase {
     status?: boolean
   ): Promise<NewInterface | undefined> {
     console.log(token);
-    
+
     if (!token) return;
 
     const newData: CreateNewInterface = {
       title,
-      content,
+      contenido_noticia: content,
       image,
       id,
       attached,

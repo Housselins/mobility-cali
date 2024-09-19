@@ -1,13 +1,22 @@
 "use client";
 import { Banner } from "@/components/banner/Banner";
 import { MenuCentral } from "@/components/menu-central/MenuCentral";
-import { NewInterface, SocialMediaInterface } from "@/domain/models";
+import {
+  CreateNewInterface,
+  NewInterface,
+  SocialMediaInterface,
+} from "@/domain/models";
 import CreateNewUseCase from "@/domain/usecases/news/create-new.use.case";
 import FindNewUseCase from "@/domain/usecases/news/find-new.use.case";
 import CreateSocialMediaUseCase from "@/domain/usecases/social-media/create-social-media.use.case";
 import GetSocialMediaUseCase from "@/domain/usecases/social-media/get-social-media.use.case";
 import { appContainer, USECASES_TYPES } from "@/infrastructure/ioc";
-import { CustomImageInput, CustomInput, CustomTextArea } from "@/presentation";
+import {
+  CustomImageInput,
+  CustomInput,
+  CustomPdfInput,
+  CustomTextArea,
+} from "@/presentation";
 import { PQRSDButton } from "@/presentation/components/atoms/buttons/pqrsd";
 import {
   Button,
@@ -27,7 +36,13 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { FaSearch, FaUserAlt } from "react-icons/fa";
 import { FaBars, FaHouse, FaPlus } from "react-icons/fa6";
-import { MdDelete, MdModeEdit, MdOutlineAdd, MdStar } from "react-icons/md";
+import {
+  MdDelete,
+  MdModeEdit,
+  MdOutlineAdd,
+  MdStar,
+  MdUploadFile,
+} from "react-icons/md";
 import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
 import LoginForm from "../components/forms/login";
@@ -233,6 +248,15 @@ export default function Home() {
     contenido_noticia: "",
     image: "",
   });
+  const [pdfFormValues, setPdfFormValues] = React.useState({
+    id: 0,
+    title: "",
+    contenido_noticia: "",
+    image: "",
+    pdfName: "",
+    pdfFile: "",
+    pdfDescription: "",
+  });
 
   const limpiarFormValues = () => {
     setFormValues({
@@ -241,8 +265,80 @@ export default function Home() {
       image: "",
     });
   };
+  const limpiarPdfFormValues = () => {
+    setPdfFormValues({
+      id: 0,
+      title: "",
+      contenido_noticia: "",
+      image: "",
+      pdfName: "",
+      pdfFile: "",
+      pdfDescription: "",
+    });
+  };
   const [openAddNews, setOpenAddNews] = React.useState(false);
+  const [addFile, setAddFile] = React.useState(false);
+  const handleOpenAddFile = async (id: string) => {
+    const response: NewInterface = await axios
+      .get(`http://localhost:4000/news/${id}`)
+      .then((data) => data.data)
+      .catch();
 
+    const pdfFormValues = {
+      id: response.id,
+      title: response.title ?? "",
+      contenido_noticia: response.contenido_noticia ?? "",
+      image: response.image ?? "",
+      pdfName: response.fileName ?? "",
+      pdfFile: response.file ?? "",
+      pdfDescription: response.fileDescription ?? "",
+    };
+    setPdfFormValues(pdfFormValues);
+    setAddFile(true);
+  };
+  const handlePdfSubmit = async () => {
+    if (
+      !pdfFormValues.id ||
+      !pdfFormValues.title ||
+      !pdfFormValues.image ||
+      !pdfFormValues.contenido_noticia ||
+      !pdfFormValues.pdfName ||
+      !pdfFormValues.pdfFile ||
+      !pdfFormValues.pdfDescription
+    ) {
+      setError("Por favor, completa todos los campos obligatorios");
+      return;
+    }
+    setLoading(true);
+    try {
+      const updateableNewPdf: CreateNewInterface = {
+        id: pdfFormValues.id,
+        title: pdfFormValues.title,
+        contenido_noticia: pdfFormValues.contenido_noticia,
+        file: pdfFormValues.pdfFile,
+        fileName: pdfFormValues.pdfName,
+        fileDescription: pdfFormValues.pdfDescription,
+      };
+      await axios.post(`http://localhost:4000/news`, updateableNewPdf);
+      await initNews();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+    handleClsAddFile();
+  };
+  const handleClsAddFile = () => {
+    limpiarPdfFormValues();
+    setError(null);
+    setAddFile(false);
+  };
+  const handlePdfChange = (pdf: string) => {
+    setPdfFormValues({
+      ...pdfFormValues,
+      pdfFile: pdf,
+    });
+  };
   const [controladorRenderMenu, setControladorRenderMenu] =
     React.useState(false);
 
@@ -376,6 +472,13 @@ export default function Home() {
       [name]: value,
     });
   };
+  const handlePdfInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setPdfFormValues({
+      ...pdfFormValues,
+      [name]: value,
+    });
+  };
 
   const handleTxtAreaChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
@@ -383,6 +486,15 @@ export default function Home() {
     const { name, value } = event.target;
     setFormValues({
       ...formValues,
+      [name]: value,
+    });
+  };
+  const handlePdfTxtAreaChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const { name, value } = event.target;
+    setPdfFormValues({
+      ...pdfFormValues,
       [name]: value,
     });
   };
@@ -675,7 +787,7 @@ export default function Home() {
                             .execute(
                               attachedNew.title!,
                               userInfo?.access_token,
-                              attachedNew.content,
+                              attachedNew.contenido_noticia,
                               attachedNew.image,
                               attachedNew?.id,
                               !attachedNew.attached,
@@ -685,6 +797,16 @@ export default function Home() {
                               await initNews();
                             });
                         }}
+                      />
+                    )}
+                    {userInfo && userInfo.user.rol.id === 1 && (
+                      <MdUploadFile
+                        size={20}
+                        title="Editar"
+                        className="text-neutral-500 bg-white rounded-full cursor-pointer z-50"
+                        onClick={() =>
+                          handleOpenAddFile(attachedNew.id.toString())
+                        }
                       />
                     )}
                   </div>
@@ -772,6 +894,14 @@ export default function Home() {
                                 }}
                               />
                             )}
+                            {userInfo && userInfo.user.rol.id === 1 && (
+                              <MdUploadFile
+                                size={20}
+                                title="Editar"
+                                className="text-neutral-500 bg-white rounded-full cursor-pointer z-50"
+                                onClick={() => handleOpenAddFile(carrousel.id)}
+                              />
+                            )}
                           </div>
                           <Link href={`/noticia?id=${carrousel.id}`} passHref>
                             <img
@@ -843,6 +973,7 @@ export default function Home() {
                     />
                     <br />
                     <CustomImageInput returnFile={handleImageChange} />
+
                     {error && <p className="error pt-2">{error}</p>}
                   </form>
                 </DialogContentText>
@@ -1006,6 +1137,64 @@ export default function Home() {
                   Aceptar
                 </Button>
               </div>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog
+            open={addFile}
+            onClose={handleClsAddFile}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{tilte}</DialogTitle>
+            <DialogContent>
+              {loading ? (
+                // Mostrar el indicador de carga mientras se está creando una noticia
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <DialogContentText id="alert-dialog-description">
+                  <form>
+                    <CustomInput
+                      className="bg-transparent h-10 w-full pl-4 border border-l-base-300 rounded-br20"
+                      value={pdfFormValues.pdfName}
+                      onChange={handlePdfInputChange}
+                      name="pdfName"
+                      label="Titutlo del PDF"
+                    />
+                    <br />
+
+                    <CustomTextArea
+                      className="bg-transparent h-40 p-4 w-full pl-4 border border-l-base-300 rounded-br20"
+                      value={pdfFormValues.pdfDescription}
+                      onChange={handlePdfTxtAreaChange}
+                      name="pdfDescription"
+                      label="Descripción PDF"
+                    />
+                    <br />
+                    <CustomPdfInput returnFile={handlePdfChange} />
+
+                    {error && <p className="error pt-2">{error}</p>}
+                  </form>
+                </DialogContentText>
+              )}
+            </DialogContent>
+            <DialogActions className="justify-center pb-6">
+              <Button
+                onClick={handlePdfSubmit}
+                variant="outlined"
+                color="success"
+              >
+                Aceptar
+              </Button>
+              <Button
+                onClick={handleClsAddFile}
+                variant="outlined"
+                color="error"
+              >
+                Cancelar
+              </Button>
             </DialogActions>
           </Dialog>
         </div>
