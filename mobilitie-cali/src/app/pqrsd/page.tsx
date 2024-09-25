@@ -16,7 +16,7 @@ const PQRSD = () => {
       src: "https://www.cali.gov.co/participacion/publicaciones/43/oficina_de_atencin_al_ciudadano/info/principal/media/galeria/thumbs/thgaleria_100X100_251107.jpg",
       alt: "radicacionSolicitudes",
       text: "Formulario de radicación de solicitudes, peticiones, quejas y reclamos.",
-      link: '/corrupcion'
+      link: '/formulario-pqrs'
     },
     {
       src: "https://www.cali.gov.co/participacion/publicaciones/43/oficina_de_atencin_al_ciudadano/info/principal/media/galeria/thumbs/thgaleria_100X100_251105.jpg",

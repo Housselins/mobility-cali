@@ -566,7 +566,7 @@ export default function Home() {
     if (Array.isArray(result)) setSocialMediaData(result);
   };
 
-  return (
+  return ( 
     <main className="h-full w-full">
       <Toaster />
       <div className="fixed z-40 w-full justify-between bg-principal py-2 px-6 flex flex-row items-center">
