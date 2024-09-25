@@ -6,6 +6,7 @@ import { BannerModule } from './banner/banner.module';
 import { InfoModule } from './info-central/info.module';
 import { SocialMediaModule } from './social-media/social-media.module';
 import { DenunciaModule } from './denuncia/denuncia.module';
+import { PqrsModule } from './pqrs/pqrs.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { DenunciaModule } from './denuncia/denuncia.module';
     BannerModule,
     InfoModule,
     SocialMediaModule,
-    DenunciaModule
+    DenunciaModule,
+    PqrsModule,
   ],
   controllers: [],
   providers: [],

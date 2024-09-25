@@ -136,3 +136,21 @@ model Testigo {
   pruebaId       Int
   prueba         Prueba @relation(fields: [pruebaId], references: [id])
 }
+
+model Pqrs {
+  id                 Int      @id @default(autoincrement())
+  nombres            String
+  apellidos          String
+  identificacion     String
+  direccion          String
+  correo             String
+  telefono           String
+  tipoSolicitud      String
+  contenidoSolicitud String
+  dependencia        String
+  pais               String
+  ciudad             String
+  departamento       String
+  image              String
+  createdAt          DateTime @default(now())
+}
