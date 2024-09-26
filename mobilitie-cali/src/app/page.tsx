@@ -1,6 +1,5 @@
 "use client";
 import { Banner } from "@/components/banner/Banner";
-import { MenuCentral } from "@/components/menu-central/MenuCentral";
 import {
   CreateNewInterface,
   NewInterface,
@@ -45,6 +44,8 @@ import {
 } from "react-icons/md";
 import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
+import { MenuCentral } from "@/components/menu-central/MenuCentral";
+import { Footer } from "@/components/footer/Footer";
 import LoginForm from "../components/forms/login";
 type FormSocialMediaValues = {
   name?: string;
@@ -936,8 +937,8 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <footer className="text-center p-4 bg-principal text-white">
-            © 2023 Copyright: Base
+          <footer>
+            <Footer/>
           </footer>
           <Dialog
             open={openAddNews}
