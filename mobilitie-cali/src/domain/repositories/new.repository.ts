@@ -1,3 +1,4 @@
+import { IFindNews } from "@/lib/interfaces";
 import { CreateNewInterface, NewInterface } from "../models";
 
 export interface INewsRepository {
@@ -5,5 +6,8 @@ export interface INewsRepository {
     accessToken: string,
     newData: CreateNewInterface
   ): Promise<NewInterface | undefined>;
-  findNews(accessToken: string): Promise<NewInterface[] | undefined>;
+  findNews(
+    accessToken: string,
+    filter?: IFindNews
+  ): Promise<NewInterface[] | undefined>;
 }

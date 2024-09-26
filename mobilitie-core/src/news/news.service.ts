@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/shared';
-import { CreateNewDTO } from './dto/new.dto';
+import { CreateNewDTO, NewFilter } from './dto/new.dto';
 
 @Injectable()
 export class NewsService {
@@ -12,20 +12,52 @@ export class NewsService {
 
   async createNew(newData: CreateNewDTO) {
     try {
-      console.log('newData', newData);
+      const pdf = {
+        ...(newData.file && { file: newData.file }),
+      };
+      const pdfDesc = {
+        ...(newData.fileDescription && {
+          fileDescription: newData.fileDescription,
+        }),
+      };
+      const fileName = {
+        ...(newData.fileName && {
+          fileName: newData.fileName,
+        }),
+      };
 
-      const createNewResult = await this.prismaService.new.create({
-        data: {
-          title: newData.title,
-          contenido_noticia: newData.contenido_noticia,
-          image: newData.image,
-        },
-      });
+      if (newData.id) {
+        const update = await this.prismaService.new.update({
+          where: { id: newData.id },
+          data: {
+            attached: newData.attached,
+            title: newData.title,
+            contenido_noticia: newData.contenido_noticia,
+            image: newData.image,
+            ...(pdf && { ...pdf }),
+            ...(fileName && { ...fileName }),
+            ...(pdfDesc && { ...pdfDesc }),
+          },
+        });
 
-      if (!createNewResult) {
-        throw new InternalServerErrorException('No se pudo crear la noticia');
+        if (!update) {
+          throw new InternalServerErrorException('No se pudo crear la noticia');
+        }
+        return update;
+      } else {
+        const createNewResult = await this.prismaService.new.create({
+          data: {
+            title: newData.title,
+            contenido_noticia: newData.contenido_noticia,
+            image: newData.image,
+          },
+        });
+
+        if (!createNewResult) {
+          throw new InternalServerErrorException('No se pudo crear la noticia');
+        }
+        return createNewResult;
       }
-      return createNewResult;
     } catch (error) {
       console.log(error);
 
@@ -33,22 +65,23 @@ export class NewsService {
     }
   }
 
-  async findAll() {
+  async findAll(filter?: NewFilter) {
     try {
-      const allNews = await this.prismaService.new.findMany();
+      const allNews = await this.prismaService.new.findMany({
+        where: { ...filter, isEnabled: true },
+      });
 
       if (allNews.length == 0) {
         throw new NotFoundException('No se encontraron noticias');
       }
       return allNews;
     } catch (error) {
-      console.log(error);
       throw new Error(error);
     }
   }
 
   async deleteNew(id: number) {
-    console.log("ID de noticia a eliminar desde el servicio:", id);
+    console.log('ID de noticia a eliminar desde el servicio:', id);
     try {
       // Verificar si la noticia existe antes de intentar eliminarla
       const newsExists = await this.prismaService.new.findUnique({

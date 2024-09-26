@@ -17,18 +17,22 @@ export default class CreateNewUseCase {
   async execute(
     title: string,
     token?: string,
-    content?: Record<string, any>,
+    content?: string,
     image?: string,
     id?: number,
+    attached?: boolean,
     status?: boolean
   ): Promise<NewInterface | undefined> {
+    console.log(token);
+
     if (!token) return;
 
     const newData: CreateNewInterface = {
       title,
-      content,
+      contenido_noticia: content,
       image,
       id,
+      attached,
       isEnabled: status,
     };
     const request = await this.newRepository
