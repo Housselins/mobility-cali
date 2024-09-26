@@ -20,11 +20,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
-      <body className={"w-screen h-screen " + inter.className}>
-        <div className="h-[calc(100%)]">{children}</div>
-        <Toaster />
-      </body>
-    </html>
+    <StoreProvider>
+      <html lang="es">
+        <body className={"w-screen h-screen " + inter.className}>
+          <div className="h-[calc(100%)]">{children}</div>
+          <Toaster />
+        </body>
+      </html>
+    </StoreProvider>
   );
 }

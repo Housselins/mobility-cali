@@ -9,6 +9,7 @@ const config: Config = {
       white: "#ffffff",
       menuLateral: "#EEEEEE",
       yellow: "#D3DD45FF",
+      red: "#7B0909FF",
     },
     borderRadius: {
       br20: "20px",
