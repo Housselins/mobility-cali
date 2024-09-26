@@ -134,3 +134,17 @@ model Testigo {
   pruebaId      Int
   prueba        Prueba   @relation(fields: [pruebaId], references: [id])
 }
+
+model Footer {
+  id            Int      @id @default(autoincrement())
+  nombreColumna String
+  inFooters     inFooter[]
+}
+
+model inFooter {
+  id            Int      @id @default(autoincrement())
+  texto         String
+  link          String
+  fkIdFooter    Int
+  footer        Footer   @relation(fields: [fkIdFooter], references: [id])
+}
