@@ -38,13 +38,12 @@ const InfoNoticia = () => {
           // extract content type and base64 payload from original string
           const strFile = (response.data.file = response.data.file ?? "");
           var pos = strFile.indexOf(";base64,");
-          var type = strFile.substring(5, pos);
           var b64 = strFile.substr(pos + 8);
 
           // decode base64
           var pdf = atob(b64);
           const pdfSize = `${Math.round(pdf.length / 1024)} KB`;
-          const downloadFile = `data:application/pdf;base64,<?= ${b64} ?>`;
+          const downloadFile = response.data.file;
           setFileSize(pdfSize);
           setDownloadFile(downloadFile);
           dispatch(setNewState(response.data));
@@ -100,7 +99,7 @@ const InfoNoticia = () => {
               </div>
               <div className="w-full h-full flex flex-col gap-5">
                 <p>{data.contenido_noticia}</p>
-                {data.file && fileSize && (
+                {data.file && fileSize ? (
                   <div className="w-full h-max flex flex-row justify-start gap-5">
                     <div className="w-max h-full flex self-center">
                       <PdfIcon />
@@ -109,7 +108,7 @@ const InfoNoticia = () => {
                       <Link
                         href={downloadFile}
                         target="_blank"
-                        download={data.fileName + ".pdf"}
+                        download={`${data.fileName}.pdf`}
                         className="text-center align-middle self-start text-red"
                       >
                         Descargar
@@ -136,6 +135,8 @@ const InfoNoticia = () => {
                       </div>
                     </div>
                   </div>
+                ) : (
+                  <p className="text-red">Esta noticia no cuenta actualmente con PDF...</p>
                 )}
               </div>
             </div>
