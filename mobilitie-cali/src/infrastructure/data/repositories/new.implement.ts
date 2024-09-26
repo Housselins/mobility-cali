@@ -4,6 +4,7 @@ import { isAxiosError, type AxiosInstance } from "axios";
 import { inject, injectable } from "inversify";
 import "reflect-metadata";
 import { NETWORK_TYPES } from "../../ioc/containers/network/network.types";
+import { IFindNews } from "@/lib/interfaces";
 
 @injectable()
 export default class NewsRepositoryImplement implements INewsRepository {
@@ -46,14 +47,17 @@ export default class NewsRepositoryImplement implements INewsRepository {
       }
     }
   }
-  async findNews(accessToken: string): Promise<NewInterface[] | undefined> {
+  async findNews(
+    accessToken: string,
+    filter?: IFindNews
+  ): Promise<NewInterface[] | undefined> {
     try {
       const config = {
         headers: {
           Authorization: "Bearer " + accessToken,
         },
       };
-      let url = `/news`;
+      let url = `/news?attached=${Boolean(filter?.attached)}`;
 
       const resp = await this.axiosInstance.get(url, config);
       // Verifica si la respuesta es exitosa y devuelve los datos
