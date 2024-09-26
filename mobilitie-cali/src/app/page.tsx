@@ -28,6 +28,7 @@ import { isEmptyArray, useFormik } from "formik";
 import { MdDelete, MdModeEdit, MdOutlineAdd } from "react-icons/md";
 import * as Yup from "yup";
 import { MenuCentral } from "@/components/menu-central/MenuCentral";
+import { Footer } from "@/components/footer/Footer";
 type FormSocialMediaValues = {
   name?: string;
   url?: string;
@@ -731,8 +732,8 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <footer className="text-center p-4 bg-principal text-white">
-            © 2023 Copyright: Base
+          <footer>
+            <Footer/>
           </footer>
           <Dialog
             open={openAddNews}
