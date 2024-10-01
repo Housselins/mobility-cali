@@ -139,7 +139,7 @@ const FormPQRS = () => {
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
-                src="https://www.youtube.com/watch?v=0jwJ2G0VEa0&t=1s"
+                src="https://www.youtube.com/watch?v=0jwJ2G0VEa0"
               ></iframe>
             </div>
 
@@ -154,6 +154,25 @@ const FormPQRS = () => {
 
               {step === 1 && (
                 <div className="bg-white custom-card-width">
+
+                  <div className='form-control'>
+                    <label className="label">
+                      <span className="label-text">Tipo de solicitante</span>
+                    </label>
+
+                    <select
+                      name="tipoSolicitante"
+                      className="select select-bordered bg-transparent"
+                    >
+                      <option value="solicitante">Persona natural</option>
+                      <option value="dependencia">Juridica</option>
+                      <option value="dependencia">Niño</option>
+                      <option value="dependencia">Niña</option>
+                      <option value="dependencia">Adolescente</option>
+                      <option value="dependencia">Apoderado</option>
+                    </select>
+ 
+                  </div>
 
                   <div className="form-control">
                     <label className="label">
@@ -263,7 +282,7 @@ const FormPQRS = () => {
                       onChange={handleInputChange}
                       className="select select-bordered"
                     >
-                      <option value="">Seleccione el país</option>
+                      <option value="">Colombia</option>
                       {countries.map((country, index) => (
                         <option key={index} value={country}>
                           {country}
