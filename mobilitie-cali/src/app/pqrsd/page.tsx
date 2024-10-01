@@ -22,13 +22,13 @@ const PQRSD = () => {
       src: "https://www.cali.gov.co/participacion/publicaciones/43/oficina_de_atencin_al_ciudadano/info/principal/media/galeria/thumbs/thgaleria_100X100_251105.jpg",
       alt: "solicitudReservada",
       text: "Solicitud de información con identidad reservada.",
-      link: '/corrupcion'
+      link: 'https://www.procuraduria.gov.co/Pages/solicituddeinformacionconidentificacionreservada.aspx'
     },
     {
       src: "https://www.cali.gov.co/participacion/publicaciones/43/oficina_de_atencin_al_ciudadano/info/principal/media/galeria/thumbs/thgaleria_100X100_251106.jpg",
       alt: "peticionesSecretaria",
       text: "Peticiones a la Secretaría de Educación Distrital.",
-      link: '/corrupcion'
+      link: 'https://sac2.gestionsecretariasdeeducacion.gov.co/app_Login/?sec=16'
     },
   ]);
   return (

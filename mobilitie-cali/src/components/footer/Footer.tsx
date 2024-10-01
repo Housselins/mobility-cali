@@ -4,6 +4,7 @@ import "./Footer.css";
 import { MdDelete, MdModeEdit, MdOutlineAdd } from "react-icons/md";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import axios from "axios";
+import { toast, Toaster } from "react-hot-toast";
 
 export const Footer = () => {
     const [userInfo, setUserInfo] = useState<any>(null);
@@ -47,10 +48,12 @@ export const Footer = () => {
     };
 
     const handleSubmit = async () => {
-        console.log('formValues', formValues);
+        if(!formValues.fkIdFooter || !formValues.texto || !formValues.link) 
+            return toast.error("Todos los campos son obligatorios");
 
         try {
             await axios.post("http://localhost:4000/footer", formValues);
+            toast.success("Información creada exitosamente");
             handleModalAnadir()
             getFooters()
         } catch (error) {
@@ -71,6 +74,7 @@ export const Footer = () => {
         console.log(idLinkEliminar);
         try {
             await axios.delete(`http://localhost:4000/footer/${idLinkEliminar}`);
+            toast.success("Información eliminada exitosamente");
             getFooters();
         } catch (error) {
             console.log(error);
