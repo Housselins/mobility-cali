@@ -33,7 +33,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { FaSearch, FaUserAlt } from "react-icons/fa";
+import { FaSearch, FaUserAlt, FaArrowDown } from "react-icons/fa";
 import { FaBars, FaHouse, FaPlus } from "react-icons/fa6";
 import {
   MdDelete,
@@ -633,6 +633,12 @@ export default function Home() {
     }
   }, []);
 
+  const [menuOrganismo, setMenuOrganismo] = useState(false);
+
+  const ocultarSubMenuNav = () => {
+    setMenuOrganismo(!menuOrganismo);
+  }
+
   return (
     <main className="h-full w-full">
       <Toaster />
@@ -712,7 +718,7 @@ export default function Home() {
       <div className="flex flex-row items-center justify-center h-full w-full">
         <aside
           style={{ display: controladorRenderMenu ? "block" : "none" }}
-          className="bg-menuLateral w-1/5 h-full
+          className=" w-1/5 h-full
           px-3 pt-10"
         >
           <img
@@ -722,57 +728,98 @@ export default function Home() {
             style={{ width: "90px" }}
           />
 
-          <ul>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Información general
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Datos de contacto
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Planeación gestión y control
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Participación ciudadana
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Contratación
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Tramites y servicios
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Información de interés
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Educación y cultura vial
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Observatorio
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Pico y placa
-              </a>
-            </li>
+          <ul className="flex flex-col nav">
+            <div className={menuOrganismo ? "container-nav1" : "container-nav"} >
+              <li>
+                Información general <FaArrowDown className="ml-2 cursor-pointer icon-flecha" onClick={ocultarSubMenuNav} />
+              </li>
+
+              {menuOrganismo ? (
+                <div>
+                  <li>
+                    <a href="/organismo" className="text-base hover:text-principal">
+                      Funciones del Organismo
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="" className="text-base hover:text-principal">
+                      Directorio de Entidades
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="" className="text-base hover:text-principal">
+                    Directorio de AAGI
+                    </a>
+                  </li>
+                </div>
+              ) : (null)}
+
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Datos de contacto <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Planeación gestión y control <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Participación ciudadana <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Contratación <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Tramites y servicios <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Información de interés <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Educación y cultura vial <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Observatorio <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Pico y placa <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
           </ul>
         </aside>
         <div className="bg-white w-full h-full gap-[2.75rem] overflow-y-auto">
@@ -814,7 +861,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="bg-white flex flex-row pt-4 pb-4 justify-around"           
+          <div className="bg-white flex flex-row pt-4 pb-4 justify-around"
             onDragOver={(evt => dragginOver(evt))}
             onDrop={(evt => onDrop(evt, attachedNews))}>
             {attachedNews.map((attachedNew) => {
