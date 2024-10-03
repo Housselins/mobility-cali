@@ -124,7 +124,7 @@ const FormPQRS = () => {
   return (
     <>
       <Topbar />
-      <div className='cotainer-pqrs '>
+      <div className='cotainer-pqrs'>
         <div className=' contenedor-central  '>
           <form onSubmit={handleNextStep}>
             <div className='contenedor-titulo'>
