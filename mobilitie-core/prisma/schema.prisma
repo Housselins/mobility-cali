@@ -154,16 +154,26 @@ model Pqrs {
   image              String
   createdAt          DateTime @default(now())
 }
+
 model Footer {
-  id            Int      @id @default(autoincrement())
+  id            Int        @id @default(autoincrement())
   nombreColumna String
   inFooters     inFooter[]
 }
 
 model inFooter {
-  id            Int      @id @default(autoincrement())
-  texto         String
-  link          String
-  fkIdFooter    Int
-  footer        Footer   @relation(fields: [fkIdFooter], references: [id])
+  id         Int    @id @default(autoincrement())
+  texto      String
+  link       String
+  fkIdFooter Int
+  footer     Footer @relation(fields: [fkIdFooter], references: [id])
+}
+
+model Page {
+  id        Int      @id @default(autoincrement())
+  title     String
+  views     String   @default("0")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  version   String   @default("0")
 }
