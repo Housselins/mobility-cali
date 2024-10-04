@@ -5,6 +5,10 @@ import { NewsModule } from './news/news.module';
 import { BannerModule } from './banner/banner.module';
 import { InfoModule } from './info-central/info.module';
 import { SocialMediaModule } from './social-media/social-media.module';
+import { DenunciaModule } from './denuncia/denuncia.module';
+import { PqrsModule } from './pqrs/pqrs.module';
+import { FooterModule } from './footer/footer.module';
+import { PageModule } from './page/page.module';
 
 @Module({
   imports: [
@@ -14,6 +18,10 @@ import { SocialMediaModule } from './social-media/social-media.module';
     BannerModule,
     InfoModule,
     SocialMediaModule,
+    DenunciaModule,
+    PqrsModule,
+    FooterModule,
+    PageModule
   ],
   controllers: [],
   providers: [],

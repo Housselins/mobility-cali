@@ -1,15 +1,22 @@
 "use client";
-import toast, { Toaster } from "react-hot-toast";
-import { FaSearch, FaUserAlt } from "react-icons/fa";
-import { FaBars, FaHouse, FaLanguage, FaPlus } from "react-icons/fa6";
-import LoginForm from "../components/forms/login";
-import React, { ChangeEvent, useEffect, useState } from "react";
 import { Banner } from "@/components/banner/Banner";
-import { SocialMediaInterface } from "@/domain/models";
+import {
+  CreateNewInterface,
+  NewInterface,
+  SocialMediaInterface,
+} from "@/domain/models";
+import CreateNewUseCase from "@/domain/usecases/news/create-new.use.case";
+import FindNewUseCase from "@/domain/usecases/news/find-new.use.case";
 import CreateSocialMediaUseCase from "@/domain/usecases/social-media/create-social-media.use.case";
 import GetSocialMediaUseCase from "@/domain/usecases/social-media/get-social-media.use.case";
 import { appContainer, USECASES_TYPES } from "@/infrastructure/ioc";
-import { CustomImageInput, CustomInput, CustomTextArea } from "@/presentation";
+import {
+  CustomImageInput,
+  CustomInput,
+  CustomPdfInput,
+  CustomTextArea,
+} from "@/presentation";
+import { PQRSDButton } from "@/presentation/components/atoms/buttons/pqrsd";
 import {
   Button,
   Dialog,
@@ -18,16 +25,28 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import axios from "axios";
-import Link from "next/link";
-import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import "react-toastify/dist/ReactToastify.css";
+import CircularProgress from "@mui/material/CircularProgress";
+import axios from "axios";
 import { isEmptyArray, useFormik } from "formik";
-import { MdDelete, MdModeEdit, MdOutlineAdd } from "react-icons/md";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import { FaSearch, FaUserAlt, FaArrowDown } from "react-icons/fa";
+import { FaBars, FaHouse, FaPlus } from "react-icons/fa6";
+import {
+  MdDelete,
+  MdModeEdit,
+  MdOutlineAdd,
+  MdStar,
+  MdUploadFile,
+} from "react-icons/md";
+import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
-
 import { MenuCentral } from "@/components/menu-central/MenuCentral";
+import { Footer } from "@/components/footer/Footer";
+import LoginForm from "../components/forms/login";
 type FormSocialMediaValues = {
   name?: string;
   url?: string;
@@ -40,7 +59,7 @@ type FormSocialMediaProps = {
 
 export default function Home() {
   // ==================== INSTANCES OF USE CASES
-
+  const router = useRouter();
   // Create Social Media
   const createSocialMediaUseCase = appContainer.get<CreateSocialMediaUseCase>(
     USECASES_TYPES._CreateSocialMediaUseCase
@@ -48,6 +67,14 @@ export default function Home() {
   // Get Social Media
   const getSocialMediaUseCase = appContainer.get<GetSocialMediaUseCase>(
     USECASES_TYPES._GetSocialMediaUseCase
+  );
+  // Find News
+  const getNewsUseCase = appContainer.get<FindNewUseCase>(
+    USECASES_TYPES._FindNewUseCase
+  );
+  // Update or Create New
+  const createNewUseCase = appContainer.get<CreateNewUseCase>(
+    USECASES_TYPES._CreateNewUseCase
   );
 
   const [isModify, setIsModify] = React.useState<any>(null);
@@ -205,11 +232,9 @@ export default function Home() {
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
-    console.log("userData", userData);
 
     if (userData) {
       setUserInfo(JSON.parse(userData));
-      console.log("userInfo", userInfo);
     }
   }, []);
   const ocultarInitSesion = () => {
@@ -224,6 +249,15 @@ export default function Home() {
     contenido_noticia: "",
     image: "",
   });
+  const [pdfFormValues, setPdfFormValues] = React.useState({
+    id: 0,
+    title: "",
+    contenido_noticia: "",
+    image: "",
+    pdfName: "",
+    pdfFile: "",
+    pdfDescription: "",
+  });
 
   const limpiarFormValues = () => {
     setFormValues({
@@ -232,8 +266,80 @@ export default function Home() {
       image: "",
     });
   };
+  const limpiarPdfFormValues = () => {
+    setPdfFormValues({
+      id: 0,
+      title: "",
+      contenido_noticia: "",
+      image: "",
+      pdfName: "",
+      pdfFile: "",
+      pdfDescription: "",
+    });
+  };
   const [openAddNews, setOpenAddNews] = React.useState(false);
+  const [addFile, setAddFile] = React.useState(false);
+  const handleOpenAddFile = async (id: string) => {
+    const response: NewInterface = await axios
+      .get(`http://localhost:4000/news/${id}`)
+      .then((data) => data.data)
+      .catch();
 
+    const pdfFormValues = {
+      id: response.id,
+      title: response.title ?? "",
+      contenido_noticia: response.contenido_noticia ?? "",
+      image: response.image ?? "",
+      pdfName: response.fileName ?? "",
+      pdfFile: response.file ?? "",
+      pdfDescription: response.fileDescription ?? "",
+    };
+    setPdfFormValues(pdfFormValues);
+    setAddFile(true);
+  };
+  const handlePdfSubmit = async () => {
+    if (
+      !pdfFormValues.id ||
+      !pdfFormValues.title ||
+      !pdfFormValues.image ||
+      !pdfFormValues.contenido_noticia ||
+      !pdfFormValues.pdfName ||
+      !pdfFormValues.pdfFile ||
+      !pdfFormValues.pdfDescription
+    ) {
+      setError("Por favor, completa todos los campos obligatorios");
+      return;
+    }
+    setLoading(true);
+    try {
+      const updateableNewPdf: CreateNewInterface = {
+        id: pdfFormValues.id,
+        title: pdfFormValues.title,
+        contenido_noticia: pdfFormValues.contenido_noticia,
+        file: pdfFormValues.pdfFile,
+        fileName: pdfFormValues.pdfName,
+        fileDescription: pdfFormValues.pdfDescription,
+      };
+      await axios.post(`http://localhost:4000/news`, updateableNewPdf);
+      await initNews();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+    handleClsAddFile();
+  };
+  const handleClsAddFile = () => {
+    limpiarPdfFormValues();
+    setError(null);
+    setAddFile(false);
+  };
+  const handlePdfChange = (pdf: string) => {
+    setPdfFormValues({
+      ...pdfFormValues,
+      pdfFile: pdf,
+    });
+  };
   const [controladorRenderMenu, setControladorRenderMenu] =
     React.useState(false);
 
@@ -252,18 +358,55 @@ export default function Home() {
       setCurrentIndex(currentIndex - 1);
     }
   };
-  const [arrayNewaCarousel, setArrayNewaCarousel] = React.useState([]);
-
+  const [arrayNewaCarousel, setArrayNewaCarousel] = React.useState<
+    NewInterface[]
+  >([]);
+  const [attachedNews, setAttachedNews] = useState<NewInterface[]>([]);
   const initNews = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/news");
-      setArrayNewaCarousel(response?.data);
+      const response = await getNewsUseCase.execute(
+        userInfo?.access_token ?? "token"
+      );
+      /*const attachedResponse = await getNewsUseCase.execute(
+        userInfo?.access_token ?? "token",
+        { attached: true }
+      );*/
+
+      setArrayNewaCarousel(response ? response : []);
+
+      /*if (attachedResponse) {
+        const filteredAttachedNews = attachedResponse.filter(news => news.attached === true);
+        setAttachedNews(filteredAttachedNews.slice(0, 3));
+      } else {
+        setAttachedNews([]);
+      }*/
+      //setAttachedNews(attachedResponse ? attachedResponse.slice(0, 3) : []);
+      return;
     } catch (error) {
       console.error(error);
     }
   };
 
-  React.useEffect(() => {
+  const initNewsOrder = async () => {
+    try {
+
+      const attachedResponse = await getNewsUseCase.execute(
+        userInfo?.access_token ?? "token",
+        { attached: true }
+      );
+      if (attachedResponse) {
+        const filteredAttachedNews = attachedResponse.filter(news => news.attached === true);
+        setAttachedNews(filteredAttachedNews.slice(0, 3));
+      } else {
+        setAttachedNews([]);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+
+  /*React.useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) =>
         prevIndex === arrayNewaCarousel.length - 1 ? 0 : prevIndex + 1
@@ -271,7 +414,7 @@ export default function Home() {
     }, 3000); // Cambia cada 3 segundos
 
     return () => clearInterval(interval); // Limpia el intervalo cuando el componente se desmonte
-  }, [arrayNewaCarousel.length]);
+  }, [arrayNewaCarousel]);*/
 
   React.useEffect(() => {
     initNews();
@@ -279,22 +422,22 @@ export default function Home() {
   }, []);
 
   // Obtén los dos elementos siguientes basados en el currentIndex
-  const getVisibleItems = () => {
-    if (!Array.isArray(arrayNewaCarousel) || arrayNewaCarousel.length === 0) {
+  const getVisibleItems = (newArray: NewInterface[]) => {
+    if (!Array.isArray(newArray) || newArray.length === 0) {
       return [];
     }
 
     // Verificar que currentIndex esté dentro del rango
-    if (currentIndex >= arrayNewaCarousel.length || currentIndex < 0) {
+    if (currentIndex >= newArray.length || currentIndex < 0) {
       console.warn("currentIndex fuera de rango:", currentIndex);
       return [];
     }
 
-    if (currentIndex === arrayNewaCarousel.length - 1) {
-      return [arrayNewaCarousel[currentIndex], arrayNewaCarousel[0]];
+    if (currentIndex === newArray.length - 1) {
+      return [newArray[currentIndex], newArray[0]];
     }
 
-    return arrayNewaCarousel.slice(currentIndex, currentIndex + 2);
+    return newArray.slice(currentIndex, currentIndex + 2);
   };
 
   const handleOpenAddNews = () => {
@@ -341,7 +484,6 @@ export default function Home() {
     setType("edit");
     setTilte("Editar noticia");
     const response = await axios.get(`http://localhost:4000/news/${id}`);
-    console.log("response para editar:", response?.data);
     setOpenAddNews(true);
     setSelectNwsIdEdit(id);
     setFormValues(response?.data);
@@ -354,6 +496,13 @@ export default function Home() {
       [name]: value,
     });
   };
+  const handlePdfInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setPdfFormValues({
+      ...pdfFormValues,
+      [name]: value,
+    });
+  };
 
   const handleTxtAreaChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
@@ -361,6 +510,15 @@ export default function Home() {
     const { name, value } = event.target;
     setFormValues({
       ...formValues,
+      [name]: value,
+    });
+  };
+  const handlePdfTxtAreaChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const { name, value } = event.target;
+    setPdfFormValues({
+      ...pdfFormValues,
       [name]: value,
     });
   };
@@ -428,10 +586,58 @@ export default function Home() {
   //  ==================== Get All Social Media
   const getSocialMedia = async () => {
     const result = await getSocialMediaUseCase.execute();
-    console.log(result);
 
     if (Array.isArray(result)) setSocialMediaData(result);
   };
+
+  const startDrag = (evt: any, newDrag: any) => {
+    // Guardar el índice del elemento que se está arrastrando
+    evt.dataTransfer.setData('draggedIndex', attachedNews.findIndex(item => item.id === newDrag.id));
+  };
+
+  const dragginOver = (evt: any) => {
+    // Evitar que el comportamiento por defecto bloquee el evento drop
+    evt.preventDefault();
+  };
+
+  const onDrop = (evt: any, list: any) => {
+    evt.preventDefault();
+
+    // Obtener el índice del elemento que se está arrastrando
+    const draggedIndex = evt.dataTransfer.getData('draggedIndex');
+
+    // Obtener el índice del elemento sobre el que se suelta
+    const dropIndex = list.findIndex((item: any) => item.id === evt.target.closest('div[draggable]').getAttribute('data-id'));
+
+    if (draggedIndex !== dropIndex) {
+      const newAttachedNews = [...attachedNews];
+
+      // Intercambiar las posiciones
+      const [movedItem] = newAttachedNews.splice(draggedIndex, 1);
+      newAttachedNews.splice(dropIndex, 0, movedItem);
+
+      // Actualizar el estado con el nuevo orden
+      setAttachedNews(newAttachedNews);
+      // Guarda el nuevo orden en localStorage
+      localStorage.setItem('newsOrder', JSON.stringify(newAttachedNews));
+    }
+  };
+
+  useEffect(() => {
+    const storedOrder = localStorage.getItem('newsOrder');
+    if (storedOrder) {
+      console.log('Stored order:', storedOrder);
+      setAttachedNews(JSON.parse(storedOrder));
+    } else {
+      initNewsOrder(); // Llamar a la función para obtener noticias si no hay nada en localStorage
+    }
+  }, []);
+
+  const [menuOrganismo, setMenuOrganismo] = useState(false);
+
+  const ocultarSubMenuNav = () => {
+    setMenuOrganismo(!menuOrganismo);
+  }
 
   return (
     <main className="h-full w-full">
@@ -498,8 +704,8 @@ export default function Home() {
           )}
         </div>
 
-        <div className="flex flex-row space-x-2">
-          <FaLanguage style={{ color: "white" }} />
+        <div className="flex flex-row space-x-2 items-center">
+          <PQRSDButton />
           <FaSearch style={{ color: "white" }} />
           <FaUserAlt
             style={{ color: "white", cursor: "pointer" }}
@@ -512,7 +718,7 @@ export default function Home() {
       <div className="flex flex-row items-center justify-center h-full w-full">
         <aside
           style={{ display: controladorRenderMenu ? "block" : "none" }}
-          className="bg-menuLateral w-1/5 h-full
+          className=" w-1/5 h-full
           px-3 pt-10"
         >
           <img
@@ -522,60 +728,100 @@ export default function Home() {
             style={{ width: "90px" }}
           />
 
-          <ul>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Información general
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Datos de contacto
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Planeación gestión y control
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Participación ciudadana
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Contratación
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Tramites y servicios
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Información de interés
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Educación y cultura vial
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Observatorio
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Pico y placa
-              </a>
-            </li>
+          <ul className="flex flex-col nav">
+            <div className={menuOrganismo ? "container-nav1" : "container-nav"} >
+              <li>
+                Información general <FaArrowDown className="ml-2 cursor-pointer icon-flecha" onClick={ocultarSubMenuNav} />
+              </li>
+
+              {menuOrganismo ? (
+                <div>
+                  <li>
+                    <a href="/organismo" className="text-base hover:text-principal">
+                      Funciones del Organismo
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="" className="text-base hover:text-principal">
+                      Directorio de Entidades
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="" className="text-base hover:text-principal">
+                    Directorio de AAGI
+                    </a>
+                  </li>
+                </div>
+              ) : (null)}
+
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Datos de contacto <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Planeación gestión y control <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Participación ciudadana <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Contratación <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Tramites y servicios <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Información de interés <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Educación y cultura vial <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Observatorio <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
+            <div className="container-nav">
+              <li>
+
+                Pico y placa <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
+
+              </li>
+            </div>
           </ul>
         </aside>
-
         <div className="bg-white w-full h-full gap-[2.75rem] overflow-y-auto">
           <div id="banner" className="w-full pt-10 ">
             <Banner />
@@ -615,55 +861,98 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="bg-white flex flex-row pt-4 pb-4 justify-around">
-            <div className="w-1/4 relative rounded-br20">
-              <img
-                className="w-full h-full object-cover rounded-br20"
-                src="https://www.cali.gov.co/movilidad/publicaciones/182709/trabajo-conjunto-entre-movilidad-y-direccion-de-transito-y-transporte-logra-resultados-exitosos-se-han-impuesto-3739-notificaciones/info/principal/media/pubInt/thumbs/thpub_700X400_182709.jpg"
-                alt=""
-              />
+          <div className="bg-white flex flex-row pt-4 pb-4 justify-around"
+            onDragOver={(evt => dragginOver(evt))}
+            onDrop={(evt => onDrop(evt, attachedNews))}>
+            {attachedNews.map((attachedNew) => {
+              return (
+                <div
+                  className="w-1/4 relative rounded-br20"
+                  key={attachedNew.id}
+                  draggable
+                  data-id={attachedNew.id}
+                  onDragStart={(evt) => startDrag(evt, attachedNew)}
+                >
 
-              <div className="absolute p-2 flex flex-col justify-end rounded-b-br20 bottom-0 left-0 h-3/4">
-                <p className="text-white text-xs text-left mb-8 font-bold">
-                  repellendus veniam magnam, dolores natus esse. Non, illum.
-                </p>
-                <button className="text-white w-2/4 text-xs py-2 px-3 rounded-br20 bg-principal font-semibold">
-                  Saber más
-                </button>
-              </div>
-            </div>
-            <div className="w-1/3 relative rounded-br20">
-              <img
-                className="w-full h-full object-cover rounded-br20"
-                src="https://www.cali.gov.co/movilidad/publicaciones/182709/trabajo-conjunto-entre-movilidad-y-direccion-de-transito-y-transporte-logra-resultados-exitosos-se-han-impuesto-3739-notificaciones/info/principal/media/pubInt/thumbs/thpub_700X400_182709.jpg"
-                alt=""
-              />
+                  <div className="absolute top-0 right-0 flex flex-col justify-center items-center gap-3 text-neutral-300 text-xs font-bold p-2">
+                    {userInfo && userInfo.user.rol.id === 1 && (
+                      <MdDelete
+                        size={20}
+                        title="Eliminar"
+                        className="text-neutral-500"
+                        onClick={() =>
+                          handleDltNws()
+                        }
+                      />
+                    )}
+                    {userInfo && userInfo.user.rol.id === 1 && (
+                      <MdModeEdit
+                        size={20}
+                        title="Editar"
+                        className="text-neutral-500"
+                        onClick={() =>
+                          handleOpenEditNews(attachedNew.id.toString())
+                        }
+                      />
+                    )}
+                    {userInfo && userInfo.user.rol.id === 1 && (
+                      <MdStar
+                        size={20}
+                        title="Fijar"
+                        className={`${attachedNew.attached
+                          ? "text-yellow"
+                          : "text-neutral-500"
+                          } bg-white rounded-full cursor-pointer z-50`}
+                        onClick={async () => {
+                          await createNewUseCase
+                            .execute(
+                              attachedNew.title!,
+                              userInfo?.access_token,
+                              attachedNew.contenido_noticia,
+                              attachedNew.image,
+                              attachedNew?.id,
+                              !attachedNew.attached,
+                              true
+                            )
+                            .then(async () => {
+                              await initNews();
+                            });
+                        }}
+                      />
+                    )}
+                    {userInfo && userInfo.user.rol.id === 1 && (
+                      <MdUploadFile
+                        size={20}
+                        title="Editar"
+                        className="text-neutral-500 bg-white rounded-full cursor-pointer z-50"
+                        onClick={() =>
+                          handleOpenAddFile(attachedNew.id.toString())
+                        }
+                      />
+                    )}
+                  </div>
+                  <img
+                    className="w-full h-full object-cover rounded-br20"
+                    src={attachedNew.image}
+                    alt={attachedNew.title}
+                  />
 
-              <div className="absolute p-2 flex flex-col justify-end rounded-b-br20 bottom-0 left-0 h-3/4">
-                <p className="text-white text-xs text-left mb-8 font-bold">
-                  repellendus veniam magnam, dolores natus esse. Non, illum.
-                </p>
-                <button className="text-white w-2/4 text-xs py-2 px-3 rounded-br20 bg-principal font-semibold">
-                  Saber más
-                </button>
-              </div>
-            </div>
-            <div className="w-1/4 relative rounded-br20">
-              <img
-                className="w-full h-full object-cover rounded-br20"
-                src="https://www.cali.gov.co/movilidad/publicaciones/182709/trabajo-conjunto-entre-movilidad-y-direccion-de-transito-y-transporte-logra-resultados-exitosos-se-han-impuesto-3739-notificaciones/info/principal/media/pubInt/thumbs/thpub_700X400_182709.jpg"
-                alt=""
-              />
-
-              <div className="absolute p-2 flex flex-col justify-end rounded-b-br20 bottom-0 left-0 h-3/4">
-                <p className="text-white text-xs text-left mb-8 font-bold">
-                  repellendus veniam magnam, dolores natus esse. Non, illum.
-                </p>
-                <button className="text-white w-2/4 text-xs py-2 px-3 rounded-br20 bg-principal font-semibold">
-                  Saber más
-                </button>
-              </div>
-            </div>
+                  <div className="absolute p-2 flex flex-col justify-end rounded-b-br20 bottom-0 left-0 h-3/4">
+                    <p className="text-white text-xs text-left mb-8 font-bold">
+                      {attachedNew.title}
+                    </p>
+                    <button
+                      className="text-white w-2/4 text-xs py-2 px-3 rounded-br20 bg-principal font-semibold"
+                      onClick={() => {
+                        router.push(`/noticia?id=${attachedNew.id}`);
+                      }}
+                    >
+                      Saber más
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
           <div>
             <div className="carousel w-full">
@@ -676,43 +965,79 @@ export default function Home() {
                       className="text-principal absolute top-1/2 z-10 cursor-pointer w-10 "
                     />
                   )}
-                  {getVisibleItems().map((carrousel: any) => (
-                    <div
-                      key={carrousel.id}
-                      className="w-2/6 h-5/6 rounded-br20 shadow-xl cursor-pointer relative overflow-hidden"
-                    >
-                      <div className="absolute top-0 right-0 flex flex-col justify-center items-center gap-3 text-neutral-300 text-xs font-bold p-2">
-                        {userInfo && userInfo.user.rol.id === 1 && (
-                          <MdDelete
-                            size={20}
-                            title="Eliminar"
-                            className="text-neutral-500"
-                            onClick={() => handleOpenDltNews(carrousel.id)}
-                          />
-                        )}
-                        {userInfo && userInfo.user.rol.id === 1 && (
-                          <MdModeEdit
-                            size={20}
-                            title="Editar"
-                            className="text-neutral-500"
-                            onClick={() => handleOpenEditNews(carrousel.id)}
-                          />
-                        )}
-                      </div>
-                      <Link href={`/noticia?id=${carrousel.id}`} passHref>
-                        <img
-                          id="noticia"
-                          className="h-3/4 rounded-t-br20 w-full object-cover"
-                          src={carrousel.image}
-                          alt={carrousel.title}
-                        />
-                      </Link>
+                  {arrayNewaCarousel &&
+                    getVisibleItems(arrayNewaCarousel).map((carrousel: any) => {
+                      return (
+                        <div
+                          key={carrousel.id}
+                          className="w-2/6 h-5/6 rounded-br20 shadow-xl cursor-pointer relative overflow-hidden"
+                        >
+                          <div className="absolute top-0 right-0 flex flex-col justify-center items-center gap-3 text-neutral-300 text-xs font-bold p-2">
+                            {userInfo && userInfo.user.rol.id === 1 && (
+                              <MdDelete
+                                size={20}
+                                title="Eliminar"
+                                className="text-neutral-500"
+                                onClick={() => handleOpenDltNews(carrousel.id)}
+                              />
+                            )}
+                            {userInfo && userInfo.user.rol.id === 1 && (
+                              <MdModeEdit
+                                size={20}
+                                title="Editar"
+                                className="text-neutral-500"
+                                onClick={() => handleOpenEditNews(carrousel.id)}
+                              />
+                            )}
+                            {userInfo && userInfo.user.rol.id === 1 && (
+                              <MdStar
+                                size={20}
+                                title="Fijar"
+                                className={`${carrousel.attached
+                                  ? "text-yellow"
+                                  : "text-neutral-500"
+                                  } bg-white rounded-full cursor-pointer z-50`}
+                                onClick={async () => {
+                                  await createNewUseCase
+                                    .execute(
+                                      carrousel.title!,
+                                      userInfo?.access_token,
+                                      carrousel.content,
+                                      carrousel.image,
+                                      carrousel?.id,
+                                      !carrousel.attached,
+                                      true
+                                    )
+                                    .then(async () => {
+                                      await initNews();
+                                    });
+                                }}
+                              />
+                            )}
+                            {userInfo && userInfo.user.rol.id === 1 && (
+                              <MdUploadFile
+                                size={20}
+                                title="Editar"
+                                className="text-neutral-500 bg-white rounded-full cursor-pointer z-50"
+                                onClick={() => handleOpenAddFile(carrousel.id)}
+                              />
+                            )}
+                          </div>
+                          <Link href={`/noticia?id=${carrousel.id}`} passHref>
+                            <img
+                              id="noticia"
+                              className="h-3/4 rounded-t-br20 w-full object-cover"
+                              src={carrousel.image}
+                              alt={carrousel.title}
+                            />
+                          </Link>
 
-                      <p className="text-neutral-600 text-center py-2 text-xs">
-                        {carrousel.title}
-                      </p>
-                    </div>
-                  ))}
+                          <p className="text-neutral-600 text-center py-2 text-xs">
+                            {carrousel.title}
+                          </p>
+                        </div>
+                      );
+                    })}
                 </div>
                 <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
                   <button
@@ -731,8 +1056,8 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <footer className="text-center p-4 bg-principal text-white">
-            © 2023 Copyright: Base
+          <footer>
+            <Footer />
           </footer>
           <Dialog
             open={openAddNews}
@@ -768,6 +1093,7 @@ export default function Home() {
                     />
                     <br />
                     <CustomImageInput returnFile={handleImageChange} />
+
                     {error && <p className="error pt-2">{error}</p>}
                   </form>
                 </DialogContentText>
@@ -931,6 +1257,64 @@ export default function Home() {
                   Aceptar
                 </Button>
               </div>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog
+            open={addFile}
+            onClose={handleClsAddFile}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{tilte}</DialogTitle>
+            <DialogContent>
+              {loading ? (
+                // Mostrar el indicador de carga mientras se está creando una noticia
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <DialogContentText id="alert-dialog-description">
+                  <form>
+                    <CustomInput
+                      className="bg-transparent h-10 w-full pl-4 border border-l-base-300 rounded-br20"
+                      value={pdfFormValues.pdfName}
+                      onChange={handlePdfInputChange}
+                      name="pdfName"
+                      label="Titutlo del PDF"
+                    />
+                    <br />
+
+                    <CustomTextArea
+                      className="bg-transparent h-40 p-4 w-full pl-4 border border-l-base-300 rounded-br20"
+                      value={pdfFormValues.pdfDescription}
+                      onChange={handlePdfTxtAreaChange}
+                      name="pdfDescription"
+                      label="Descripción PDF"
+                    />
+                    <br />
+                    <CustomPdfInput returnFile={handlePdfChange} />
+
+                    {error && <p className="error pt-2">{error}</p>}
+                  </form>
+                </DialogContentText>
+              )}
+            </DialogContent>
+            <DialogActions className="justify-center pb-6">
+              <Button
+                onClick={handlePdfSubmit}
+                variant="outlined"
+                color="success"
+              >
+                Aceptar
+              </Button>
+              <Button
+                onClick={handleClsAddFile}
+                variant="outlined"
+                color="error"
+              >
+                Cancelar
+              </Button>
             </DialogActions>
           </Dialog>
         </div>

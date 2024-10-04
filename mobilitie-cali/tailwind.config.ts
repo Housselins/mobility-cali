@@ -8,10 +8,13 @@ const config: Config = {
       principalTransparente: "rgba(51, 102, 204, 0.7)",
       white: "#ffffff",
       menuLateral: "#EEEEEE",
+      yellow: "#D3DD45FF",
+      red: "#7B0909FF",
     },
     borderRadius: {
-      'br20': '20px',
-      'lgin': '0 0 0 40px',
+      br20: "20px",
+      lgin: "0 0 0 40px",
+      full: "100%",
     },
     extend: {
       backgroundImage: {
