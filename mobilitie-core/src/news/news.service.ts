@@ -12,18 +12,37 @@ export class NewsService {
 
   async createNew(newData: CreateNewDTO) {
     try {
-      const createNewResult = await this.prismaService.new.create({
-        data: {
-          title: newData.title,
-          content: newData.content,
-          image: newData.image,
-        },
-      });
+      if (newData.id) {
+        const createNewResult = await this.prismaService.new.update({
+          where: { id: newData.id },
+          data: {
+            title: newData.title,
+            content: newData.content,
+            image: newData.image,
+            isEnabled: newData.isEnabled,
+          },
+        });
 
-      if (!createNewResult) {
-        throw new InternalServerErrorException('No se pudo crear la noticia');
+        if (!createNewResult) {
+          throw new InternalServerErrorException(
+            'No se pudo actualizar la noticia',
+          );
+        }
+        return createNewResult;
+      } else {
+        const createNewResult = await this.prismaService.new.create({
+          data: {
+            title: newData.title,
+            content: newData.content,
+            image: newData.image,
+          },
+        });
+
+        if (!createNewResult) {
+          throw new InternalServerErrorException('No se pudo crear la noticia');
+        }
+        return createNewResult;
       }
-      return createNewResult;
     } catch (error) {
       console.log(error);
 
@@ -33,7 +52,9 @@ export class NewsService {
 
   async findAll() {
     try {
-      const allNews = await this.prismaService.new.findMany();
+      const allNews = await this.prismaService.new.findMany({
+        where: { isEnabled: true },
+      });
 
       if (allNews.length == 0) {
         throw new NotFoundException('No se encontraron noticias');

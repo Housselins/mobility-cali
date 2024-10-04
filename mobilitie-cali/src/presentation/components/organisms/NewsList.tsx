@@ -1,18 +1,15 @@
 "use client";
-import { useFormik } from "formik";
-import { ChangeEvent, FC, useEffect, useState } from "react";
-import {
-  CustomImageInput,
-  CustomInput,
-  CustomTextArea,
-  PrimaryButton,
-  Subtitle,
-} from "../atoms";
-import { appContainer, USECASES_TYPES } from "@/infrastructure/ioc";
-import FindNewUseCase from "@/domain/usecases/news/find-new.use.case";
-import { AuthDataInterface } from "@/lib/interfaces";
 import { NewInterface } from "@/domain/models";
+import FindNewUseCase from "@/domain/usecases/news/find-new.use.case";
+import { appContainer, USECASES_TYPES } from "@/infrastructure/ioc";
+import { ADMIN_ROL_ID } from "@/lib/config";
+import { AuthDataInterface } from "@/lib/interfaces";
 import Image from "next/image";
+import { FC, useEffect, useState } from "react";
+import { Subtitle } from "../atoms";
+import { useAppDispatch } from "@/presentation/store";
+import { setNewState } from "@/presentation/store/news/NewsSlice";
+import { useRouter } from "next/navigation";
 type FormValues = {
   title?: string;
   content?: string;
@@ -22,6 +19,8 @@ export const NewsList: FC<{}> = ({}) => {
   const createNewUseCase = appContainer.get<FindNewUseCase>(
     USECASES_TYPES._FindNewUseCase
   );
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const initialFormValues: FormValues = {
     title: "",
     content: "",
@@ -39,6 +38,9 @@ export const NewsList: FC<{}> = ({}) => {
       return;
     }
     setNewsList(resultCreateNewUseCase);
+    if (Array.isArray(resultCreateNewUseCase)) {
+      setNewsList(resultCreateNewUseCase);
+    }
   };
   useEffect(() => {
     const auth = localStorage.getItem("user");
@@ -55,7 +57,18 @@ export const NewsList: FC<{}> = ({}) => {
         <>
           {newsList.map((newItem, key) => {
             return (
-              <div className="w-full h-full relative flex flex-col justify-start items-center gap-5 p-4  bg-gray-200 rounded-lg">
+              <div
+                key={key}
+                onClick={() => {
+                  dispatch(setNewState(newItem));
+                  router.push('find-new/new-details')
+                }}
+                className={`w-full h-full relative flex flex-col justify-start items-center gap-5 p-4  bg-gray-200 rounded-lg
+                  ${
+                    authenticated?.user?.rol?.id == ADMIN_ROL_ID &&
+                    "hover:shadow-xl transition-shadow duration-300"
+                  }`}
+              >
                 <Subtitle className="self-start" text={newItem.title} />
                 {newItem.image && (
                   <Image
