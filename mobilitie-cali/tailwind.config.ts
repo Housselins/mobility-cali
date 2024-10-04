@@ -3,6 +3,16 @@ import type { Config } from "tailwindcss";
 const config: Config = {
   content: ["./src/**/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
+    colors: {
+      principal: "#3366CC",
+      principalTransparente: "rgba(51, 102, 204, 0.7)",
+      white: "#ffffff",
+      menuLateral: "#EEEEEE",
+    },
+    borderRadius: {
+      'br20': '20px',
+      'lgin': '0 0 0 40px',
+    },
     extend: {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -11,6 +21,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
 };
 export default config;

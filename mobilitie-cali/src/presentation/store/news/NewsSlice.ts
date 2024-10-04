@@ -11,7 +11,7 @@ const newsSlice = createSlice({
   name: "news",
   initialState,
   reducers: {
-    setNewState(state, action: PayloadAction<NewInterface | undefined>) {
+    setNewState(state: any, action: PayloadAction<NewInterface | undefined>) {
       state.new = action.payload;
     },
   },

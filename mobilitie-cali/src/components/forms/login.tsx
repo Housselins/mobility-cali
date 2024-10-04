@@ -1,8 +1,8 @@
-import axios from "axios";
-import React from "react";
 import { useForm } from "react-hook-form";
+import axios from "axios";
 import { toast } from "react-hot-toast";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
+import React, { useEffect } from "react";
 
 export default function LoginForm() {
   const {
@@ -14,6 +14,11 @@ export default function LoginForm() {
   //Captcha func
   const [tryCount, setTryCount] = React.useState(0);
   const [captchaCode, setCaptchaCode] = React.useState("");
+  const [usuario, setUsuario] = React.useState({
+    email: "",
+    name: ""
+  });
+
   const generarCodigo = () => {
     const letra = String.fromCharCode(97 + Math.floor(Math.random() * 26));
     const numeros = Math.floor(1000 + Math.random() * 9000);
@@ -23,9 +28,10 @@ export default function LoginForm() {
   const onSubmit = async (data: any) => {
     try {
       const response = await axios.post("http://localhost:4000/auth", data);
-      console.log("Response:", response.data);
+      console.log("Response del usuario:", response.data.user);
+      setUsuario(response.data.user);
       localStorage.setItem("user", JSON.stringify(response.data));
-      window.location.href = "/dashboard";
+      window.location.href = "/";
     } catch (error: any) {
       if (
         error.response &&
@@ -87,18 +93,39 @@ export default function LoginForm() {
     }
   };
 
+  const [userInfo, setUserInfo] = React.useState<any>(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    console.log("userData", userData);
+
+    if (userData) {
+      setUserInfo(JSON.parse(userData));
+      console.log("userInfo", userInfo);
+
+    }
+  }, []);
+
+  const cerrarSesion = () => {
+    localStorage.removeItem("user");
+    window.location.href = "/";
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full h-full grid">
-      <div className="w-1/2 h-full flex flex-col justify-center items-center gap-6 justify-self-center p-5  bg-slate-50 rounded-xl shadow-md">
+    <form onSubmit={handleSubmit(onSubmit)} className="form w-full h-full">
+      <div className="h-full w-full flex flex-col justify-center items-center gap-y-6">
         {tryCount < 3 ? (
           <>
-            <div>
+          <div className="justify-center">
+          <span> Bienvenido! <strong>{usuario?.name}</strong> </span>
+          </div>
+            <div className="w-10/12">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 Email
               </label>
               <input
                 {...register("email", { required: true })}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded-br20 w-full py-2 px-3 text-gray-700 bg-transparent leading-tight focus:outline-none focus:shadow-outline"
                 id="username"
                 type="text"
                 placeholder="Email"
@@ -110,14 +137,14 @@ export default function LoginForm() {
               )}
             </div>
 
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2">
+            <div className="w-10/12 mb-4">
+              <label className="block text-gray-700 text-sm font-bold">
                 Password
               </label>
               <div style={{ position: "relative" }}>
                 <input
                   {...register("password", { required: true })}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="shadow appearance-none border rounded-br20 w-full py-2 px-3 text-gray-700 bg-transparent leading-tight focus:outline-none focus:shadow-outline"
                   id="password"
                   type={viewPass ? "text" : "password"}
                   placeholder="******************"
@@ -138,10 +165,18 @@ export default function LoginForm() {
 
             <button
               type="submit"
-              className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+              className=" bg-principal w-10/12 text-white font-semibold py-2 px-4 border border-principal-500 rounded-br20"
             >
-              Send Data
+              Entrar
             </button>
+            {userInfo &&(
+              <button
+                className=" bg-principal w-10/12 text-white font-semibold py-2 px-4 border border-principal-500 rounded-br20"
+                onClick={cerrarSesion}
+              >
+                Cerrar sesión
+              </button>
+            )}
           </>
         ) : (
           <>
@@ -170,6 +205,7 @@ export default function LoginForm() {
                 className="shadow appearance-none border rounded w-2/3 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               />
               <br />
+
               <button
                 type="button"
                 onClick={captchaValidate}

@@ -47,9 +47,9 @@
     cursor: pointer;
     position: absolute; /* Posiciona el icono de eliminar dentro del contenedor de la imagen */
     top: 10px;
-    right: 50px;
-    background-color: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente para mayor contraste */
-    border-radius: 50%;
+    right: 60px;
+    background-color: rgba(0, 0, 0,0.5); /* Fondo semi-transparente para mayor contraste */
+    border-radius: 5px;
     padding: 10px; /* Mayor padding para un área de clic más grande */
     font-size: 35px; /* Aumenta el tamaño del icono de eliminar */
     display: flex;
@@ -57,15 +57,21 @@
     justify-content: center;
   }
   
-  .plus:hover {
-    color: #048e04; /* Cambia el color al pasar sobre los iconos */
+  .add-icon-container:hover {
     transform: scale(1.1); /* Pequeña animación de aumento al hacer hover */
     transition: transform 0.2s ease-in-out; /* Transición suave para el efecto de hover */
   }
   
+  .plus:hover {
+    color: #048e04;
+  }
 
   .trash:hover {
     color: red; /* Cambia el color al pasar sobre los iconos */
     transform: scale(1.1); /* Pequeña animación de aumento al hacer hover */
     transition: transform 0.2s ease-in-out; /* Transición suave para el efecto de hover */
+  }
+
+  .error{
+    color: red;
   }
