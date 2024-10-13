@@ -1,4 +1,5 @@
 "use client";
+import Link from 'next/link';
 import React, { useState } from 'react'
 import { FaSearch, FaUserAlt } from 'react-icons/fa';
 import { FaBars, FaHouse, FaLanguage } from 'react-icons/fa6'
@@ -36,7 +37,9 @@ export const Topbar = () => {
                     style={{ color: "white", cursor: "pointer" }}
                     onClick={ocultarInitSesion}
                 />
-                <FaHouse style={{ color: "white" }} />
+                <Link href={`/`} passHref>
+                    <FaHouse style={{ color: "white" }} />
+                </Link>
             </div>
         </div>
     )

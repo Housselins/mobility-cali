@@ -47,6 +47,7 @@ import * as Yup from "yup";
 import { MenuCentral } from "@/components/menu-central/MenuCentral";
 import { Footer } from "@/components/footer/Footer";
 import LoginForm from "../components/forms/login";
+import SideMenu from "@/components/side-menu/sideMenu";
 type FormSocialMediaValues = {
   name?: string;
   url?: string;
@@ -647,67 +648,9 @@ export default function Home() {
         <aside
           style={{ display: controladorRenderMenu ? "block" : "none" }}
           className="bg-menuLateral w-1/5 h-full
-          px-3 pt-10"
+          px-3 pt-10 overflow-y-scroll"
         >
-          <img
-            className="py-2"
-            src="https://www.cali.gov.co/movilidad/info/principal/media/bloque210342.png"
-            alt="ded"
-            style={{ width: "90px" }}
-          />
-
-          <ul>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Información general
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Datos de contacto
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Planeación gestión y control
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Participación ciudadana
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Contratación
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Tramites y servicios
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Información de interés
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Educación y cultura vial
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Observatorio
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-base hover:text-principal">
-                Pico y placa
-              </a>
-            </li>
-          </ul>
+          <SideMenu/>
         </aside>
 
         <div className="bg-white w-full h-full gap-[2.75rem] overflow-y-auto">
