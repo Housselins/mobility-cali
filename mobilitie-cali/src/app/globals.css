@@ -54,3 +54,16 @@ button {
   color: #007fff;;
   right: 0;
 }
+
+.idiomas{
+  margin-right: 0.5rem;
+}
+
+.codigo-idioma{
+  margin-right: 0.75rem;
+  cursor: pointer;
+}
+
+.codigo-idioma:hover{
+  background-color: rgb(80, 80, 243)
+}
