@@ -1,0 +1,10 @@
+-- CreateTable
+CREATE TABLE "Page" (
+    "id" SERIAL NOT NULL,
+    "title" TEXT NOT NULL,
+    "views" BIGINT NOT NULL DEFAULT 0,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Page_pkey" PRIMARY KEY ("id")
+);

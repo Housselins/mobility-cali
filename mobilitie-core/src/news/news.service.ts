@@ -67,9 +67,7 @@ export class NewsService {
 
   async findAll(filter?: NewFilter) {
     try {
-      const allNews = await this.prismaService.new.findMany({
-        where: { ...filter, isEnabled: true },
-      });
+      const allNews = await this.prismaService.new.findMany();
 
       if (allNews.length == 0) {
         throw new NotFoundException('No se encontraron noticias');

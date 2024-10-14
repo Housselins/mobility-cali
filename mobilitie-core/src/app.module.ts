@@ -6,7 +6,10 @@ import { BannerModule } from './banner/banner.module';
 import { InfoModule } from './info-central/info.module';
 import { SocialMediaModule } from './social-media/social-media.module';
 import { DenunciaModule } from './denuncia/denuncia.module';
+import { PqrsModule } from './pqrs/pqrs.module';
 import { FooterModule } from './footer/footer.module';
+import { PageModule } from './page/page.module';
+import { EnteModule } from './ente/ente.module';
 
 @Module({
   imports: [
@@ -17,7 +20,10 @@ import { FooterModule } from './footer/footer.module';
     InfoModule,
     SocialMediaModule,
     DenunciaModule,
-    FooterModule
+    PqrsModule,
+    FooterModule,
+    PageModule,
+    EnteModule
   ],
   controllers: [],
   providers: [],

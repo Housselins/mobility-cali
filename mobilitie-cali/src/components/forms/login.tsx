@@ -28,7 +28,6 @@ export default function LoginForm() {
   const onSubmit = async (data: any) => {
     try {
       const response = await axios.post("http://localhost:4000/auth", data);
-      console.log("Response del usuario:", response.data.user);
       setUsuario(response.data.user);
       localStorage.setItem("user", JSON.stringify(response.data));
       window.location.href = "/";
@@ -97,11 +96,11 @@ export default function LoginForm() {
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
-    console.log("userData", userData);
+
 
     if (userData) {
       setUserInfo(JSON.parse(userData));
-      console.log("userInfo", userInfo);
+
 
     }
   }, []);

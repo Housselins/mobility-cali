@@ -4,17 +4,37 @@ import "./Footer.css";
 import { MdDelete, MdModeEdit, MdOutlineAdd } from "react-icons/md";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import axios from "axios";
+import { toast, Toaster } from "react-hot-toast";
 
 export const Footer = () => {
     const [userInfo, setUserInfo] = useState<any>(null);
     const [anadirInfo, setAnadirInfo] = useState(false);
     const [controlDeleteLink, setControlDeleteLink] = useState(false);
     const [idLinkEliminar, SetIdLinkEliminar] = useState(0)
+    const [idEditar, setIdEditar] = useState(0)
+    const [type, setType] = useState("")
+    const [title, setTitle] = useState("")
     const handleModalAnadir = () => {
-        setAnadirInfo(!anadirInfo);
+        setAnadirInfo(true);
+        setType("add")
+        setTitle("Añadir información al footer"); 
     };
 
+    const handleModalEdit = async ( idEditar: number) => {  
+
+        console.log('idLinkEditar', idEditar);
+        setAnadirInfo(true);
+        setType("edit")
+        setTitle("Editar información del footer");
+        const response = await axios.get(`http://localhost:4000/footer/${idEditar}`)
+        setIdEditar(idEditar)
+        console.log('footer',response.data)
+        setFormValues(response?.data)
+    };
+ 
     const handleDeleteLink = () => {
+        console.log('control delete', idLinkEliminar);
+        
         setControlDeleteLink(!controlDeleteLink)
     }
 
@@ -47,12 +67,19 @@ export const Footer = () => {
     };
 
     const handleSubmit = async () => {
-        console.log('formValues', formValues);
+        if(!formValues.fkIdFooter || !formValues.texto || !formValues.link) 
+            return toast.error("Todos los campos son obligatorios");
 
         try {
-            await axios.post("http://localhost:4000/footer", formValues);
-            handleModalAnadir()
-            getFooters()
+            if (type === "edit") {
+                await axios.put(`http://localhost:4000/footer/${idEditar}`, formValues);
+                toast.success("Información editada exitosamente");
+                getFooters()
+            }else if (type === "add") {
+                await axios.post("http://localhost:4000/footer", formValues);
+                toast.success("Información creada exitosamente");
+                getFooters()
+            } 
         } catch (error) {
             console.log(error);
         }
@@ -60,6 +87,7 @@ export const Footer = () => {
     }
 
     const clearForm = () => {
+        setAnadirInfo(false);
         setFormValues({
             fkIdFooter: "",
             texto: "",
@@ -71,11 +99,17 @@ export const Footer = () => {
         console.log(idLinkEliminar);
         try {
             await axios.delete(`http://localhost:4000/footer/${idLinkEliminar}`);
+            toast.success("Información eliminada exitosamente");
             getFooters();
         } catch (error) {
             console.log(error);
         }
         handleDeleteLink();
+    }
+
+    const handleClsModal = () => {
+        setAnadirInfo(false);
+        clearForm();
     }
 
     useEffect(() => {
@@ -97,6 +131,7 @@ export const Footer = () => {
                             title="Añadir"
                             className="h-5 text-white cursor-pointer"
                             onClick={handleModalAnadir}
+
                         />
                     </>
                 )}
@@ -107,10 +142,11 @@ export const Footer = () => {
                         <div className="flex flex-col w-1/4" id={"footerNumero" + (index + 1)}>
                             <p className="text-xl mb-5">{info.nombreColumna}</p>
                             {info.inFooters.map((cont: any, indx: number) => (
-                                <div className={userInfo?.access_token ? "flex flex-row w-full justify-between relative bg-neutral-700  mb-3 py-2" : "flex flex-row w-full justify-center relative"}>
+                                <div className={userInfo?.access_token ? "flex flex-row w-full justify-between relative  mb-3 py-2" : "flex flex-row w-full justify-center relative"}>
                                     {userInfo?.access_token ? (<>
                                         <a id={"infooter" + index + "" + indx} className={cont.link != "" ? " text-left hover:underline cursor-pointer " : " text-left cursor-default "} href={cont.link} target={cont.link != "" ? "_blank" : ""}>{cont.texto}</a>
                                         <MdDelete size={15} title="Eliminar link" onClick={() =>{handleDeleteLink(); SetIdLinkEliminar(cont.id)}} className="absolute top-1/3 right-0 cursor-pointer" />
+                                        <MdModeEdit size={15} title="Editar información	" onClick={() => {handleModalEdit(cont.id);}}  className="absolute top-1/3 right-5 cursor-pointer"  />
                                     </>) : (
                                         <a id={"infooter" + index + "" + indx} className={cont.link != "" ? "text-center hover:underline cursor-pointer" : " text-center cursor-default "} href={cont.link} target={cont.link != "" ? "_blank" : ""}>{cont.texto}</a>
                                     )}
@@ -127,7 +163,7 @@ export const Footer = () => {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                    {"Agregar informacion al footer"}
+                    {title}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
@@ -173,7 +209,7 @@ export const Footer = () => {
                         Aceptar
                     </Button>
                     <Button
-                        onClick={handleModalAnadir}
+                        onClick={handleClsModal}
                         variant="outlined"
                         color="error"
                     >

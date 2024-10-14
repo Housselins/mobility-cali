@@ -6,4 +6,8 @@ export const USECASES_TYPES = {
   // SOCIAL MEDIA
   _CreateSocialMediaUseCase: Symbol("CreateSocialMediaUseCase"),
   _GetSocialMediaUseCase: Symbol("GetSocialMediaUseCase"),
+
+  // PAGE
+  _FindStadisticsUseCase: Symbol("FindStadisticsUseCase"),
+  _UpdateStadisticsUseCase: Symbol("UpdateStadisticsUseCase"),
 };

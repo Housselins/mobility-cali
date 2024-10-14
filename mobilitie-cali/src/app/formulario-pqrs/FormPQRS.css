@@ -1,0 +1,106 @@
+.cotainer-pqrs {
+    border: 1px solid #a1031b;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    /* Asegura que ocupe toda la altura de la ventana */
+}
+
+.contenedor-central {
+    padding-top: 50px;
+   /* border: 1px solid #0ba103;*/
+    width: 80%;
+    /* Ajusta este valor según lo ancho que desees el contenedor */
+    margin: 0 auto;
+    padding: 0 20px;
+    /* Espacio a los lados dentro del contenedor */
+
+}
+
+.title-pqrs{
+    padding-top: 80px;
+    color: #215a9a;
+    font-size: 2em;
+}
+
+.contenedor-titulo{
+    padding-bottom: 50px;
+}
+.video-pqrs{
+   /* border: 1px solid #8903a1;*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.steps-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 50px;
+}
+
+.custom-card-width {
+  /*border: 1px solid #151b82;*/ 
+  width: 800px;
+  height: 400px;
+}
+
+.center-container {
+    padding-top: 100px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.btn-siguiente {
+    color: #fff;
+    background-color: #428bca;
+    border-color: #357ebd;
+    padding: 20px;
+    width: 45%;
+}
+
+.btn-anterior{
+    color: #fff;
+    background-color: #428bca;
+    border-color: #357ebd;
+    padding: 20px;
+    width: 45%;
+}
+
+.btn-siguiente:hover {
+    color: #fff;
+    background-color: #3071a9;
+    border-color: #285e8e;
+}
+
+.button-container{
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-anterior:hover {
+    color: #fff;
+    background-color: #3071a9;
+    border-color: #285e8e;
+}
+
+.btn-primero{
+    color: #fff;
+    background-color: #428bca;
+    border-color: #357ebd;
+    padding: 20px;
+    width: 100%;
+}
+
+.btn-primero:hover {
+    color: #fff;
+    background-color: #3071a9;
+    border-color: #285e8e;
+}
