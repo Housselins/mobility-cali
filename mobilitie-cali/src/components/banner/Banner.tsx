@@ -41,11 +41,11 @@ export const Banner = () => {
 
     useEffect(() => {
         const userData = localStorage.getItem("user");
-        console.log("userData", userData);
+
 
         if (userData) {
             setUserInfo(JSON.parse(userData));
-            console.log("userInfo", userInfo);
+
 
         }
     }, []);

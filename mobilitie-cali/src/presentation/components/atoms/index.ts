@@ -2,3 +2,5 @@ export * from "./ItemLink";
 export * from "./text-input";
 export * from "./Subtitle";
 export * from "./buttons";
+export * from "./images";
+export * from "./ItemDropdown";

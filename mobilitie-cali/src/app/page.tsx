@@ -33,7 +33,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { FaSearch, FaUserAlt } from "react-icons/fa";
+import { FaSearch, FaUserAlt, FaArrowDown, FaLanguage } from "react-icons/fa";
 import { FaBars, FaHouse, FaPlus } from "react-icons/fa6";
 import {
   MdDelete,
@@ -48,6 +48,7 @@ import { MenuCentral } from "@/components/menu-central/MenuCentral";
 import { Footer } from "@/components/footer/Footer";
 import LoginForm from "../components/forms/login";
 import SideMenu from "@/components/side-menu/sideMenu";
+import { CarruselEntes } from "@/components/carrusel-entes/CarruselEntes";
 type FormSocialMediaValues = {
   name?: string;
   url?: string;
@@ -368,22 +369,46 @@ export default function Home() {
       const response = await getNewsUseCase.execute(
         userInfo?.access_token ?? "token"
       );
-      const attachedResponse = await getNewsUseCase.execute(
+      /*const attachedResponse = await getNewsUseCase.execute(
         userInfo?.access_token ?? "token",
         { attached: true }
-      );
+      );*/
 
       setArrayNewaCarousel(response ? response : []);
 
-      setAttachedNews(attachedResponse ? attachedResponse.slice(0, 3) : []);
-
+      /*if (attachedResponse) {
+        const filteredAttachedNews = attachedResponse.filter(news => news.attached === true);
+        setAttachedNews(filteredAttachedNews.slice(0, 3));
+      } else {
+        setAttachedNews([]);
+      }*/
+      //setAttachedNews(attachedResponse ? attachedResponse.slice(0, 3) : []);
       return;
     } catch (error) {
       console.error(error);
     }
   };
 
-  React.useEffect(() => {
+  const initNewsOrder = async () => {
+    try {
+
+      const attachedResponse = await getNewsUseCase.execute(
+        userInfo?.access_token ?? "token",
+        { attached: true }
+      );
+      if (attachedResponse) {
+        const filteredAttachedNews = attachedResponse.filter(news => news.attached === true);
+        setAttachedNews(filteredAttachedNews.slice(0, 3));
+      } else {
+        setAttachedNews([]);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+
+  /*React.useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) =>
         prevIndex === arrayNewaCarousel.length - 1 ? 0 : prevIndex + 1
@@ -391,7 +416,7 @@ export default function Home() {
     }, 3000); // Cambia cada 3 segundos
 
     return () => clearInterval(interval); // Limpia el intervalo cuando el componente se desmonte
-  }, [arrayNewaCarousel]);
+  }, [arrayNewaCarousel]);*/
 
   React.useEffect(() => {
     initNews();
@@ -461,7 +486,6 @@ export default function Home() {
     setType("edit");
     setTilte("Editar noticia");
     const response = await axios.get(`http://localhost:4000/news/${id}`);
-    console.log("response para editar:", response?.data);
     setOpenAddNews(true);
     setSelectNwsIdEdit(id);
     setFormValues(response?.data);
@@ -568,6 +592,60 @@ export default function Home() {
     if (Array.isArray(result)) setSocialMediaData(result);
   };
 
+  const startDrag = (evt: any, newDrag: any) => {
+    // Guardar el índice del elemento que se está arrastrando
+    evt.dataTransfer.setData('draggedIndex', attachedNews.findIndex(item => item.id === newDrag.id));
+  };
+
+  const dragginOver = (evt: any) => {
+    // Evitar que el comportamiento por defecto bloquee el evento drop
+    evt.preventDefault();
+  };
+
+  const onDrop = (evt: any, list: any) => {
+    evt.preventDefault();
+
+    // Obtener el índice del elemento que se está arrastrando
+    const draggedIndex = evt.dataTransfer.getData('draggedIndex');
+
+    // Obtener el índice del elemento sobre el que se suelta
+    const dropIndex = list.findIndex((item: any) => item.id === evt.target.closest('div[draggable]').getAttribute('data-id'));
+
+    if (draggedIndex !== dropIndex) {
+      const newAttachedNews = [...attachedNews];
+
+      // Intercambiar las posiciones
+      const [movedItem] = newAttachedNews.splice(draggedIndex, 1);
+      newAttachedNews.splice(dropIndex, 0, movedItem);
+
+      // Actualizar el estado con el nuevo orden
+      setAttachedNews(newAttachedNews);
+      // Guarda el nuevo orden en localStorage
+      localStorage.setItem('newsOrder', JSON.stringify(newAttachedNews));
+    }
+  };
+
+  useEffect(() => {
+    const storedOrder = localStorage.getItem('newsOrder');
+    if (storedOrder) {
+      console.log('Stored order:', storedOrder);
+      setAttachedNews(JSON.parse(storedOrder));
+    } else {
+      initNewsOrder(); // Llamar a la función para obtener noticias si no hay nada en localStorage
+    }
+  }, []);
+
+  const [menuOrganismo, setMenuOrganismo] = useState(false);
+
+  const ocultarSubMenuNav = () => {
+    setMenuOrganismo(!menuOrganismo);
+  }
+
+  const [showLanguage, setShowLanguage] = useState(false)
+
+  const mostrarIdiomas = () => {
+    setShowLanguage(!showLanguage)
+  }
   return (
     <main className="h-full w-full">
       <Toaster />
@@ -634,6 +712,21 @@ export default function Home() {
         </div>
 
         <div className="flex flex-row space-x-2 items-center">
+          {showLanguage && (
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>EN</p>
+              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>FR</p>
+              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>IT</p>
+              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>JP</p>
+              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>PO</p>
+              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>AL</p>
+              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>ES</p>
+            </div>
+          )}
+
+          <FaLanguage
+            style={{ color: "white", cursor: "pointer" }}
+            onClick={mostrarIdiomas} />
           <PQRSDButton />
           <FaSearch style={{ color: "white" }} />
           <FaUserAlt
@@ -652,7 +745,6 @@ export default function Home() {
         >
           <SideMenu/>
         </aside>
-
         <div className="bg-white w-full h-full gap-[2.75rem] overflow-y-auto">
           <div id="banner" className="w-full pt-10 ">
             <Banner />
@@ -692,10 +784,19 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="bg-white flex flex-row pt-4 pb-4 justify-around">
+          <div className="bg-white flex flex-row pt-4 pb-4 justify-around"
+            onDragOver={(evt => dragginOver(evt))}
+            onDrop={(evt => onDrop(evt, attachedNews))}>
             {attachedNews.map((attachedNew) => {
               return (
-                <div className="w-1/4 relative rounded-br20">
+                <div
+                  className="w-1/4 relative rounded-br20"
+                  key={attachedNew.id}
+                  draggable
+                  data-id={attachedNew.id}
+                  onDragStart={(evt) => startDrag(evt, attachedNew)}
+                >
+
                   <div className="absolute top-0 right-0 flex flex-col justify-center items-center gap-3 text-neutral-300 text-xs font-bold p-2">
                     {userInfo && userInfo.user.rol.id === 1 && (
                       <MdDelete
@@ -703,7 +804,7 @@ export default function Home() {
                         title="Eliminar"
                         className="text-neutral-500"
                         onClick={() =>
-                          handleOpenEditNews(attachedNew.id.toString())
+                          handleDltNws()
                         }
                       />
                     )}
@@ -721,11 +822,10 @@ export default function Home() {
                       <MdStar
                         size={20}
                         title="Fijar"
-                        className={`${
-                          attachedNew.attached
-                            ? "text-yellow"
-                            : "text-neutral-500"
-                        } bg-white rounded-full cursor-pointer z-50`}
+                        className={`${attachedNew.attached
+                          ? "text-yellow"
+                          : "text-neutral-500"
+                          } bg-white rounded-full cursor-pointer z-50`}
                         onClick={async () => {
                           await createNewUseCase
                             .execute(
@@ -816,11 +916,10 @@ export default function Home() {
                               <MdStar
                                 size={20}
                                 title="Fijar"
-                                className={`${
-                                  carrousel.attached
-                                    ? "text-yellow"
-                                    : "text-neutral-500"
-                                } bg-white rounded-full cursor-pointer z-50`}
+                                className={`${carrousel.attached
+                                  ? "text-yellow"
+                                  : "text-neutral-500"
+                                  } bg-white rounded-full cursor-pointer z-50`}
                                 onClick={async () => {
                                   await createNewUseCase
                                     .execute(
@@ -880,8 +979,11 @@ export default function Home() {
               </div>
             </div>
           </div>
+          <div className="p-10">
+            <CarruselEntes />
+          </div>
           <footer>
-            <Footer/>
+            <Footer />
           </footer>
           <Dialog
             open={openAddNews}

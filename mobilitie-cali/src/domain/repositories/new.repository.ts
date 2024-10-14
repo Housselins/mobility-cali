@@ -1,5 +1,10 @@
 import { IFindNews } from "@/lib/interfaces";
-import { CreateNewInterface, NewInterface } from "../models";
+import {
+  CreateNewInterface,
+  CreateOrUpdatePage,
+  NewInterface,
+  Page,
+} from "../models";
 
 export interface INewsRepository {
   createNew(
@@ -10,4 +15,6 @@ export interface INewsRepository {
     accessToken: string,
     filter?: IFindNews
   ): Promise<NewInterface[] | undefined>;
+  findPageStadistics(title: string): Promise<Page[] | undefined>;
+  createOrUpdate(page: CreateOrUpdatePage): Promise<Page | undefined>;
 }
