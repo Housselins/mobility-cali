@@ -55,4 +55,11 @@ export class FooterService {
       where: { id },
     });
   }
+
+  async update(id: number, data: any) {
+    return this.prisma.inFooter.update({
+      where: { id },
+      data,
+    });
+  }
 }

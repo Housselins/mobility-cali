@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, Delete, Param, ParseIntPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, Delete, Param, ParseIntPipe, Put } from '@nestjs/common';
 import { FooterService } from './footer.service';
 import { CreateFooterDTO } from './dto/footer.dto';
 
@@ -36,5 +36,11 @@ export class FooterController {
         );
       }
     }
+
+    @Put(':id')
+    async updateFooter(@Param('id') id: string, @Body() newData: CreateFooterDTO) {
+      return this.footerService.update(Number(id), newData);
+    }
+
    
 }
