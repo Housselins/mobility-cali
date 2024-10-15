@@ -43,7 +43,7 @@ export class FooterService {
   }
 
   async findOne(id: number) {
-    return this.prisma.footer.findUnique({
+    return this.prisma.inFooter.findUnique({
       where: { id },
     });
   }
@@ -57,9 +57,32 @@ export class FooterService {
   }
 
   async update(id: number, data: any) {
-    return this.prisma.inFooter.update({
-      where: { id },
-      data,
-    });
+    console.log('id', id, 'data', data);
+    try {
+       const InFooterExists = await this.prisma.inFooter.findUnique({
+         where: { id },
+       })
+
+       if (!InFooterExists) {
+         throw new NotFoundException(`InFooter con ID ${id} no encontrada`)
+       }
+       const updateInFooter = await this.prisma.inFooter.update({
+         where: { id },
+         data: {
+           texto: data.texto,
+           link: data.link,
+           fkIdFooter: parseInt(data.fkIdFooter)
+         }
+       })
+       if (!updateInFooter) {
+         throw new InternalServerErrorException(
+           'No se pudo actualizar la informacion en el footer'
+         )
+       }
+       return updateInFooter
+    } catch (error) {
+      console.log(error);
+    }
+
   }
 }

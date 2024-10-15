@@ -17,6 +17,15 @@ export class FooterController {
         return this.footerService.findAll();
     }
 
+    @Get(':id')
+    async getFooter(@Param('id', ParseIntPipe) id: number) {
+        const footer = await this.footerService.findOne(id);
+        if (!footer) {
+          throw new HttpException('Link no encontrado', HttpStatus.NOT_FOUND);
+        }
+        return footer;
+    }
+
     @Delete(':id')
     async deleteFooter(@Param('id', ParseIntPipe) id: number) {
       try {
@@ -41,6 +50,5 @@ export class FooterController {
     async updateFooter(@Param('id') id: string, @Body() newData: CreateFooterDTO) {
       return this.footerService.update(Number(id), newData);
     }
-
    
 }

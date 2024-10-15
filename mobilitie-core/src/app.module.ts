@@ -8,6 +8,8 @@ import { SocialMediaModule } from './social-media/social-media.module';
 import { DenunciaModule } from './denuncia/denuncia.module';
 import { PqrsModule } from './pqrs/pqrs.module';
 import { FooterModule } from './footer/footer.module';
+import { PageModule } from './page/page.module';
+import { EnteModule } from './ente/ente.module';
 
 @Module({
   imports: [
@@ -19,7 +21,9 @@ import { FooterModule } from './footer/footer.module';
     SocialMediaModule,
     DenunciaModule,
     PqrsModule,
-    FooterModule
+    FooterModule,
+    PageModule,
+    EnteModule
   ],
   controllers: [],
   providers: [],
