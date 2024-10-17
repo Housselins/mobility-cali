@@ -81,7 +81,7 @@ export const NewsList: FC<{}> = ({}) => {
                 )}
                 <article className="w-full h-full self-start overflow-x-auto">
                   <div className=" whitespace-normal left">
-                    {newItem.content?.content}
+                    {newItem?.contenido_noticia}
                   </div>
                 </article>
               </div>

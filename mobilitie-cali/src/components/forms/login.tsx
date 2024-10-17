@@ -1,3 +1,4 @@
+"use client";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -77,7 +78,7 @@ export default function LoginForm() {
         (t) => (
           <div style={{ color: "#fff" }}>
             <strong>Error!</strong>
-            <p>The captcha doesn't match</p>
+            <p>{`The captcha doesn't match`}</p>
           </div>
         ),
         {

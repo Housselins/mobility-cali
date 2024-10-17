@@ -33,7 +33,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { FaSearch, FaUserAlt, FaArrowDown } from "react-icons/fa";
+import { FaSearch, FaUserAlt, FaArrowDown, FaLanguage } from "react-icons/fa";
 import { FaBars, FaHouse, FaPlus } from "react-icons/fa6";
 import {
   MdDelete,
@@ -47,6 +47,7 @@ import * as Yup from "yup";
 import { MenuCentral } from "@/components/menu-central/MenuCentral";
 import { Footer } from "@/components/footer/Footer";
 import LoginForm from "../components/forms/login";
+import { CarruselEntes } from "@/components/carrusel-entes/CarruselEntes";
 type FormSocialMediaValues = {
   name?: string;
   url?: string;
@@ -639,6 +640,11 @@ export default function Home() {
     setMenuOrganismo(!menuOrganismo);
   }
 
+  const [showLanguage, setShowLanguage] = useState(false)
+
+  const mostrarIdiomas = () => {
+    setShowLanguage(!showLanguage)
+  }
   return (
     <main className="h-full w-full">
       <Toaster />
@@ -656,8 +662,8 @@ export default function Home() {
         </div>
 
         <div className="flex flex-row space-x-2 items-center">
-          {socialMediaData.map((red) => (
-            <div className="flex flex-col">
+          {socialMediaData.map((red, key) => (
+            <div key={key} className="flex flex-col">
               {userInfo?.access_token && (
                 <MdModeEdit
                   title="Editar"
@@ -705,6 +711,21 @@ export default function Home() {
         </div>
 
         <div className="flex flex-row space-x-2 items-center">
+          {showLanguage && (
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>EN</p>
+              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>FR</p>
+              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>IT</p>
+              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>JP</p>
+              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>PO</p>
+              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>AL</p>
+              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>ES</p>
+            </div>
+          )}
+
+          <FaLanguage
+            style={{ color: "white", cursor: "pointer" }}
+            onClick={mostrarIdiomas} />
           <PQRSDButton />
           <FaSearch style={{ color: "white" }} />
           <FaUserAlt
@@ -750,7 +771,7 @@ export default function Home() {
 
                   <li>
                     <a href="" className="text-base hover:text-principal">
-                    Directorio de AAGI
+                      Directorio de AAGI
                     </a>
                   </li>
                 </div>
@@ -1055,6 +1076,9 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </div>
+          <div className="p-10">
+            <CarruselEntes />
           </div>
           <footer>
             <Footer />

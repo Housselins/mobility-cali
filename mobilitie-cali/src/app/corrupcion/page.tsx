@@ -17,9 +17,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { ThemeProvider, createTheme, useColorScheme } from '@mui/material/styles';
 const Corrupcion = () => {
   const { mode, setMode } = useColorScheme();
-  if (!mode) {
-    return null;
-  }
+  
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
   const [formValues, setFormValues] = useState({
@@ -173,6 +171,10 @@ const Corrupcion = () => {
     console.log("mostrarFormularioDenuncia");
     setMostrarFormulario(!mostrarFormulario);
   };
+
+  if (!mode) {
+    return null;
+  }
 
   return (
     <>
@@ -729,7 +731,7 @@ const Corrupcion = () => {
                         <div className="form-control">
                           <label className="label">
                             <span className="message-accordion">
-                              En cumplimiento de la Ley Estatutaria 1581 del 17 de
+                              {`En cumplimiento de la Ley Estatutaria 1581 del 17 de
                               Octubre de 2012 "Por la cual se dictan disposiciones
                               generales para la protección de datos personales",
                               la Alcaldía de Santiago de Cali informa, que siendo
@@ -742,7 +744,7 @@ const Corrupcion = () => {
                               acerca a la Alcaldía de Santiago de Cali. Sus
                               respuestas serán estrictamente confidenciales y
                               serán usadas por la Oficina Asesora de Transparencia
-                              solo con fines estadísticos.
+                              solo con fines estadísticos.`}
                             </span>
                           </label>
                         </div>

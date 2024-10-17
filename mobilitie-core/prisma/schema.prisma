@@ -177,3 +177,14 @@ model Page {
   updatedAt DateTime @default(now())
   version   String   @default("0")
 }
+
+
+model ente {
+  id             Int      @id @default(autoincrement())
+  alt            String
+  image          String
+  url            String
+  isEnabled      Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
