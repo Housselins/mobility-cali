@@ -9,6 +9,8 @@ import { DenunciaModule } from './denuncia/denuncia.module';
 import { PqrsModule } from './pqrs/pqrs.module';
 import { FooterModule } from './footer/footer.module';
 import { PageModule } from './page/page.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -23,7 +25,7 @@ import { PageModule } from './page/page.module';
     FooterModule,
     PageModule
   ],
-  controllers: [],
-  providers: [],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
