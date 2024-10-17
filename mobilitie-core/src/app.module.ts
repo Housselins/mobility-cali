@@ -11,6 +11,7 @@ import { FooterModule } from './footer/footer.module';
 import { PageModule } from './page/page.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { EnteModule } from './ente/ente.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { AppService } from './app.service';
     DenunciaModule,
     PqrsModule,
     FooterModule,
-    PageModule
+    PageModule,
+    EnteModule
   ],
   controllers: [AppController],
   providers: [AppService],
