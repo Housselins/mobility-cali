@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 import { NavBar } from "@/presentation/components/molecules";
 import { MENU_DATA } from "@/lib/config/menuData";
 import { StoreProvider } from "@/presentation";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
         <body className={"w-screen h-screen " + inter.className}>
           <div className="h-[calc(100%)]">{children}</div>
           <Toaster />
+          <Suspense>{children}</Suspense>
         </body>
       </html>
     </StoreProvider>

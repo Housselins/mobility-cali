@@ -139,10 +139,10 @@ export const Footer = () => {
                 <div className="text-center w-full relative p-4 text-white flex flex-row justify-around gap-3">
 
                     {inFooter.map((info: any, index: number) => (
-                        <div className="flex flex-col w-1/4" id={"footerNumero" + (index + 1)}>
+                        <div key={index} className="flex flex-col w-1/4" id={"footerNumero" + (index + 1)}>
                             <p className="text-xl mb-5">{info.nombreColumna}</p>
                             {info.inFooters.map((cont: any, indx: number) => (
-                                <div className={userInfo?.access_token ? "flex flex-row w-full justify-between relative  mb-3 py-2" : "flex flex-row w-full justify-center relative"}>
+                                <div key={indx} className={userInfo?.access_token ? "flex flex-row w-full justify-between relative  mb-3 py-2" : "flex flex-row w-full justify-center relative"}>
                                     {userInfo?.access_token ? (<>
                                         <a id={"infooter" + index + "" + indx} className={cont.link != "" ? " text-left hover:underline cursor-pointer " : " text-left cursor-default "} href={cont.link} target={cont.link != "" ? "_blank" : ""}>{cont.texto}</a>
                                         <MdDelete size={15} title="Eliminar link" onClick={() =>{handleDeleteLink(); SetIdLinkEliminar(cont.id)}} className="absolute top-1/3 right-0 cursor-pointer" />
@@ -175,7 +175,7 @@ export const Footer = () => {
                                     name="fkIdFooter">
                                     <option disabled selected>Selecciona la columna</option>
                                     {inFooter.map((data: any, index: number) => (
-                                        <option value={data.id}>{data.nombreColumna}</option>
+                                        <option key={index} value={data.id}>{data.nombreColumna}</option>
                                     ))}
                                 </select>
                             </div>

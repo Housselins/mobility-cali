@@ -1,4 +1,5 @@
 "use client";
+
 import { NewInterface } from "@/domain/models";
 import CreateNewUseCase from "@/domain/usecases/news/create-new.use.case";
 import { appContainer, USECASES_TYPES } from "@/infrastructure/ioc";
@@ -34,7 +35,7 @@ export const CreateNewsForm: FC<FormProps> = ({ newToEdit }) => {
   );
   const initialFormValues: FormValues = {
     title: isModify ? newToEdit?.title : "",
-    content: isModify ? newToEdit?.content?.content : "",
+
     image: isModify ? newToEdit?.image : "",
   };
   const [authenticated, setAuthenticated] = useState<AuthDataInterface>();
@@ -79,7 +80,7 @@ export const CreateNewsForm: FC<FormProps> = ({ newToEdit }) => {
       const resultCreateNewUseCase = await createNewUseCase.execute(
         values.title!,
         authenticated?.access_token,
-        content,
+        "",
         values.image,
         newToEdit?.id
       );
@@ -126,7 +127,7 @@ export const CreateNewsForm: FC<FormProps> = ({ newToEdit }) => {
     const resultCreateNewUseCase = await createNewUseCase.execute(
       newData.title,
       authenticated?.access_token,
-      newData.content,
+      "",
       newData.image,
       newToEdit?.id,
       !newData.isEnabled
@@ -173,7 +174,7 @@ export const CreateNewsForm: FC<FormProps> = ({ newToEdit }) => {
     if (auth) {
       setAuthenticated(JSON.parse(auth) as AuthDataInterface);
     }
-  }, [localStorage]);
+  }, []);
   useEffect(() => {
     // Clean store
     // return () => {

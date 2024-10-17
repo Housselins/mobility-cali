@@ -1,11 +1,10 @@
 "use client";
-
 import { PdfIcon, useAppDispatch } from "@/presentation";
 import { setNewState } from "@/presentation/store/news/NewsSlice";
 import axios from "axios";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { FaSearch, FaUserAlt } from "react-icons/fa";
 import { FaBars, FaHouse, FaLanguage } from "react-icons/fa6";
 import "./Noticia.css";
@@ -57,7 +56,7 @@ const InfoNoticia = () => {
   }, [id]);
 
   return (
-    <>
+    <Suspense>
       <div className="fixed w-full justify-between bg-principal py-2 px-6 flex flex-row items-center">
         <div className="flex flex-row items-center space-x-2">
           <FaBars
@@ -136,7 +135,9 @@ const InfoNoticia = () => {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-red">Esta noticia no cuenta actualmente con PDF...</p>
+                  <p className="text-red">
+                    Esta noticia no cuenta actualmente con PDF...
+                  </p>
                 )}
               </div>
             </div>
@@ -145,7 +146,7 @@ const InfoNoticia = () => {
           <p>Loading...</p>
         )}
       </div>
-    </>
+    </Suspense>
   );
 };
 
