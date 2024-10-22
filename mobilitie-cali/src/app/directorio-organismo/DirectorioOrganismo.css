@@ -1,0 +1,91 @@
+.container-organismo {
+
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+
+    margin: 0 auto;
+    padding: 0 20px;
+  
+
+}
+
+.infoPrincipal-organismo {
+    padding-top: 50px;
+    width: 50%;
+
+
+}
+
+.title-organismo {
+    color: #215a9a;
+    font-size: 2.5em;
+    font-weight: 400;
+}
+
+.pgel {
+    font-family: "Raleway", sans-serif;
+    font-size: 15px;
+    margin-top: 50px;
+
+    width: 100%;
+    justify-content: space-between;
+    display: flex;
+}
+
+.pgel-text {
+    width: 50%;
+
+}
+
+.pgel-img {
+    width: 50%;
+
+}
+
+.sigep{
+    width: 30%;
+    height: 100%;
+    margin-left: 50px;
+}
+
+.contenedor-funcionarios{
+
+
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.funcionarios{
+    margin-top: 50px;
+    border-radius: 10px; 
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 6px 20px rgba(0, 0, 0, 0.1); 
+    background-color: #ffffff;
+    width: 70%;
+}
+.title-funcionarios{
+    margin-top: 15px;
+    font-family: "Raleway", sans-serif;
+    font-size: 1.533em;
+    font-weight: 400;
+    color: #222;
+    padding: 20px;
+}
+
+.contenedor-datos{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.text-datos p{
+    font-weight: 500;
+    font-size: 1em;
+    color: #555555;
+    font-family: "Raleway", sans-serif;
+    margin: 0 0 10px;
+    margin-left: 10px;
+}
+
+

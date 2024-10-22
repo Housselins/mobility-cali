@@ -5,10 +5,12 @@ import React, { useState } from 'react'
 import { FaArrowDown, FaSearch, FaUserAlt } from 'react-icons/fa';
 import { FaBars, FaHouse, FaLanguage } from 'react-icons/fa6'
 import LoginForm from '../forms/login';
+import { useTranslation } from 'next-i18next';
 import './Topbar.css'
 export const Topbar = () => {
     const [controladorRenderMenu, setControladorRenderMenu] = useState(false);
     const [showLanguage, setShowLanguage] = useState(false)
+    const { t, i18n } = useTranslation('common');
 
     const ocultarMenuNav = () => {
         setControladorRenderMenu(!controladorRenderMenu);
@@ -31,6 +33,12 @@ export const Topbar = () => {
         setShowLanguage(!showLanguage)
     }
 
+    const changeLanguage = (lang:any) => {
+        i18n.changeLanguage(lang);
+        console.log(i18n.language);
+        
+      };
+
     return (
         <>
             <div className="fixed z-40 w-full justify-between bg-principal py-2 px-6 flex flex-row items-center">
@@ -44,11 +52,12 @@ export const Topbar = () => {
                         src="https://www.cali.gov.co/movilidad/info/principal/media/bloque214959.png"
                         alt=""
                     />
+           
                 </div>
                 <div className="flex flex-row space-x-2 items-center">
                     {showLanguage && (
                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <FaLanguage className='idiomas' /> <p className='codigo-idioma'>EN</p>
+                            <FaLanguage className='idiomas' /> <p onClick={() => changeLanguage('en')} className='codigo-idioma'>EN</p>
                             <FaLanguage className='idiomas' /> <p className='codigo-idioma'>FR</p>
                             <FaLanguage className='idiomas' /> <p className='codigo-idioma'>IT</p>
                             <FaLanguage className='idiomas' /> <p className='codigo-idioma'>JP</p>
