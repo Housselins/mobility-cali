@@ -175,7 +175,7 @@ export const Footer = () => {
                                     name="fkIdFooter">
                                     <option disabled selected>Selecciona la columna</option>
                                     {inFooter.map((data: any, index: number) => (
-                                        <option value={data.id}>{data.nombreColumna}</option>
+                                        <option key={index} value={data.id}>{data.nombreColumna}</option>
                                     ))}
                                 </select>
                             </div>

@@ -1,0 +1,46 @@
+.container-participacion {
+
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 0 20px;
+
+}
+
+.infoPrincipal-participacion {
+    padding-top: 50px;
+    width: 50%;
+}
+
+
+.title-participacion {
+    color: #215a9a;
+    font-size: 2em;
+    font-weight: 400;
+    font-family: "Raleway", sans-serif;
+
+}
+
+.pgEspacio{
+    margin-top: 70px;
+}
+
+.departamentos-administrativos{
+    color: #215a9a;
+    font-size: 1.533em;
+    font-weight: 400;
+    font-family: "Raleway", sans-serif;
+
+}
+
+
+.title-accordion{
+    color: #31708f;;
+    font-weight: 500;
+    font-family: "Raleway", sans-serif;
+}
+
+.lista-comite{
+    margin-left: 10px;
+}

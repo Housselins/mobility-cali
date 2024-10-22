@@ -35,8 +35,8 @@ const PQRSD = () => {
     <>
     <Topbar />
       <div className="w-full h-full flex flex-row justify-center items-center gap-3 px-10">
-        {arrayOpciones.map((element: any) => (
-          <div className="w-1/5">
+        {arrayOpciones.map((element: any, index: any) => (
+          <div key={index} className="w-1/5">
             <Link href={element.link} className="flex flex-col justify-center items-center  hover:text-neutral-500">
               <img className="w-20" src={element.src} alt={element.alt} />
               <p className="m-0 p-2 text-center text-principal">

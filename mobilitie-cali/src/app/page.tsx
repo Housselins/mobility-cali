@@ -664,7 +664,7 @@ export default function Home() {
 
         <div className="flex flex-row space-x-2 items-center">
           {socialMediaData.map((red) => (
-            <div className="flex flex-col">
+            <div key={red.id} className="flex flex-col">
               {userInfo?.access_token && (
                 <MdModeEdit
                   title="Editar"
