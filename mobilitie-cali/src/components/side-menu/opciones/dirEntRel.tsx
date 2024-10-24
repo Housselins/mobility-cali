@@ -59,7 +59,7 @@ export default function DirEntRel() {
 
                     <ol style={{ listStyleType: "float", paddingLeft: "50px" }}>
                         {opciones.map((opcion: any, indx: number) => (
-                            <li className="mb-3 hover:cursor-pointer">
+                            <li key={indx} className="mb-3 hover:cursor-pointer">
                                 <a href={opcion.link} target="_blank">
                                     {opcion.texto}
                                 </a>

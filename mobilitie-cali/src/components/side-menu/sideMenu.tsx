@@ -4,11 +4,11 @@ import React, { useState } from "react";
 export default function SideMenu() {
     const [opcionesMenu, setOpcionesMenu] = useState([
         {
-            opcion: "Información general",
+            opcion: "Información general", 
             divisiones: [
                 {
                     texto: "Funciones del Organismo",
-                    link: "#",
+                    link: "/organismo",
                 },
                 {
                     texto: "Directorio de Entidades",
@@ -85,7 +85,7 @@ export default function SideMenu() {
             divisiones: [
                 {
                     texto: "Espacios de Participación Ciudadana",
-                    link: "#",
+                    link: "/espacio-participacion",
                 },
                 {
                     texto:
@@ -238,7 +238,7 @@ export default function SideMenu() {
 
             <div className="join join-vertical w-full">
                 {opcionesMenu.map((dato: any, index: number) => (
-                    <div className="collapse collapse-arrow join-item">
+                    <div key={index} className="collapse collapse-arrow join-item">
                         <input type="radio" name="my-accordion-4" />
                         <div className="collapse-title">
                             <p className="text-l text-principalTransparente font-semibold">
