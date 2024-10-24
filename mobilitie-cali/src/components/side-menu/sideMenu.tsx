@@ -26,11 +26,11 @@ export default function SideMenu() {
             divisiones: [
                 {
                     texto: "Localización y horarios de atención al público",
-                    link: "#",
+                    link: "horariosDeAtencion",
                 },
                 {
                     texto: "Directorio del Organismo",
-                    link: "https://www.cali.gov.co/movilidad/publicaciones/106992/entidades_relacionadas_transito/",
+                    link: "directorioOrganismo",
                 },
             ],
         },
@@ -250,7 +250,7 @@ export default function SideMenu() {
                                 <ul style={{ listStyleType: "disc" }}>
                                     {dato.divisiones.map((sub: any, idx: number) => (
                                         <li className="pb-3">
-                                            <Link href={sub.link} passHref>
+                                            <Link href={sub.link} target="_blank" passHref>
                                                 {sub.texto}
                                             </Link>
                                         </li>
