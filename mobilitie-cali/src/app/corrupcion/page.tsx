@@ -12,12 +12,16 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import { FaFileAlt, FaArrowRight } from "react-icons/fa";
 import { FaArrowDown } from "react-icons/fa6";
 import axios from "axios";
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import { ThemeProvider, createTheme, useColorScheme } from '@mui/material/styles';
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import {
+  ThemeProvider,
+  createTheme,
+  useColorScheme,
+} from "@mui/material/styles";
 const Corrupcion = () => {
   const { mode, setMode } = useColorScheme();
-  
+
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
   const [formValues, setFormValues] = useState({
@@ -112,7 +116,7 @@ const Corrupcion = () => {
     }
     try {
       const response = await axios.post(
-        "http://localhost:4000/denuncia",
+        `${process.env.coreApi}/denuncia`,
         formValues
       );
       toast.success("Denuncia enviada");
@@ -166,7 +170,7 @@ const Corrupcion = () => {
   };
 
   const mostrarFormularioDenuncia = () => {
-    console.log('mode', mode);
+    console.log("mode", mode);
 
     console.log("mostrarFormularioDenuncia");
     setMostrarFormulario(!mostrarFormulario);
@@ -189,7 +193,7 @@ const Corrupcion = () => {
             <Select
               value={mode}
               onChange={(event) =>
-                setMode(event.target.value as 'system' | 'light' | 'dark')
+                setMode(event.target.value as "system" | "light" | "dark")
               }
             >
               <MenuItem value="system">System</MenuItem>
@@ -223,10 +227,10 @@ const Corrupcion = () => {
                       VIDEOS, AUDIO, o entre otros.
                       <br />
                       Si la denuncia que vas a presentar por presuntos actos de
-                      corrupción es cometido por servidores públicos NO vinculados
-                      a la Alcaldía de Cali, deberá presentar la misma
-                      directamente ante la entidad a la que se encuentre vinculado
-                      el funcionario público o contratista.
+                      corrupción es cometido por servidores públicos NO
+                      vinculados a la Alcaldía de Cali, deberá presentar la
+                      misma directamente ante la entidad a la que se encuentre
+                      vinculado el funcionario público o contratista.
                     </p>
                   </>
                 ) : (
@@ -235,13 +239,13 @@ const Corrupcion = () => {
                       FORMULARIO DE DENUNCIA HECHOS DE CORRUPCIÓN
                     </span>
                     <p>
-                      El Decreto municipal 0516 de 2016, con el cual se reforma la
-                      estructura de la Alcaldía de Santiago de Cali, creó la
+                      El Decreto municipal 0516 de 2016, con el cual se reforma
+                      la estructura de la Alcaldía de Santiago de Cali, creó la
                       Oficina Asesora de Transparencia que tiene la función de
                       recibir información sobre presuntos hechos de corrupción y
-                      remitir esta a las instancias de control competentes. No es
-                      un órgano de control, por lo tanto, no realiza actividades
-                      de vigilancia o inspección.
+                      remitir esta a las instancias de control competentes. No
+                      es un órgano de control, por lo tanto, no realiza
+                      actividades de vigilancia o inspección.
                     </p>
                   </>
                 )}
@@ -299,8 +303,8 @@ const Corrupcion = () => {
                           />
 
                           <label htmlFor="anonimidad">
-                            Selecciona esta casilla si deseas que tu denuncia sea
-                            anónima
+                            Selecciona esta casilla si deseas que tu denuncia
+                            sea anónima
                           </label>
                         </div>
                         <div className="form-control">
@@ -586,7 +590,9 @@ const Corrupcion = () => {
                           <label className="testigos"> TESTIGO 1</label>
                           <div className="form-control mt-3">
                             <label className="label">
-                              <span className="label-text">NOMBRE COMPLETO</span>
+                              <span className="label-text">
+                                NOMBRE COMPLETO
+                              </span>
                             </label>
                             <input
                               type="text"
@@ -647,7 +653,9 @@ const Corrupcion = () => {
                           <label className="testigos"> TESTIGO 2</label>
                           <div className="form-control mt-3">
                             <label className="label">
-                              <span className="label-text">NOMBRE COMPLETO</span>
+                              <span className="label-text">
+                                NOMBRE COMPLETO
+                              </span>
                             </label>
                             <input
                               type="text"
@@ -713,11 +721,11 @@ const Corrupcion = () => {
                         <div className="form-control">
                           <label className="label">
                             <span className="message-accordion">
-                              Recuerda que si tu denuncia fue presentada de forma
-                              anónima la respuesta se hará pública en la Página
-                              Web de la Alcadía en la sección: Servicios a la
-                              ciudadanía-Información de Interés. ¡GRACIAS POR
-                              DENUNCIAR!
+                              Recuerda que si tu denuncia fue presentada de
+                              forma anónima la respuesta se hará pública en la
+                              Página Web de la Alcadía en la sección: Servicios
+                              a la ciudadanía-Información de Interés. ¡GRACIAS
+                              POR DENUNCIAR!
                             </span>
                           </label>
                         </div>

@@ -282,7 +282,7 @@ export default function Home() {
   const [addFile, setAddFile] = React.useState(false);
   const handleOpenAddFile = async (id: string) => {
     const response: NewInterface = await axios
-      .get(`http://localhost:4000/news/${id}`)
+      .get(`${process.env.coreApi}/news/${id}`)
       .then((data) => data.data)
       .catch();
 
@@ -321,7 +321,7 @@ export default function Home() {
         fileName: pdfFormValues.pdfName,
         fileDescription: pdfFormValues.pdfDescription,
       };
-      await axios.post(`http://localhost:4000/news`, updateableNewPdf);
+      await axios.post(`${process.env.coreApi}/news`, updateableNewPdf);
       await initNews();
     } catch (error) {
       console.log(error);
@@ -390,13 +390,14 @@ export default function Home() {
 
   const initNewsOrder = async () => {
     try {
-
       const attachedResponse = await getNewsUseCase.execute(
         userInfo?.access_token ?? "token",
         { attached: true }
       );
       if (attachedResponse) {
-        const filteredAttachedNews = attachedResponse.filter(news => news.attached === true);
+        const filteredAttachedNews = attachedResponse.filter(
+          (news) => news.attached === true
+        );
         setAttachedNews(filteredAttachedNews.slice(0, 3));
       } else {
         setAttachedNews([]);
@@ -404,8 +405,7 @@ export default function Home() {
     } catch (error) {
       console.error(error);
     }
-  }
-
+  };
 
   /*React.useEffect(() => {
     const interval = setInterval(() => {
@@ -484,7 +484,7 @@ export default function Home() {
   const handleOpenEditNews = async (id: string) => {
     setType("edit");
     setTilte("Editar noticia");
-    const response = await axios.get(`http://localhost:4000/news/${id}`);
+    const response = await axios.get(`${process.env.coreApi}/news/${id}`);
     setOpenAddNews(true);
     setSelectNwsIdEdit(id);
     setFormValues(response?.data);
@@ -544,12 +544,12 @@ export default function Home() {
     try {
       if (type === "edit") {
         await axios.put(
-          `http://localhost:4000/news/${selectNwsIdEdit}`,
+          `${process.env.coreApi}/news/${selectNwsIdEdit}`,
           formValues
         );
         await initNews();
       } else if (type === "add") {
-        await axios.post("http://localhost:4000/news", formValues);
+        await axios.post("${process.env.coreApi}/news", formValues);
         await initNews();
       }
     } catch (error) {
@@ -574,7 +574,7 @@ export default function Home() {
   const handleDltNws = async () => {
     if (!selectNwsId) return; // Verificar si hay un ID seleccionado
     try {
-      await axios.delete(`http://localhost:4000/news/${selectNwsId}`);
+      await axios.delete(`${process.env.coreApi}/news/${selectNwsId}`);
       setArrayNewaCarousel(
         arrayNewaCarousel.filter((noticia: any) => noticia.id !== selectNwsId)
       ); // Actualizar la lista de banners
@@ -593,7 +593,10 @@ export default function Home() {
 
   const startDrag = (evt: any, newDrag: any) => {
     // Guardar el índice del elemento que se está arrastrando
-    evt.dataTransfer.setData('draggedIndex', attachedNews.findIndex(item => item.id === newDrag.id));
+    evt.dataTransfer.setData(
+      "draggedIndex",
+      attachedNews.findIndex((item) => item.id === newDrag.id)
+    );
   };
 
   const dragginOver = (evt: any) => {
@@ -605,10 +608,13 @@ export default function Home() {
     evt.preventDefault();
 
     // Obtener el índice del elemento que se está arrastrando
-    const draggedIndex = evt.dataTransfer.getData('draggedIndex');
+    const draggedIndex = evt.dataTransfer.getData("draggedIndex");
 
     // Obtener el índice del elemento sobre el que se suelta
-    const dropIndex = list.findIndex((item: any) => item.id === evt.target.closest('div[draggable]').getAttribute('data-id'));
+    const dropIndex = list.findIndex(
+      (item: any) =>
+        item.id === evt.target.closest("div[draggable]").getAttribute("data-id")
+    );
 
     if (draggedIndex !== dropIndex) {
       const newAttachedNews = [...attachedNews];
@@ -620,14 +626,14 @@ export default function Home() {
       // Actualizar el estado con el nuevo orden
       setAttachedNews(newAttachedNews);
       // Guarda el nuevo orden en localStorage
-      localStorage.setItem('newsOrder', JSON.stringify(newAttachedNews));
+      localStorage.setItem("newsOrder", JSON.stringify(newAttachedNews));
     }
   };
 
   useEffect(() => {
-    const storedOrder = localStorage.getItem('newsOrder');
+    const storedOrder = localStorage.getItem("newsOrder");
     if (storedOrder) {
-      console.log('Stored order:', storedOrder);
+      console.log("Stored order:", storedOrder);
       setAttachedNews(JSON.parse(storedOrder));
     } else {
       initNewsOrder(); // Llamar a la función para obtener noticias si no hay nada en localStorage
@@ -638,13 +644,13 @@ export default function Home() {
 
   const ocultarSubMenuNav = () => {
     setMenuOrganismo(!menuOrganismo);
-  }
+  };
 
-  const [showLanguage, setShowLanguage] = useState(false)
+  const [showLanguage, setShowLanguage] = useState(false);
 
   const mostrarIdiomas = () => {
-    setShowLanguage(!showLanguage)
-  }
+    setShowLanguage(!showLanguage);
+  };
   return (
     <main className="h-full w-full">
       <Toaster />
@@ -712,20 +718,28 @@ export default function Home() {
 
         <div className="flex flex-row space-x-2 items-center">
           {showLanguage && (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>EN</p>
-              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>FR</p>
-              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>IT</p>
-              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>JP</p>
-              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>PO</p>
-              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>AL</p>
-              <FaLanguage className='idiomas' /> <p className='codigo-idioma'>ES</p>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <FaLanguage className="idiomas" />{" "}
+              <p className="codigo-idioma">EN</p>
+              <FaLanguage className="idiomas" />{" "}
+              <p className="codigo-idioma">FR</p>
+              <FaLanguage className="idiomas" />{" "}
+              <p className="codigo-idioma">IT</p>
+              <FaLanguage className="idiomas" />{" "}
+              <p className="codigo-idioma">JP</p>
+              <FaLanguage className="idiomas" />{" "}
+              <p className="codigo-idioma">PO</p>
+              <FaLanguage className="idiomas" />{" "}
+              <p className="codigo-idioma">AL</p>
+              <FaLanguage className="idiomas" />{" "}
+              <p className="codigo-idioma">ES</p>
             </div>
           )}
 
           <FaLanguage
             style={{ color: "white", cursor: "pointer" }}
-            onClick={mostrarIdiomas} />
+            onClick={mostrarIdiomas}
+          />
           <PQRSDButton />
           <FaSearch style={{ color: "white" }} />
           <FaUserAlt
@@ -750,15 +764,22 @@ export default function Home() {
           />
 
           <ul className="flex flex-col nav">
-            <div className={menuOrganismo ? "container-nav1" : "container-nav"} >
+            <div className={menuOrganismo ? "container-nav1" : "container-nav"}>
               <li>
-                Información general <FaArrowDown className="ml-2 cursor-pointer icon-flecha" onClick={ocultarSubMenuNav} />
+                Información general{" "}
+                <FaArrowDown
+                  className="ml-2 cursor-pointer icon-flecha"
+                  onClick={ocultarSubMenuNav}
+                />
               </li>
 
               {menuOrganismo ? (
                 <div>
                   <li>
-                    <a href="/organismo" className="text-base hover:text-principal">
+                    <a
+                      href="/organismo"
+                      className="text-base hover:text-principal"
+                    >
                       Funciones del Organismo
                     </a>
                   </li>
@@ -775,70 +796,60 @@ export default function Home() {
                     </a>
                   </li>
                 </div>
-              ) : (null)}
-
+              ) : null}
             </div>
             <div className="container-nav">
               <li>
-
-                Datos de contacto <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
-
+                Datos de contacto{" "}
+                <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
               </li>
             </div>
             <div className="container-nav">
               <li>
-
-                Planeación gestión y control <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
-
+                Planeación gestión y control{" "}
+                <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
               </li>
             </div>
             <div className="container-nav">
               <li>
-
-                Participación ciudadana <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
-
+                Participación ciudadana{" "}
+                <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
               </li>
             </div>
             <div className="container-nav">
               <li>
-
-                Contratación <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
-
+                Contratación{" "}
+                <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
               </li>
             </div>
             <div className="container-nav">
               <li>
-
-                Tramites y servicios <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
-
+                Tramites y servicios{" "}
+                <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
               </li>
             </div>
             <div className="container-nav">
               <li>
-
-                Información de interés <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
-
+                Información de interés{" "}
+                <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
               </li>
             </div>
             <div className="container-nav">
               <li>
-
-                Educación y cultura vial <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
-
+                Educación y cultura vial{" "}
+                <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
               </li>
             </div>
             <div className="container-nav">
               <li>
-
-                Observatorio <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
-
+                Observatorio{" "}
+                <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
               </li>
             </div>
             <div className="container-nav">
               <li>
-
-                Pico y placa <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
-
+                Pico y placa{" "}
+                <FaArrowDown className="ml-2 cursor-pointer icon-flecha" />
               </li>
             </div>
           </ul>
@@ -882,9 +893,11 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="bg-white flex flex-row pt-4 pb-4 justify-around"
-            onDragOver={(evt => dragginOver(evt))}
-            onDrop={(evt => onDrop(evt, attachedNews))}>
+          <div
+            className="bg-white flex flex-row pt-4 pb-4 justify-around"
+            onDragOver={(evt) => dragginOver(evt)}
+            onDrop={(evt) => onDrop(evt, attachedNews)}
+          >
             {attachedNews.map((attachedNew) => {
               return (
                 <div
@@ -894,16 +907,13 @@ export default function Home() {
                   data-id={attachedNew.id}
                   onDragStart={(evt) => startDrag(evt, attachedNew)}
                 >
-
                   <div className="absolute top-0 right-0 flex flex-col justify-center items-center gap-3 text-neutral-300 text-xs font-bold p-2">
                     {userInfo && userInfo.user.rol.id === 1 && (
                       <MdDelete
                         size={20}
                         title="Eliminar"
                         className="text-neutral-500"
-                        onClick={() =>
-                          handleDltNws()
-                        }
+                        onClick={() => handleDltNws()}
                       />
                     )}
                     {userInfo && userInfo.user.rol.id === 1 && (
@@ -920,10 +930,11 @@ export default function Home() {
                       <MdStar
                         size={20}
                         title="Fijar"
-                        className={`${attachedNew.attached
-                          ? "text-yellow"
-                          : "text-neutral-500"
-                          } bg-white rounded-full cursor-pointer z-50`}
+                        className={`${
+                          attachedNew.attached
+                            ? "text-yellow"
+                            : "text-neutral-500"
+                        } bg-white rounded-full cursor-pointer z-50`}
                         onClick={async () => {
                           await createNewUseCase
                             .execute(
@@ -1014,10 +1025,11 @@ export default function Home() {
                               <MdStar
                                 size={20}
                                 title="Fijar"
-                                className={`${carrousel.attached
-                                  ? "text-yellow"
-                                  : "text-neutral-500"
-                                  } bg-white rounded-full cursor-pointer z-50`}
+                                className={`${
+                                  carrousel.attached
+                                    ? "text-yellow"
+                                    : "text-neutral-500"
+                                } bg-white rounded-full cursor-pointer z-50`}
                                 onClick={async () => {
                                   await createNewUseCase
                                     .execute(

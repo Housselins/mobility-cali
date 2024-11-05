@@ -56,13 +56,13 @@ export const CarruselEntes = () => {
     try {
       if (type === "edit") {
         await axios.put(
-          `http://localhost:4000/ente/${selectedInfoId}`,
+          `${process.env.coreApi}/ente/${selectedInfoId}`,
           formValues
         );
         initEntes();
         toast.success("Información actualizada exitosamente!");
       } else if (type === "add") {
-        await axios.post("http://localhost:4000/ente", formValues);
+        await axios.post(`${process.env.coreApi}/ente`, formValues);
         await initEntes();
         toast.success("Información creada exitosamente!");
       }
@@ -78,7 +78,7 @@ export const CarruselEntes = () => {
 
   const initEntes = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/ente");
+      const response = await axios.get(`${process.env.coreApi}/ente`);
       setInfoEnte(response.data);
     } catch (error) {
       console.error(error);
@@ -108,7 +108,7 @@ export const CarruselEntes = () => {
   const handleOpenEditInfo = async (id: string) => {
     setType("edit");
     setTilte("Editar Ente");
-    const response = await axios.get(`http://localhost:4000/ente/${id}`);
+    const response = await axios.get(`${process.env.coreApi}/ente/${id}`);
     setOpenAddInfo(true);
     setFormValues(response?.data);
     setSelectedInfoId(id);
@@ -123,7 +123,7 @@ export const CarruselEntes = () => {
   const handleDeleteinfo = async () => {
     setLoading(true);
     try {
-      await axios.delete(`http://localhost:4000/ente/${selectedInfoId}`);
+      await axios.delete(`${process.env.coreApi}/ente/${selectedInfoId}`);
       initEntes();
       setOpenDelete(false);
       toast.success("Ente eliminado exitosamente!");
