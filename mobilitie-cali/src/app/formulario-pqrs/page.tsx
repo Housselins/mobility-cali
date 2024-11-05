@@ -1,39 +1,38 @@
 "use client";
-import React, { ChangeEvent, useEffect, useState } from 'react'
-import './FormPQRS.css'
-import { Topbar } from '@/components/topbar/Topbar'
-import axios from 'axios';
+import React, { ChangeEvent, useEffect, useState } from "react";
+import "./FormPQRS.css";
+import { Topbar } from "@/components/topbar/Topbar";
+import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
-import { CustomImageInput } from '@/presentation';
-
+import { CustomImageInput } from "@/presentation";
 
 const FormPQRS = () => {
-
   useEffect(() => {
     fetchCountries();
   }, []);
   const [step, setStep] = useState(1); // Estado para el paso actual
   const [formData, setFormData] = useState({
-    nombres: '',
-    apellidos: '',
-    identificacion: '',
-    direccion: '',
-    correo: '',
-    telefono: '',
-    pais: '',
-    departamento: '',
-    ciudad: '',
-    tipoSolicitud: '',
-    contenidoSolicitud: '',
-    dependencia: '',
-    image: '',
-
+    nombres: "",
+    apellidos: "",
+    identificacion: "",
+    direccion: "",
+    correo: "",
+    telefono: "",
+    pais: "",
+    departamento: "",
+    ciudad: "",
+    tipoSolicitud: "",
+    contenidoSolicitud: "",
+    dependencia: "",
+    image: "",
   });
 
   // Función para manejar el cambio en los campos del formulario
-  const handleInputChange = (event: ChangeEvent<
-    HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-  >) => {
+  const handleInputChange = (
+    event: ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = event.target;
     setFormData({
       ...formData,
@@ -48,7 +47,6 @@ const FormPQRS = () => {
     });
   };
 
-
   // Validación de los campos
   const isStep1Complete = () => {
     const { nombres, apellidos, identificacion } = formData;
@@ -56,7 +54,8 @@ const FormPQRS = () => {
   };
 
   const isStep2Complete = () => {
-    const { direccion, correo, telefono, pais, departamento, ciudad } = formData;
+    const { direccion, correo, telefono, pais, departamento, ciudad } =
+      formData;
     return direccion && correo && telefono && pais && departamento && ciudad;
   };
 
@@ -70,7 +69,7 @@ const FormPQRS = () => {
     } else if (step === 3) {
       guardarPqrs();
     } else {
-      alert('Por favor completa todos los campos requeridos');
+      alert("Por favor completa todos los campos requeridos");
     }
   };
 
@@ -83,8 +82,8 @@ const FormPQRS = () => {
 
   const guardarPqrs = async () => {
     try {
-      console.log('pqrs', formData);
-      const res = await axios.post('http://localhost:4000/pqrs', formData);
+      console.log("pqrs", formData);
+      const res = await axios.post(`${process.env.coreApi}/pqrs`, formData);
       console.log(res);
       toast.success("Petición creada exitosamente");
     } catch (error) {
@@ -92,31 +91,30 @@ const FormPQRS = () => {
       toast.error("Error al crear la petición");
     }
     clearForm();
-
-  }
+  };
 
   const clearForm = () => {
     setFormData({
-      nombres: '',
-      apellidos: '',
-      identificacion: '',
-      direccion: '',
-      correo: '',
-      telefono: '',
-      pais: '',
-      departamento: '',
-      ciudad: '',
-      tipoSolicitud: '',
-      contenidoSolicitud: '',
-      dependencia: '',
-      image: '',
+      nombres: "",
+      apellidos: "",
+      identificacion: "",
+      direccion: "",
+      correo: "",
+      telefono: "",
+      pais: "",
+      departamento: "",
+      ciudad: "",
+      tipoSolicitud: "",
+      contenidoSolicitud: "",
+      dependencia: "",
+      image: "",
     });
-  }
+  };
 
   const [countries, setCountries] = useState<string[]>([]);
 
   const fetchCountries = async () => {
-    const response = await fetch('https://restcountries.com/v3.1/all');
+    const response = await fetch("https://restcountries.com/v3.1/all");
     const data = await response.json();
     setCountries(data.map((country: any) => country.name.common));
   };
@@ -124,14 +122,16 @@ const FormPQRS = () => {
   return (
     <>
       <Topbar />
-      <div className='cotainer-pqrs'>
-        <div className=' contenedor-central  '>
+      <div className="cotainer-pqrs">
+        <div className=" contenedor-central  ">
           <form onSubmit={handleNextStep}>
-            <div className='contenedor-titulo'>
-              <h1 className='title-pqrs'>Radicación de peticiones, quejas y reclamos</h1>
+            <div className="contenedor-titulo">
+              <h1 className="title-pqrs">
+                Radicación de peticiones, quejas y reclamos
+              </h1>
             </div>
 
-            <div className='video-pqrs'>
+            <div className="video-pqrs">
               <iframe
                 width="560"
                 height="315"
@@ -143,19 +143,24 @@ const FormPQRS = () => {
               ></iframe>
             </div>
 
-            <div className='center-container'>
+            <div className="center-container">
               <div className="steps-container">
                 <ul className="steps">
-                  <li className={`step ${step === 1 ? 'step-primary' : ''}`}>Paso 1</li>
-                  <li className={`step ${step === 2 ? 'step-primary' : ''}`}>Paso 2</li>
-                  <li className={`step ${step === 3 ? 'step-primary' : ''}`}>Paso 3</li>
+                  <li className={`step ${step === 1 ? "step-primary" : ""}`}>
+                    Paso 1
+                  </li>
+                  <li className={`step ${step === 2 ? "step-primary" : ""}`}>
+                    Paso 2
+                  </li>
+                  <li className={`step ${step === 3 ? "step-primary" : ""}`}>
+                    Paso 3
+                  </li>
                 </ul>
               </div>
 
               {step === 1 && (
                 <div className="bg-white custom-card-width">
-
-                  <div className='form-control'>
+                  <div className="form-control">
                     <label className="label">
                       <span className="label-text">Tipo de solicitante</span>
                     </label>
@@ -171,7 +176,6 @@ const FormPQRS = () => {
                       <option value="dependencia">Adolescente</option>
                       <option value="dependencia">Apoderado</option>
                     </select>
- 
                   </div>
 
                   <div className="form-control">
@@ -204,7 +208,9 @@ const FormPQRS = () => {
 
                   <div className="form-control">
                     <label className="label">
-                      <span className="label-text">Número de identificación</span>
+                      <span className="label-text">
+                        Número de identificación
+                      </span>
                     </label>
                     <input
                       type="number"
@@ -219,12 +225,15 @@ const FormPQRS = () => {
                   <div>
                     <button
                       type="submit"
-                      className={step === 1 ? 'btn-primero btn btn-block btn-lg mt-6' : 'btn-siguiente btn btn-block btn-lg mt-6'}
+                      className={
+                        step === 1
+                          ? "btn-primero btn btn-block btn-lg mt-6"
+                          : "btn-siguiente btn btn-block btn-lg mt-6"
+                      }
                     >
                       SIGUIENTE
                     </button>
                   </div>
-
                 </div>
               )}
 
@@ -232,7 +241,9 @@ const FormPQRS = () => {
                 <div className="bg-white custom-card-width">
                   <div className="form-control">
                     <label className="label">
-                      <span className="label-text">Dirección de residencia</span>
+                      <span className="label-text">
+                        Dirección de residencia
+                      </span>
                     </label>
                     <input
                       type="text"
@@ -323,10 +334,7 @@ const FormPQRS = () => {
                       <option value="Cali">Cali</option>
                       <option value="Bogotá">Bogotá</option>
                     </select>
-
                   </div>
-
-
 
                   <div className="button-container">
                     <button
@@ -342,20 +350,18 @@ const FormPQRS = () => {
                       SIGUIENTE
                     </button>
                   </div>
-
                 </div>
               )}
 
               {step === 3 && (
                 <div className="bg-white custom-card-width">
-
                   <div className="form-control">
                     <label className="label">
                       <span className="label-text">Tipo de solicitud</span>
                     </label>
                     <select
                       name="tipoSolicitud"
-                      value={formData.tipoSolicitud || ''}
+                      value={formData.tipoSolicitud || ""}
                       onChange={handleInputChange}
                       className="select select-bordered"
                     >
@@ -369,12 +375,14 @@ const FormPQRS = () => {
 
                   <div className="form-control">
                     <label className="label">
-                      <span className="label-text">Contenido de la solicitud</span>
+                      <span className="label-text">
+                        Contenido de la solicitud
+                      </span>
                     </label>
                     <textarea
                       className="textarea textarea-bordered bg-transparent"
                       name="contenidoSolicitud"
-                      placeholder='Escriba en maximo 600 caracteres en que consiste su solicitud'
+                      placeholder="Escriba en maximo 600 caracteres en que consiste su solicitud"
                       value={formData.contenidoSolicitud}
                       onChange={handleInputChange}
                     />
@@ -382,17 +390,21 @@ const FormPQRS = () => {
 
                   <div className="form-control">
                     <label className="label">
-                      <span className="label-text">Dependencia a donde va dirigida</span>
+                      <span className="label-text">
+                        Dependencia a donde va dirigida
+                      </span>
                     </label>
                     <select
                       name="dependencia"
-                      value={formData.dependencia || ''} // Maneja caso donde sea vacío
+                      value={formData.dependencia || ""} // Maneja caso donde sea vacío
                       onChange={handleInputChange}
                       className="select select-bordered"
                     >
-                      <option value="">Seleccione una dependencia</option> {/* Opción vacía por defecto */}
+                      <option value="">Seleccione una dependencia</option>{" "}
+                      {/* Opción vacía por defecto */}
                       <option value="SECRETARIA DE DESARROLLO TERRITORIAL Y PARTICIPACION CIUDADANA (PQRS)">
-                        SECRETARIA DE DESARROLLO TERRITORIAL Y PARTICIPACION CIUDADANA (PQRS)
+                        SECRETARIA DE DESARROLLO TERRITORIAL Y PARTICIPACION
+                        CIUDADANA (PQRS)
                       </option>
                     </select>
                   </div>
@@ -403,7 +415,8 @@ const FormPQRS = () => {
                     </label>
                     <CustomImageInput
                       className="pt-4"
-                      returnFile={handleImageChange} />
+                      returnFile={handleImageChange}
+                    />
                   </div>
 
                   <div className="button-container">
@@ -420,18 +433,14 @@ const FormPQRS = () => {
                       ENVIAR
                     </button>
                   </div>
-
-
                 </div>
-
               )}
-
             </div>
           </form>
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default FormPQRS
+export default FormPQRS;

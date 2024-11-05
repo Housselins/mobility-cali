@@ -38,7 +38,7 @@ export const MenuCentral = () => {
 
     const initInfoCentral = async () => {
         try {
-            const response = await axios.get("http://localhost:4000/info");
+            const response = await axios.get(`${process.env.coreApi}/info`);
             setInfoCentral(response.data);
         } catch (error) {
             console.error(error);
@@ -88,11 +88,11 @@ export const MenuCentral = () => {
         setLoading(true);
         try {
             if (type === "edit") {
-                await axios.put(`http://localhost:4000/info/${selectedInfoId}`, formValues);
+                await axios.put(`${process.env.coreApi}/info/${selectedInfoId}`, formValues);
                 initInfoCentral();
                 toast.success("Información actualizada exitosamente!");
             } else if (type === "add") {
-                await axios.post("http://localhost:4000/info", formValues);
+                await axios.post(`${process.env.coreApi}/info`, formValues);
                 await initInfoCentral();
                 toast.success("Información creada exitosamente!");
             }
@@ -114,7 +114,7 @@ export const MenuCentral = () => {
     const handleOpenEditInfo = async (id: string) => {
         setType("edit");
         setTilte("Editar información");
-        const response = await axios.get(`http://localhost:4000/info/${id}`);
+        const response = await axios.get(`${process.env.coreApi}/info/${id}`);
         setOpenAddInfo(true);
         setFormValues(response?.data);
         setSelectedInfoId(id);
@@ -123,7 +123,7 @@ export const MenuCentral = () => {
     const handleDeleteinfo = async () => {
         setLoading(true);
         try {
-            await axios.delete(`http://localhost:4000/info/${selectedInfoId}`);
+            await axios.delete(`${process.env.coreApi}/info/${selectedInfoId}`);
             initInfoCentral();
             setOpenDelete(false);
             toast.success("Información eliminada exitosamente!");

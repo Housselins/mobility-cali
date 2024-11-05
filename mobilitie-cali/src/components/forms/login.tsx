@@ -17,7 +17,7 @@ export default function LoginForm() {
   const [captchaCode, setCaptchaCode] = React.useState("");
   const [usuario, setUsuario] = React.useState({
     email: "",
-    name: ""
+    name: "",
   });
 
   const generarCodigo = () => {
@@ -28,7 +28,7 @@ export default function LoginForm() {
 
   const onSubmit = async (data: any) => {
     try {
-      const response = await axios.post("http://localhost:4000/auth", data);
+      const response = await axios.post(`${process.env.coreApi}/auth`, data);
       setUsuario(response.data.user);
       localStorage.setItem("user", JSON.stringify(response.data));
       window.location.href = "/";
@@ -98,11 +98,8 @@ export default function LoginForm() {
   useEffect(() => {
     const userData = localStorage.getItem("user");
 
-
     if (userData) {
       setUserInfo(JSON.parse(userData));
-
-
     }
   }, []);
 
@@ -116,9 +113,12 @@ export default function LoginForm() {
       <div className="h-full w-full flex flex-col justify-center items-center gap-y-6">
         {tryCount < 3 ? (
           <>
-          <div className="justify-center">
-          <span> Bienvenido! <strong>{usuario?.name}</strong> </span>
-          </div>
+            <div className="justify-center">
+              <span>
+                {" "}
+                Bienvenido! <strong>{usuario?.name}</strong>{" "}
+              </span>
+            </div>
             <div className="w-10/12">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 Email
@@ -169,7 +169,7 @@ export default function LoginForm() {
             >
               Entrar
             </button>
-            {userInfo &&(
+            {userInfo && (
               <button
                 className=" bg-principal w-10/12 text-white font-semibold py-2 px-4 border border-principal-500 rounded-br20"
                 onClick={cerrarSesion}
