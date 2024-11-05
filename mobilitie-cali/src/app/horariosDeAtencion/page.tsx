@@ -3,7 +3,7 @@
 import { Footer } from "@/components/footer/Footer";
 import { Topbar } from "@/components/topbar/Topbar";
 import { useState } from "react";
-
+import './HorariosAtencion.css';
 export default function HorariosDeAtencion() {
 
   const [infoAtencion, setInfoAtencion] = useState([{
@@ -47,21 +47,21 @@ export default function HorariosDeAtencion() {
       <div className="w-screen h-4/5">
         <Topbar />
 
-        <div className="pt-14">
-          <div className="pl-6">
+        <div className="pt-14 container-horarios">
+          <div className="pl-6 pt-14">
 
-            <b className="text-5xl text-principal">Localización física y horarios de atención</b>
+            <b className="text-5xl text-principal title-localizacion">Localización física y horarios de atención</b>
 
             <br />
 
             {infoAtencion.map((content: any) => (
               <>
-                <div className="mt-4 px-6">
+                <div className="mt-4 px-6 info-horarios">
                   <p><strong className="text-principalTransparente">{content.titulo}</strong></p>
                   {content.sedes.map((sede: any) => (
                     <div className="pl-7">
-                      <b className="text-neutral-950">{sede.nombre}</b>
-                      <p className="text-neutral-800">{sede.direccion}</p>
+                      <b className="text-neutral-950 mt-4"> * {sede.nombre}</b>
+                      <p className="text-neutral-800 mb-2">{sede.direccion}</p>
                     </div>
                   ))}
                 </div>
@@ -71,7 +71,11 @@ export default function HorariosDeAtencion() {
 
           </div>
         </div>
+
       </div>
+      <footer>
+        <Footer />
+      </footer>
     </>
   );
 }

@@ -35,6 +35,6 @@
     ".next/types/**/*.ts",
     "src/context/AuthContext.jsx",
     "middleware.ts"
-  ],
+, "src/__test__/MenuCentral.test.js"  ],
   "exclude": ["node_modules"]
 }

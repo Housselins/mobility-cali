@@ -1,15 +1,27 @@
 "use client";
-
 import { PdfIcon, useAppDispatch } from "@/presentation";
 import { setNewState } from "@/presentation/store/news/NewsSlice";
 import axios from "axios";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { FaSearch, FaUserAlt } from "react-icons/fa";
 import { FaBars, FaHouse, FaLanguage } from "react-icons/fa6";
+import { useChat } from 'ai/react'
 import "./Noticia.css";
+import { Button, Card, CardContent } from "@mui/material";
+
+
+
+
+
 const InfoNoticia = () => {
+
+  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+    api: "/api/chat",
+  });
+
+
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams(); //se  Usa `useSearchParams` para obtener los parámetros de la URL
   const [data, setData] = useState<any | null>(null);
@@ -22,6 +34,31 @@ const InfoNoticia = () => {
 
   //se obtiene el id del parámetro de la URL
   const id = searchParams.get("id");
+
+  const [pdfText, setPdfText] = useState<string>("");
+
+
+  /*const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await getDocument({ data: arrayBuffer }).promise;
+        let text = "";
+
+        for (let i = 0; i < pdf.numPages; i++) {
+          const page = await pdf.getPage(i + 1);
+          const content = await page.getTextContent();
+          const pageText = content.items.map((item: any) => item.str).join(" ");
+          text += pageText + "\n";
+        }
+
+        setPdfText(text); // Guardamos el texto extraído en el estado
+      } catch (error) {
+        console.error("Error al leer el PDF:", error);
+      }
+    }
+  };*/
 
   const ocultarInitSesion = () => {
     setControladorRenderLogin(!controladorRenderLogin);
@@ -138,13 +175,65 @@ const InfoNoticia = () => {
                 ) : (
                   <p className="text-red">Esta noticia no cuenta actualmente con PDF...</p>
                 )}
+                <section className="flex justify-center items-center h-screen">
+                  <form onSubmit={handleSubmit} className="max-w-xl w-full">
+                    <div className="text-black max-h-96 h-full overflow-y-auto">
+                      {messages.map((m) => (
+                        <div
+                          key={m.id}
+                          className={`message ${m.role === "assistant" ? "assistant" : "user"}`}
+                        >
+                          <span className="role">
+                            {m.role}
+                          </span>
+                          {m.content}
+                        </div>
+
+                      ))}
+                    </div>
+
+                    <div className="flex justify-between my-4">
+                      <label className="text-black block font-bold my-2">
+                        ¿Con qué puedo ayudarte?
+                      </label>
+                      <button
+                        className="enviar-mensaje text-black px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 disabled:opacity-50"
+                        disabled={isLoading || !input}
+                      >
+                        Enviar
+                      </button>
+                    </div>
+
+                    <textarea
+                      rows={4}
+                      value={input}
+                      onChange={handleInputChange}
+                      className="text-black bg-slate-300 px-3 py-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                      placeholder="Escribe algo..."
+                      autoFocus
+                    />
+                    <input type="file" accept="application/pdf" />
+
+                    {/* Muestra el texto extraído si existe */}
+                    {pdfText && (
+                      <div className="mt-4 bg-gray-100 p-4 rounded">
+                        <h2>Texto extraído del PDF:</h2>
+                        <p>{pdfText}</p>
+                      </div>
+                    )}
+
+                  </form>
+                </section>
+
               </div>
+
             </div>
           </div>
         ) : (
           <p>Loading...</p>
         )}
       </div>
+
     </>
   );
 };

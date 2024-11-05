@@ -10,7 +10,7 @@ import { PqrsModule } from './pqrs/pqrs.module';
 import { FooterModule } from './footer/footer.module';
 import { PageModule } from './page/page.module';
 import { EnteModule } from './ente/ente.module';
-
+import { FuncionarioModule } from './funcionario/funcionario.module';
 @Module({
   imports: [
     SharedModule,
@@ -23,7 +23,8 @@ import { EnteModule } from './ente/ente.module';
     PqrsModule,
     FooterModule,
     PageModule,
-    EnteModule
+    EnteModule,
+    FuncionarioModule
   ],
   controllers: [],
   providers: [],

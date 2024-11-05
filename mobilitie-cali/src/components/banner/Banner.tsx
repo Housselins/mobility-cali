@@ -237,7 +237,6 @@ export const Banner = () => {
             </Dialog>
 
             <div className="w-full relative">
-                {userInfo && userInfo.user.rol.id === 1 && (
                     <div className="add-icon-container">
 
 
@@ -247,7 +246,7 @@ export const Banner = () => {
                             onClick={handleClickOpen}
                         />
                     </div>
-                )}
+             
                 <div className="w-full carousel">
                     {banners.map((banner: any, index) => (
                         <div

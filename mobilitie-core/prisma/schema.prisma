@@ -188,3 +188,16 @@ model ente {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
+
+model funcionario {
+  id             Int      @id @default(autoincrement())
+  direccion      String
+  correo         String
+  cargo          String
+  telefono       String
+  nombre         String
+  image          String
+  link           String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}

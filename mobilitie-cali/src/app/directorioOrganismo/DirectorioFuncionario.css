@@ -1,0 +1,11 @@
+.add-icon-container {
+    background-color: rgb(51 102 204);
+    cursor: pointer;
+    display: flex;
+    border-radius: 5px;
+    padding: 5px;
+  }
+
+  .error{
+    color: red;
+  }

@@ -40,7 +40,7 @@ export const MenuCentral = () => {
             const response = await axios.get("http://localhost:4000/info");
             setInfoCentral(response.data);
         } catch (error) {
-            console.error(error);
+   
         }
     };
 
@@ -145,11 +145,12 @@ export const MenuCentral = () => {
     return (
         <>
             <div className="bloqueZona2">
-                {userInfo && userInfo.user.rol.id === 1 && (
+                <span style={{ display: "none" }}>Información</span>
+         
                     <div className="add-icon-container-info">
                         <FaPlus title="Añadir nueva información" className="plus" onClick={handleOpenAddInfo} />
                     </div>
-                )}
+          
                 <div className="carousel w-full cotenedores-informacion">
                     {infoCentral.slice(currentIndex, currentIndex + itemsPerPage).map((info: any) => (
                         <div key={info.id} className="carousel-item relative w-full carousel-item-info">

@@ -6,6 +6,14 @@ const nextConfig = {
     coreApi: process.env.API_CORE,
   },
   ...i18nConfig,
+  async rewrites() {
+    return [
+      {
+        source: '/api/llm/:path*',
+        destination: 'https://usellm.org/api/llm/:path*', // Redirige a la URL de la API externa
+      },
+    ];
+  },
 };
 
 export default nextConfig;
