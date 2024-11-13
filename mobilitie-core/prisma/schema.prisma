@@ -1,0 +1,240 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int            @id @default(autoincrement())
+  email    String         @unique
+  password String
+  name     String?
+  rol      Rol?           @relation(fields: [rolId], references: [id])
+  rolId    Int?
+  logins   LoginHistory[] // Relación con LoginHistory
+}
+
+model Rol {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  description String?
+
+  User User[]
+}
+
+model New {
+  id                Int      @id @default(autoincrement())
+  title             String
+  contenido_noticia String
+  image             String?
+  file              String?
+  fileName          String?
+  fileDescription   String?
+  attached          Boolean? @default(false)
+  isEnabled         Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updateddAt        DateTime @default(now())
+}
+
+model LoginHistory {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  loginTime DateTime @default(now())
+}
+
+model Banner {
+  id        Int      @id @default(autoincrement())
+  image     String
+  alt       String
+  createdAt DateTime @default(now())
+}
+
+model SocialMedia {
+  id               Int                @id @default(autoincrement())
+  name             String
+  url              String
+  image            String?
+  isEnabled        Boolean            @default(true)
+  createdAt        DateTime           @default(now())
+  updateddAt       DateTime           @default(now())
+  SocialMediaAudit SocialMediaAudit[]
+}
+
+model SocialMediaAudit {
+  id            Int         @id @default(autoincrement())
+  socialMedia   SocialMedia @relation(fields: [socialMediaId], references: [id])
+  socialMediaId Int
+  name          String
+  url           String
+  image         String
+  isEnabled     String
+  createdAt     DateTime    @default(now())
+  updateddAt    DateTime    @default(now())
+}
+
+model info {
+  id             Int      @id @default(autoincrement())
+  title          String
+  contenido_info String
+  image          String
+  isEnabled      Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updateddAt     DateTime @default(now())
+}
+
+model Denunciante {
+  id                   Int        @id @default(autoincrement())
+  nombre               String
+  apellido             String
+  numeroIdentificacion String
+  sexo                 String
+  correo               String
+  telefono             String
+  direccion            String
+  denuncias            Denuncia[] // Relación con la tabla Denuncia
+}
+
+model Denuncia {
+  id                  Int         @id @default(autoincrement())
+  denuncianteId       Int
+  denunciante         Denunciante @relation(fields: [denuncianteId], references: [id])
+  servidorInvolucrado String // Nombres y apellidos del servidor o contratista involucrado
+  rol                 String // Campo o rol del servidor
+  organismo           String // Organismo al que pertenece el servidor
+  lugarHechos         String // Lugar de los hechos
+  fechaHechos         String // Fecha de los hechos
+  descripcion         String // Descripción detallada de los hechos
+  pruebas             Prueba[] // Relación con la tabla Prueba
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @default(now())
+}
+
+model Prueba {
+  id         Int       @id @default(autoincrement())
+  denunciaId Int
+  denuncia   Denuncia  @relation(fields: [denunciaId], references: [id])
+  evidencia  String? // Ruta o nombre del archivo de evidencia
+  testigos   Testigo[] // Relación con la tabla de Testigos
+}
+
+model Testigo {
+  id             Int    @id @default(autoincrement())
+  nombreCompleto String
+  direccion      String
+  telefono       String
+  correo         String
+  pruebaId       Int
+  prueba         Prueba @relation(fields: [pruebaId], references: [id])
+}
+
+model Pqrs {
+  id                 Int      @id @default(autoincrement())
+  nombres            String
+  apellidos          String
+  identificacion     String
+  direccion          String
+  correo             String
+  telefono           String
+  tipoSolicitud      String
+  contenidoSolicitud String
+  dependencia        String
+  pais               String
+  ciudad             String
+  departamento       String
+  image              String
+  createdAt          DateTime @default(now())
+}
+
+model Footer {
+  id            Int        @id @default(autoincrement())
+  nombreColumna String
+  inFooters     inFooter[]
+}
+
+model inFooter {
+  id         Int    @id @default(autoincrement())
+  texto      String
+  link       String
+  fkIdFooter Int
+  footer     Footer @relation(fields: [fkIdFooter], references: [id])
+}
+
+model Page {
+  id        Int      @id @default(autoincrement())
+  title     String
+  views     String   @default("0")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  version   String   @default("0")
+}
+
+
+model ente {
+  id             Int      @id @default(autoincrement())
+  alt            String
+  image          String
+  url            String
+  isEnabled      Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model funcionario {
+  id             Int      @id @default(autoincrement())
+  direccion      String
+  correo         String
+  cargo          String
+  telefono       String
+  nombre         String
+  image          String
+  link           String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+
+
+model horarios_direcciones_atencion {
+  id        Int       @id @default(autoincrement())
+  titulo    String    @db.VarChar(100)
+  direccion String    @db.VarChar(255)
+  tipo      String    @db.VarChar(255)
+  pertenece    String    @db.VarChar(150)
+  horario      String    @db.VarChar(255)
+}
+
+model entidades_relacionadas {
+   id             Int       @id @default(autoincrement())
+   nombre         String    @db.VarChar(250)
+   url            String
+   createdAt      DateTime @default(now())
+   updatedAt      DateTime @updatedAt
+}
+
+model estudios {
+   id             Int       @id @default(autoincrement())
+   titulo         String    @db.VarChar(250)
+   descripcion            String
+   createdAt      DateTime @default(now())
+   updatedAt      DateTime @updatedAt
+}
+
+model agremiaciones {
+   id             Int       @id @default(autoincrement())
+   nombre         String    @db.VarChar(250)
+   direccion      String
+   correo         String
+   telefono       String
+   createdAt      DateTime @default(now())
+   updatedAt      DateTime @updatedAt
+}

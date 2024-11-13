@@ -1,0 +1,51 @@
+.container-estudios{
+   
+        display: flex;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 0 20px;
+    
+}
+
+.infoPrincipal-estudios {
+    padding-top: 50px;
+    width: 50%;
+    font-family: Raleway, sans-serif;
+}
+
+.title-estudios{
+    color: #215a9a;
+    font-size: 2.5em;
+    font-weight: 400;
+    margin-bottom: 30px;
+}
+
+.listado-estudios{
+    box-sizing: border-box;
+    margin: 0px 0px 10px;
+    font-size: 15px;
+    line-height: 1.5em;
+    color: rgb(85, 85, 85);
+    font-family: Raleway, sans-serif;
+}
+
+.listado-estudios p{
+    margin-bottom: 10px;
+    color: #215a9a;
+}
+
+.icon-estudios{
+    color: #215a9a;
+    cursor: pointer;
+}
+
+.edit-estudio{
+    color: #5ed6ce;
+    cursor: pointer;
+}
+
+.delete-estudio{
+    color: red;
+    cursor: pointer;
+}

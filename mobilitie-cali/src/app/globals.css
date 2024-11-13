@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+}
+
+body {
+  background-color: white;
+  height: 100%;
+  width: 100%;
+}
+
+button {
+  /*all: unset !important; /* Resetea todas las propiedades CSS del botón */
+  display: inline-block !important; /* Agrega el display si es necesario */
+  cursor: pointer !important;
+  position: static !important;
+}
+
+#__next {
+  height: 100%;
+  width: 100%;
+}
+
+.nav li{
+  font-family: "Raleway", sans-serif;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+.container-nav{
+  height: 40px;
+  border: 1px solid  #FFFFFF;;
+  color: white;
+  background-color: #215a9a;
+
+}
+
+.container-nav1{
+  height: 100px;
+  border: 1px solid  #FFFFFF;;
+  color: white;
+  background-color: #215a9a;
+}
+
+.icon-flecha{
+  cursor: pointer;
+  color: #007fff;;
+  right: 0;
+}
+
+.idiomas{
+  margin-right: 0.5rem;
+}
+
+.codigo-idioma{
+  margin-right: 0.75rem;
+  cursor: pointer;
+}
+
+.codigo-idioma:hover{
+  background-color: rgb(80, 80, 243)
+}

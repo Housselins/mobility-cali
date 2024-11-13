@@ -1,0 +1,100 @@
+/* Contenedor principal centrado */
+.container {
+    width: 100%; /* Hace que el contenedor ocupe todo el ancho */
+    height: 100vh; /* Hace que el contenedor ocupe toda la altura de la pantalla */
+    display: flex; /* Usamos flexbox para centrar el contenido */
+    justify-content: center; /* Centramos horizontalmente */
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+/* Contenedor de la información */
+.contenedor-info {
+   
+    width: 100%;
+    max-width: 1140px; /* Define el ancho máximo del contenido */
+    padding: 15px;
+}
+
+/* Contenedor del contenido principal */
+#infoPrincipal {
+
+    text-align: center; /* Centra el texto dentro del contenedor */
+    padding: 15px;
+    width: 100%;
+}
+
+/* Ajustes generales para la estructura de fila */
+.row {
+    margin-right: -15px;
+    margin-left: -15px;
+    display: flex; /* Usamos flexbox para ayudar con la alineación */
+    justify-content: center; /* Asegura que los elementos hijos estén centrados */
+}
+
+.titulo-noticia{
+    color: #215a9a;
+    font-size: 2.5em;
+    font-weight: 400;
+}
+
+.descripcion-noticia{
+    color: #555555;
+    font-weight: 500;
+    font-size: 1em;
+    line-height: 1.5em;
+
+}
+
+.contenedor-boton-mensaje{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.boton-mensaje{
+    background-color: #215a9a;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* styles.css */
+
+.message {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.375rem; /* 6px */
+  }
+  
+  .message.assistant {
+    align-self: flex-end;
+    background-color: #1f2937; /* bg-gray-800 */
+    color: #ffffff;
+  }
+  
+  .message.user {
+    align-self: flex-start;
+    background-color: #2563eb; /* bg-blue-700 */
+    color: #ffffff;
+  }
+  
+  .message .role {
+    font-size: 0.75rem;
+    text-align: right;
+  }
+  
+  .message.user .role {
+    text-align: left;
+  }
+
+  .enviar-mensaje{
+    background-color: #215a9a;
+    border-radius: 5px;
+  }

@@ -1,0 +1,26 @@
+.title-localizacion{
+    color: #215a9a;
+    font-size: 2em;
+    font-weight: 400;
+    font-family: "Raleway", sans-serif;
+}
+
+.info-horarios p{
+    font-family: "Raleway", sans-serif;
+    font-size: 15px;
+}
+
+.container-horarios{
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.pross{
+    font-family: "Raleway", sans-serif;
+    font-size: 15px;
+ 
+}

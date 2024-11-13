@@ -1,0 +1,34 @@
+services:
+  mobilitie:
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - mobilitie-backend-tier
+    restart: always
+    container_name: mobilitie
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3005:3005
+    expose:
+      - '3005'
+  db:
+    image: library/postgres:16
+    ports:
+      - 5433:5432
+    restart: always
+    networks:
+      - mobilitie-backend-tier
+    volumes:
+      - mobilitie-db:/var/lib/postgresql/data
+    env_file:
+      - .env
+volumes:
+  mobilitie-db:
+    driver: local
+networks:
+  mobilitie-backend-tier:
+    driver: bridge
