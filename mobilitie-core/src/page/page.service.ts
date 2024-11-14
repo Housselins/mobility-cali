@@ -1,6 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Page } from '@prisma/client';
+<<<<<<< HEAD
 import { PrismaService } from 'src/shared';
+=======
+import { PrismaService } from '../shared';
+>>>>>>> origin/nuevos_camnbios
 import { UpdatePageDto } from './dto/page.dto';
 
 @Injectable()

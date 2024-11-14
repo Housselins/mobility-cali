@@ -3,7 +3,11 @@ import {
     InternalServerErrorException,
     NotFoundException,
   } from '@nestjs/common';
+<<<<<<< HEAD
   import { PrismaService } from 'src/shared';
+=======
+  import { PrismaService } from '../shared';
+>>>>>>> origin/nuevos_camnbios
   import { CreateInfoDTO } from './dto/info.dto';
 
   @Injectable()
