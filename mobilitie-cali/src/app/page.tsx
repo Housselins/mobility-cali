@@ -549,7 +549,7 @@ export default function Home() {
         );
         await initNews();
       } else if (type === "add") {
-        await axios.post("${process.env.coreApi}/news", formValues);
+        await axios.post(`${process.env.coreApi}/news`, formValues);
         await initNews();
       }
     } catch (error) {
