@@ -1,0 +1,63 @@
+
+
+.pgel-dirEntRel{
+    box-sizing: border-box;
+    margin: 0px 0px 10px;
+    font-size: 15px;
+    line-height: 1.5em;
+    color: rgb(85, 85, 85);
+    font-family: Raleway, sans-serif;
+
+}
+
+.span-dirEntRel{
+    margin-bottom: 30px;
+}
+
+.pgel-dirEntRel p{
+  margin-bottom: 10px;
+}
+ 
+
+.title-dirEntRel{
+    color: #215a9a;
+    font-size: 2.5em;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-family: "Raleway", sans-serif;
+}
+
+.listado-dirEntRel{
+    box-sizing: border-box;
+    margin: 0px 0px 10px;
+    font-size: 15px;
+    line-height: 1.5em;
+    color: rgb(85, 85, 85);
+    font-family: Raleway, sans-serif;
+}
+
+.listado-dirEntRel p{
+    margin-bottom: 10px;
+    color: #215a9a;
+
+}
+
+.plus-dirEntRel{
+    color: #215a9a;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.new-dirEntRel{
+    opacity:  0.5;
+}
+
+.edit-dirEntRel{
+    color: #6a9dd7;
+    cursor: pointer;
+}
+
+.delete-dirEntRel{
+    color: rgb(198, 69, 69);
+    cursor: pointer;
+}

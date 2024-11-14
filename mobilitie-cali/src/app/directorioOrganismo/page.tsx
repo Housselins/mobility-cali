@@ -322,10 +322,11 @@ export default function DirectorioOrganismo() {
             </Dialog>
           </div>
         </div>
-        <footer>
+      
+      </div>
+      <footer>
           <Footer />
         </footer>
-      </div>
     </>
   );
 }  

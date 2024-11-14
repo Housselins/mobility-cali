@@ -1,0 +1,165 @@
+.container-organismo {
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 0 20px;
+    padding-bottom: 50px;
+
+}
+
+.infoPrincipal-organismo {
+    padding-top: 50px;
+    width: 50%;
+   /* background-color: blanchedalmond;*/
+}
+
+.title-organismo {
+    color: #215a9a;
+    font-size: 2.5em;
+    font-weight: 400;
+}
+
+
+.pgel {
+    font-family: "Raleway", sans-serif;
+    font-size: 15px;
+    margin-top: 50px;
+}
+
+
+.pgel p {
+    font-weight: 500;
+    font-size: 1em;
+    line-height: 1.5em;
+    color: #555555;
+}
+
+.pgel-text {
+    margin-left: 40px;
+    margin-top: 30px;
+}
+
+.pgel-ol {
+    margin-top: 10px;
+    margin-left: 50px;
+}
+
+.title-funciones {
+    padding-top: 50px;
+    font-weight: 700;
+    color: #215a9a;
+    font-size: 2.5em;
+}
+
+.title-subsecretaria {
+    margin-left: 40px;
+    margin-top: 30px;
+    color: #215a9a;
+    font-size: 1.533em;
+    font-weight: 400;
+}
+
+.pgel-img {
+    text-align: center;
+    display: flex;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.img-demarcacion {
+    text-align: center;
+    overflow-clip-margin: content-box;
+    overflow: clip;
+    width: 500px;
+    margin-right: 50px;
+}
+
+.img-reparacion {
+    width: 300px;
+}
+
+.subsecretarias p {
+    margin-bottom: 10px;
+}
+
+.imgs-movilidad {
+    margin-top: 50px;
+    margin-left: 60px;
+    margin-bottom: 30px;
+    align-items: center;
+    text-align: center;
+    display: flex;
+}
+
+
+.img-regulacion {
+    margin-right: 20px;
+    height: 271.962px;
+    width: 371.927px;
+}
+
+.img-control {
+    height: 276.927px;
+    width: 320.938px;
+}
+
+.img-contravenciones{
+    margin-top: 40px;
+    margin-left: 80px;
+}
+
+.info117110{
+    font-family: "Raleway", sans-serif;
+    font-size: 15px;
+    margin-top: 100px;
+    text-align: right;
+    color: #555555;
+}
+
+.footer-share-options {
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
+    padding-top: 20px;
+    display: block;
+    float: left;
+    width: 100%;
+}
+
+.btn-share-options {
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; /* Asegura que el botón sea circular */
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.05);
+    margin-left: 5px;
+    padding: 0;
+    box-sizing: border-box; /* Asegura que el tamaño sea consistente */
+}
+
+.btn-options-icon {
+    color: #215a9a;
+    margin-left: 6px;
+    font-size: 1.5em; /* Aumenta ligeramente el tamaño del ícono */
+    line-height: 1; /* Elimina el espacio innecesario en la altura de línea */
+}
+
+.contenedor-options-redes{
+    display: flex;
+    justify-content: space-between;
+}
+
+.compartir{
+    margin-top: 8px;
+    display: block;
+    color: #215a9a;
+    font-weight: bold;
+}
+
+.pedagogia{
+    font-weight: 700;
+    color: #1ec704;
+}

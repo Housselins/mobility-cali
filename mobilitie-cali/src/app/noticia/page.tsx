@@ -10,8 +10,7 @@ import { FaBars, FaHouse, FaLanguage } from "react-icons/fa6";
 import { useChat } from 'ai/react'
 import "./Noticia.css";
 import { Button, Card, CardContent } from "@mui/material";
-
-
+import PdfExtractor from '../../components/pdf/PdfExtractor';
 
 
 
@@ -35,30 +34,6 @@ const InfoNoticia = () => {
   //se obtiene el id del parámetro de la URL
   const id = searchParams.get("id");
 
-  const [pdfText, setPdfText] = useState<string>("");
-
-
-  /*const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      try {
-        const arrayBuffer = await file.arrayBuffer();
-        const pdf = await getDocument({ data: arrayBuffer }).promise;
-        let text = "";
-
-        for (let i = 0; i < pdf.numPages; i++) {
-          const page = await pdf.getPage(i + 1);
-          const content = await page.getTextContent();
-          const pageText = content.items.map((item: any) => item.str).join(" ");
-          text += pageText + "\n";
-        }
-
-        setPdfText(text); // Guardamos el texto extraído en el estado
-      } catch (error) {
-        console.error("Error al leer el PDF:", error);
-      }
-    }
-  };*/
 
   const ocultarInitSesion = () => {
     setControladorRenderLogin(!controladorRenderLogin);
@@ -212,15 +187,9 @@ const InfoNoticia = () => {
                       placeholder="Escribe algo..."
                       autoFocus
                     />
-                    <input type="file" accept="application/pdf" />
-
-                    {/* Muestra el texto extraído si existe */}
-                    {pdfText && (
-                      <div className="mt-4 bg-gray-100 p-4 rounded">
-                        <h2>Texto extraído del PDF:</h2>
-                        <p>{pdfText}</p>
-                      </div>
-                    )}
+                    <div>
+                      <PdfExtractor />
+                    </div>
 
                   </form>
                 </section>

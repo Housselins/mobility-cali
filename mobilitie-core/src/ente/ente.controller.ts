@@ -21,8 +21,8 @@ export class EnteController {
     }
 
     @Put(':id')
-    async updateEnteEndpoint(@Param('id') id: string, @Body() newData: any) {
-        return this.enteService.editEnte(Number(id), newData);
+    async updateEnteEndpoint(@Param('id', ParseIntPipe) id: number, @Body() newData: any) {
+        return this.enteService.editEnte(id, newData);
     }
 
     @Get(':id')

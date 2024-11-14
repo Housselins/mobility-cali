@@ -201,3 +201,40 @@ model funcionario {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
+
+
+
+model horarios_direcciones_atencion {
+  id        Int       @id @default(autoincrement())
+  titulo    String    @db.VarChar(100)
+  direccion String    @db.VarChar(255)
+  tipo      String    @db.VarChar(255)
+  pertenece    String    @db.VarChar(150)
+  horario      String    @db.VarChar(255)
+}
+
+model entidades_relacionadas {
+   id             Int       @id @default(autoincrement())
+   nombre         String    @db.VarChar(250)
+   url            String
+   createdAt      DateTime @default(now())
+   updatedAt      DateTime @updatedAt
+}
+
+model estudios {
+   id             Int       @id @default(autoincrement())
+   titulo         String    @db.VarChar(250)
+   descripcion            String
+   createdAt      DateTime @default(now())
+   updatedAt      DateTime @updatedAt
+}
+
+model agremiaciones {
+   id             Int       @id @default(autoincrement())
+   nombre         String    @db.VarChar(250)
+   direccion      String
+   correo         String
+   telefono       String
+   createdAt      DateTime @default(now())
+   updatedAt      DateTime @updatedAt
+}

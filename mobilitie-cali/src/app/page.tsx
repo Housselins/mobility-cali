@@ -867,7 +867,7 @@ export default function Home() {
                     <button
                       className="text-white w-2/4 text-xs py-2 px-3 rounded-br20 bg-principal font-semibold"
                       onClick={() => {
-                        router.push(`/noticia?id=${attachedNew.id}`);
+                        router.push(`/noticia?id=${attachedNew.id}`); 
                       }}
                     >
                       Saber más

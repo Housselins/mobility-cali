@@ -178,7 +178,7 @@ export default function SideMenu() {
                 },
                 {
                     texto: "Estudios, investigaciones y otras publicaciones",
-                    link: "#",
+                    link: "/estudios",
                 },
                 {
                     texto: "Información para niños, niñas y adolescentes",
@@ -218,11 +218,11 @@ export default function SideMenu() {
             divisiones: [
                 {
                     texto: "Pico y Placa 2024",
-                    link: "#",
+                    link: "/pico-placa",
                 },
                 {
                     texto: "Exentos de Pico y Placa",
-                    link: "#",
+                    link: "/exentos",
                 },
             ],
         },

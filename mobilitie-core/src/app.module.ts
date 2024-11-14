@@ -11,6 +11,10 @@ import { FooterModule } from './footer/footer.module';
 import { PageModule } from './page/page.module';
 import { EnteModule } from './ente/ente.module';
 import { FuncionarioModule } from './funcionario/funcionario.module';
+import { HorariosDireccionesAtencionModule } from './atencion/atencion.module'
+import { EntidadesModule } from './entidades/entidades.module'
+import { EstudiosModule } from './estudios/estudios.module';
+import { AgremiacionesModule } from './agremiaciones/agremiaciones.module';
 @Module({
   imports: [
     SharedModule,
@@ -24,7 +28,11 @@ import { FuncionarioModule } from './funcionario/funcionario.module';
     FooterModule,
     PageModule,
     EnteModule,
-    FuncionarioModule
+    FuncionarioModule,
+    HorariosDireccionesAtencionModule,
+    EntidadesModule,
+    EstudiosModule,
+    AgremiacionesModule
   ],
   controllers: [],
   providers: [],
