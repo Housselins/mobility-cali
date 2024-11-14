@@ -1,3 +1,4 @@
+"use client";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -27,7 +28,7 @@ export default function LoginForm() {
 
   const onSubmit = async (data: any) => {
     try {
-      const response = await axios.post("http://localhost:4000/auth", data);
+      const response = await axios.post(`${process.env.coreApi}/auth`, data);
       setUsuario(response.data.user);
       localStorage.setItem("user", JSON.stringify(response.data));
       window.location.href = "/";
@@ -77,7 +78,7 @@ export default function LoginForm() {
         (t) => (
           <div style={{ color: "#fff" }}>
             <strong>Error!</strong>
-            <p>The captcha doesn't match</p>
+            <p>{`The captcha doesn't match`}</p>
           </div>
         ),
         {
@@ -97,11 +98,8 @@ export default function LoginForm() {
   useEffect(() => {
     const userData = localStorage.getItem("user");
 
-
     if (userData) {
       setUserInfo(JSON.parse(userData));
-
-
     }
   }, []);
 
