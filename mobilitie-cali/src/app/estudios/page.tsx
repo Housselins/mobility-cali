@@ -96,7 +96,7 @@ const Estudios = () => {
     const handleOpenEditInfo = async (id: string) => {
         setType("edit");
         setTilte("Editar estudio");
-        const response = await axios.get(`http://localhost:4000/estudios/${id}`);
+        const response = await axios.get(`http://localhost:4000/estudios/${id}`); 
         setOpenAddInfo(true);
         setFormValues(response?.data);
         setSelectedInfoId(id);
