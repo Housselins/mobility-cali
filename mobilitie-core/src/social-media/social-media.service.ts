@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-<<<<<<< HEAD
-import { PrismaService } from 'src/shared';
-=======
 import { PrismaService } from '../shared';
->>>>>>> origin/nuevos_camnbios
 
 @Injectable()
 export class SocialMediaService {
